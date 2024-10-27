@@ -1,13 +1,44 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import iconAlternateMapMarker from "Ratatouille/src/assets/local.svg";
 import iconFacebook from "Ratatouille/src/assets/facebook.svg";
 import iconGmail from "Ratatouille/src/assets/gmail.svg";
 import iconPhone from "Ratatouille/src/assets/telephone.svg";
 import iconWebsite from "Ratatouille/src/assets/website.svg";
 import logoDhCongNgheUet1 from "Ratatouille/src/assets/uet.svg";
-import "./index.css";
 
+import "./index.css";
 const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch('/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage(data.message);
+        navigate('/admin'); // Redirect to the admin screen
+      } else {
+        setMessage(data.message);
+      }
+    } catch (error) {
+      setMessage('An error occurred. Please try again.');
+    }
+  };
+
   return (
     <div className="bg-[#c1d1e0] flex flex-col min-h-screen w-full">
       <header className="w-full bg-[#014f94] p-6 flex items-center justify-between">
@@ -27,23 +58,26 @@ const Login = () => {
             UET-LMS Login
           </h1>
 
-          <form>
+          <form onSubmit={handleLogin}>
             <div className="mb-4">
               <input
-                type="text"
+                type="email"
                 placeholder="Email"
-                className="w-full h-10 bg-[#d4e6fc] rounded-md border border-solid border-[#a09292] px-2.5 py-2.5 text-[#b5a7a7] text-[15px]"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded"
               />
             </div>
-
             <div className="mb-4">
               <input
                 type="password"
                 placeholder="Password"
-                className="w-full h-10 bg-[#d4e6fc] rounded-md border border-solid border-[#a09292] px-2.5 py-2.5 text-[#b5a7a7] text-[15px]"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded"
               />
             </div>
-
+            {message && <p className="text-red-500 mb-4">{message}</p>}
             <div className="flex items-center mb-4">
               <input type="checkbox" id="custom-checkbox" className="mr-2" />
               <label htmlFor="custom-checkbox" className="text-black text-[15px]">

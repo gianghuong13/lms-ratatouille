@@ -163,3 +163,9 @@ CREATE TABLE announcement_classes (
     FOREIGN KEY (announcement_id) REFERENCES announcements(announcement_id) ON DELETE CASCADE,
     FOREIGN KEY (class_id) REFERENCES classes(class_id) ON DELETE CASCADE
 );
+
+
+insert into users (user_id,username,password,full_name,role,email) values ('admin001','tvaexe','va100704','Thân Việt Anh','0','vietanh.vadc.2004@gmail.com'), 
+('admin002','ntq','ntqexe','Nguyễn Thúy Quỳnh','0','22026559@vnu.edu.vn'),
+('admin003','hple','hpleexe','Lê Thị Hà Phương','0','22026563@vnu.edu.vn'),
+('admin004','gianghuong','gianghuongexe','Nguyễn Hương Giang','0','22026566@vnu.edu.vn');
