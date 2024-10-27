@@ -1,10 +1,10 @@
 import React from "react";
-import iconAlternateMapMarker from "./assets/local.svg";
-import iconFacebook from "./assets/facebook.svg";
-import iconGmail from "./assets/gmail.svg";
-import iconPhone from "./assets/telephone.svg";
-import iconWebsite from "./assets/website.svg";
-import logoDhCongNgheUet1 from "./assets/uet.svg";
+import iconAlternateMapMarker from "Ratatouille/src/assets/local.svg";
+import iconFacebook from "Ratatouille/src/assets/facebook.svg";
+import iconGmail from "Ratatouille/src/assets/gmail.svg";
+import iconPhone from "Ratatouille/src/assets/telephone.svg";
+import iconWebsite from "Ratatouille/src/assets/website.svg";
+import logoDhCongNgheUet1 from "Ratatouille/src/assets/uet.svg";
 import "./index.css";
 
 const Login = () => {
