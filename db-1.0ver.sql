@@ -96,15 +96,7 @@ CREATE TABLE assignment_allowed_formats (
     FOREIGN KEY (assignment_id) REFERENCES assignments(assignment_id) ON DELETE CASCADE
 );
 
--- Bảng file_storage dùng chung cho các loại file
-CREATE TABLE file_storage (
-    file_id INT PRIMARY KEY AUTO_INCREMENT,
-    reference_id INT NOT NULL,
-    reference_type ENUM('assignment', 'post', 'submission', 'announcement') NOT NULL,
-    file_name NVARCHAR(255) NOT NULL,
-    file_path VARCHAR(255) NOT NULL,
-    upload_date DATETIME DEFAULT CURRENT_TIMESTAMP
-);
+
 
 -- Bảng posts
 CREATE TABLE posts (
@@ -145,23 +137,66 @@ CREATE TABLE submissions (
     FOREIGN KEY (student_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
--- Bảng announcements
-CREATE TABLE announcements (
-    announcement_id INT PRIMARY KEY AUTO_INCREMENT,
-    creator_id VARCHAR(8),
+-- Bảng notifications
+CREATE TABLE notifications (
+    notification_id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
+    creator_id VARCHAR(8),
     created_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     last_modified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    is_global BOOLEAN DEFAULT 0,
     FOREIGN KEY (creator_id) REFERENCES users(user_id) ON DELETE SET NULL
 );
 
--- Bảng announcement_classes
-CREATE TABLE announcement_classes (
-    announcement_id INT NOT NULL,
+
+-- Bảng notification_classes
+CREATE TABLE notification_classes (
+    notification_id INT NOT NULL,
     class_id VARCHAR(50) NOT NULL,
-    PRIMARY KEY (announcement_id, class_id),
-    FOREIGN KEY (announcement_id) REFERENCES announcements(announcement_id) ON DELETE CASCADE,
+    PRIMARY KEY (notification_id, class_id),
+    FOREIGN KEY (notification_id) REFERENCES notifications(notification_id) ON DELETE CASCADE,
     FOREIGN KEY (class_id) REFERENCES classes(class_id) ON DELETE CASCADE
+);
+
+-- Bảng lưu file cho các bài tập
+CREATE TABLE assignment_files (
+    file_id INT PRIMARY KEY AUTO_INCREMENT,
+    assignment_id INT NOT NULL,
+    file_name NVARCHAR(255) NOT NULL,
+    file_path VARCHAR(255) NOT NULL,
+    upload_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (assignment_id) REFERENCES assignments(assignment_id) ON DELETE CASCADE
+);
+
+-- Bảng lưu file cho các bài đăng
+CREATE TABLE post_files (
+    file_id INT PRIMARY KEY AUTO_INCREMENT,
+    post_id INT NOT NULL,
+    file_name NVARCHAR(255) NOT NULL,
+    file_path VARCHAR(255) NOT NULL,
+    upload_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE
+);
+
+-- Bảng lưu file cho các bài nộp
+CREATE TABLE submission_files (
+    file_id INT PRIMARY KEY AUTO_INCREMENT,
+    submission_id INT NOT NULL,
+    file_name NVARCHAR(255) NOT NULL,
+    file_path VARCHAR(255) NOT NULL,
+    upload_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (submission_id) REFERENCES submissions(submission_id) ON DELETE CASCADE
+);
+
+-- Bảng lưu file cho các thông báo
+CREATE TABLE notification_files (
+    file_id INT PRIMARY KEY AUTO_INCREMENT,
+    announcement_id INT NOT NULL,
+    file_name NVARCHAR(255) NOT NULL,
+    file_path VARCHAR(255) NOT NULL,
+    upload_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (announcement_id) REFERENCES notifications(notification_id) ON DELETE CASCADE
 );
 
 
@@ -171,3 +206,4 @@ insert into users (user_id,username,password,full_name,role,email) values ('admi
 ('admin004','gianghuong','gianghuongexe','Nguyễn Hương Giang','admin','22026566@vnu.edu.vn');
 
 
+select * from users;
