@@ -165,7 +165,9 @@ CREATE TABLE announcement_classes (
 );
 
 
-insert into users (user_id,username,password,full_name,role,email) values ('admin001','tvaexe','va100704','Thân Việt Anh','0','vietanh.vadc.2004@gmail.com'), 
-('admin002','ntq','ntqexe','Nguyễn Thúy Quỳnh','0','22026559@vnu.edu.vn'),
-('admin003','hple','hpleexe','Lê Thị Hà Phương','0','22026563@vnu.edu.vn'),
-('admin004','gianghuong','gianghuongexe','Nguyễn Hương Giang','0','22026566@vnu.edu.vn');
+insert into users (user_id,username,password,full_name,role,email) values ('admin001','tvaexe','va100704','Thân Việt Anh','admin','vietanh.vadc.2004@gmail.com'), 
+('admin002','ntq','ntqexe','Nguyễn Thúy Quỳnh','admin','22026559@vnu.edu.vn'),
+('admin003','hple','hpleexe','Lê Thị Hà Phương','admin','22026563@vnu.edu.vn'),
+('admin004','gianghuong','gianghuongexe','Nguyễn Hương Giang','admin','22026566@vnu.edu.vn');
+
+

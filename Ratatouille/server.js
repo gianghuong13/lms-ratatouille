@@ -26,9 +26,10 @@ app.post('/login', (req, res) => {
     if (err) {
       return res.status(500).send('Error executing query');
     }
-
     if (results.length > 0) {
-      res.status(200).json({ message: 'Login successful' });
+      const user = results[0];
+      console.log(user);
+      res.status(200).json({ message: 'Login successful', role: user.role });
     } else {
       res.status(401).json({ message: 'Invalid email or password' });
     }
