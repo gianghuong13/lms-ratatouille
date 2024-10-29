@@ -1,19 +1,26 @@
+import React from 'react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Login from './Login_screen/Login.jsx';
-import Me from './Admin_screen/Me.jsx';
-import './Login_screen/index.css';
-import './Admin_screen/index.css';
+import { BrowserRouter as Router, Route, Routes, Navigate} from 'react-router-dom';
+import App from './App';
+import LoginPage from './pages/LoginPage.jsx';
+import MePage from './pages/MePage.jsx';
+import './index.css'
+
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Router>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/admin" element={<Me />} />
-        <Route path="/teacher" element={<Me />} />
-        <Route path="/student" element={<Me />} />
+      <Routes>  
+        <Route path="/" element={<Navigate to="login" replace/>} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/admin" element={<MePage />} />
+        <Route path="/teacher" element={<MePage />} />
+        <Route path="/student" element={<MePage />} />
+        {/* <Route path="/admin/users" element={<AdminUsers />} />
+        <Route path="/admin/classes" element={<AdminClasses />} />
+        <Route path="/admin/notifications" element={<AdminNotifications />} />
+        <Route path="/admin/classes" element={<TeacherClasses />} /> */}
       </Routes>
     </Router>
   </StrictMode>,
