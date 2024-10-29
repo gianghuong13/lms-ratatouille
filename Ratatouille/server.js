@@ -1,10 +1,12 @@
 import express from 'express';
-import connection from './src/Database_connection/db.js';
+import connection from './src/db-connect/db.js';
 import bodyParser from 'body-parser';
+// import cors from 'cors';
 
 const app = express();
 const PORT = 3000;
 
+// app.use(cors());
 app.use(bodyParser.json());
 
 // Test endpoint to check database connection
