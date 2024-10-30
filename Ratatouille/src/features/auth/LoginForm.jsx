@@ -25,7 +25,7 @@ const LoginForm = () => {
       if (response.ok) {
         setMessage(data.message);
         if (data.role === 'student') navigate('/student');
-        if (data.role === 'admin') navigate('/admin');
+        if (data.role === 'admin') navigate('/admin-home');
         if (data.role === 'teacher') navigate('/teacher');
       } else {
         setMessage(data.message);

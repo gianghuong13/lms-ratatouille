@@ -1,6 +1,7 @@
 import React from "react";
-import Navbar from "../components/Navbar.jsx";
+import Navbar from "../components/admin/Navbar.jsx";
 import MainContent from "../features/auth/MainContent.jsx";
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 export const MePage = () => {
   return (

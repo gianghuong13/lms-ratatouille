@@ -2,8 +2,8 @@ import mysql from 'mysql2';
 
 const connection = mysql.createConnection({
   host: 'localhost', // Replace with your database host
-  user: 'haphuong', // Replace with your database user
-  password: '123', // Replace with your database password
+  user: 'root', // Replace with your database user
+  password: 'qqqqqqqqqq', // Replace with your database password
   database: 'educationsystem' // Replace with your database name
 });
 
