@@ -199,11 +199,8 @@ CREATE TABLE notification_files (
     FOREIGN KEY (announcement_id) REFERENCES notifications(notification_id) ON DELETE CASCADE
 );
 
-
-insert into users (user_id,username,password,full_name,role,email) values ('admin001','tvaexe','va100704','Thân Việt Anh','admin','vietanh.vadc.2004@gmail.com'), 
-('admin002','ntq','ntqexe','Nguyễn Thúy Quỳnh','admin','22026559@vnu.edu.vn'),
-('admin003','hple','hpleexe','Lê Thị Hà Phương','admin','22026563@vnu.edu.vn'),
-('admin004','gianghuong','gianghuongexe','Nguyễn Hương Giang','admin','22026566@vnu.edu.vn');
-
-
-select * from users;
+INSERT INTO users (user_id, username, password, full_name, role, email) VALUES 
+('admin001', 'tvaexe', '$2b$10$aFe8Ev6gBa92/bYrYIEta.bJFQ/CrFRMI7GSAJsLnpP7SUf/SJ9Oy', 'Thân Việt Anh', 'admin', 'vietanh.vadc.2004@gmail.com'), 
+('admin002', 'ntq', '$2b$10$gBMKWuqjDfJJHiRLBgUwhOmh7GEVHfK8Jqp7yua4f1pLen/phKpLG', 'Nguyễn Thúy Quỳnh', 'admin', '22026559@vnu.edu.vn'),
+('admin003', 'hple', '$2b$10$fv.d1sqVdcBwUiUPDRrlResZb39YmiZRtojURXfKl5jVn8H/MAYbS', 'Lê Thị Hà Phương', 'admin', '22026563@vnu.edu.vn'),
+('admin004', 'gianghuong', '$2b$10$Qb1MjNWHm3f9qaqYBo0AM.hX4mUK3F55KNh81daN9PweSGAgRQiZi', 'Nguyễn Hương Giang', 'admin', '22026566@vnu.edu.vn');

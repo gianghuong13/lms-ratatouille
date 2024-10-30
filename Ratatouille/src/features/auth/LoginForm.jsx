@@ -81,7 +81,7 @@ const LoginForm = () => {
       </div>
       <div className="flex justify-center mb-4">
         <button className="flex items-center bg-white border border-gray-300 rounded-full px-4 py-2">
-          {/* Insert Google icon here */}
+          {}
           <span className="text-black">Google</span>
         </button>
       </div>
