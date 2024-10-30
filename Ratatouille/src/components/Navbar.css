@@ -1,9 +1,10 @@
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
-nav{
+
+nav {
     box-sizing: border-box;
     min-width: 12rem;
     display: flex;
@@ -11,42 +12,52 @@ nav{
     background-color: #C2E7FF;
     height: 100vh;
     position: sticky;
-    top:0;
+    top: 0;
+    padding: 1rem;
 }
-nav>a{
+
+nav > a {
     display: flex;
     justify-content: center;
+    margin-bottom: 2rem;
 }
-nav img{
+
+nav img {
     width: 5.5rem;
     height: 5.5rem;
-    margin-top: 1rem;
 }
-nav ul{
-    padding: 0px;
-    margin: 1rem;
-}
-nav ul li{
+
+nav ul {
+    padding: 0;
+    margin: 0;
     list-style: none;
-    font-family: Arial, sans-serif;
-    margin: 0.5rem;
 }
-nav ul li a{
+
+nav ul li {
+    margin: 0.5rem 0;
+}
+
+nav ul li a {
     color: black;
     text-decoration: none;
-    display: block;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    transition: background-color 0.3s;
 }
-nav ul li a i{
-    padding: 0.5rem;
 
-    width: 30%;
+nav ul li a img.nav-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-right: 0.5rem;
 }
-nav ul li:hover{
+
+nav ul li:hover a {
     background-color: rgb(247, 245, 245);
-    border-radius: 20px;
 }
-.active{
+
+nav ul li a.active {
     background-color: white;
-    border-radius: 20px;
+    color: black; /* Ensure text color remains black */
 }
-/* navbar */

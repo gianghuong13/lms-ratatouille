@@ -1,6 +1,8 @@
 // LoginForm.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
@@ -81,7 +83,7 @@ const LoginForm = () => {
       </div>
       <div className="flex justify-center mb-4">
         <button className="flex items-center bg-white border border-gray-300 rounded-full px-4 py-2">
-          {}
+        <FontAwesomeIcon icon={faGoogle} className="text-500 mr-2 rainbow-text" />
           <span className="text-black">Google</span>
         </button>
       </div>

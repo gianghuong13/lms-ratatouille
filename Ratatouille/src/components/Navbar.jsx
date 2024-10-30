@@ -1,30 +1,45 @@
+import React from 'react';
 import logo from "../assets/logo-uet.webp";
-import {Link, NavLink} from "react-router-dom";
-import "./Navbar.css"
-export default function Navbar(){
-    return (
-        <nav>
-            <Link to="/">
-                <img src= {logo} alt="logo-UET" />
-            </Link>
-            <ul>
-                <CustomLink to="/" icon="fa-solid fa-house">Home</CustomLink>
-                <CustomLink to="/classes" icon="fa-solid fa-book">Classes</CustomLink>
-                <CustomLink to="/accounts" icon="fa-solid fa-users">Accounts</CustomLink>
-                <CustomLink to="/notifications" icon="fa-solid fa-bell">Notifications</CustomLink>
-                <CustomLink to="/me" icon="fa-solid fa-circle-user">Me</CustomLink>
-            </ul>
-        </nav>
-    );
+import home from "../assets/Admin_screen/Home.svg";
+import classes from "../assets/Admin_screen/Group.svg";
+import account from "../assets/Admin_screen/account.svg";
+import notification from "../assets/Admin_screen/noti.svg";
+import key from "../assets/Admin_screen/me.svg";
+import { Link, NavLink } from "react-router-dom";
+import "./Navbar.css";
+
+const navLinks = [
+  { to: "/", icon: home, alt: "home", label: "Home" },
+  { to: "/classes", icon: classes, alt: "classes", label: "Classes" },
+  { to: "/accounts", icon: account, alt: "account", label: "Accounts" },
+  { to: "/notifications", icon: notification, alt: "notification", label: "Notifications" },
+  { to: "/me", icon: key, alt: "key", label: "Me" },
+];
+
+export default function Navbar() {
+  return (
+    <nav>
+      <Link to="/">
+        <img src={logo} alt="logo-UET" />
+      </Link>
+      <ul>
+        {navLinks.map((link, index) => (
+          <CustomLink key={index} to={link.to} icon={link.icon} alt={link.alt}>
+            {link.label}
+          </CustomLink>
+        ))}
+      </ul>
+    </nav>
+  );
 }
 
-function CustomLink({to, children, icon,  ...props}){
-    return (
-        <li>
-            <NavLink to={to}>
-                <i className={icon}></i>
-                <span>{children}</span>
-            </NavLink>
-        </li>
-    );
+function CustomLink({ to, children, icon, alt, ...props }) {
+  return (
+    <li>
+      <NavLink to={to} className={({ isActive }) => (isActive ? "active" : "")} {...props}>
+        <img src={icon} alt={alt} className="nav-icon" />
+        <span>{children}</span>
+      </NavLink>
+    </li>
+  );
 }
