@@ -23,15 +23,32 @@ const LoginForm = () => {
       });
 
       const data = await response.json();
+      console.log(data);
+      const user = data.data;
+      if (data.status===200) 
+      {
+        const accessToken = user.accessToken;
+        localStorage.setItem('accessToken', accessToken);
+        const response = await fetch('/decode', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ accessToken }),
+        });
+        const data_decode = await response.json();
+        const role=data_decode.data.role;
+        if (role==='admin') {
+          navigate('/admin');
+        } else if (role==='student') {
+          navigate('/student');
+        } else if (role==='teacher') {
+          navigate('/teacher');
+        }
 
-      if (response.ok) {
-        setMessage(data.message);
-        if (data.role === 'student') navigate('/student');
-        if (data.role === 'admin') navigate('/admin');
-        if (data.role === 'teacher') navigate('/teacher');
-      } else {
-        setMessage(data.message);
       }
+
+     
     } catch (error) {
       setMessage('An error occurred. Please try again.');
     }

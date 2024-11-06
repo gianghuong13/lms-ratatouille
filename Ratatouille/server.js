@@ -3,7 +3,7 @@ import bodyParser from 'body-parser';
 import testDbRouter from './src/API/testdb.js';
 import registerRouter from './src/API/register.js';
 import loginRouter from './src/API/login.js';
-// import cors from 'cors';
+import decodeRouter from './src/API/decode.js';
 
 const app = express();
 const PORT = 3000;
@@ -15,6 +15,7 @@ app.use(bodyParser.json());
 app.use(testDbRouter)
 app.use(registerRouter);
 app.use(loginRouter);
+app.use(decodeRouter);
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
