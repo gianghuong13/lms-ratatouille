@@ -8,6 +8,10 @@ import ProtectedRoutes from './middlewares/ProtectedRoute.jsx';
 import UnauthorizedRoutes from './middlewares/UnauthorizedRoute.jsx';
 import HomePage from './pages/Admin/Home.jsx';
 
+import CourseManagePage from './pages/Admin/CourseManage/CourseManagePage.jsx';
+import AddCoursePage from './pages/Admin/CourseManage/AddCoursePage.jsx';
+import EditCoursePage from './pages/Admin/CourseManage/EditCourse.jsx';
+
 const App = () => {
   return (
     <Routes>
@@ -15,6 +19,9 @@ const App = () => {
         <Route path="/admin" >
           <Route index element={<AdminPage />} />
           <Route path="home" element={<HomePage />} />
+          <Route path='courses'element={<CourseManagePage />} />
+          <Route path='courses/add' element={<AddCoursePage />} />
+          <Route path='courses/edit/:id' element={<EditCoursePage />} />
         </Route>
         <Route path="/teacher" element={<TeacherPage />} /> 
         <Route path="/student" element={<StudentPage />} />
