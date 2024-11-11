@@ -10,7 +10,7 @@ import "../styles/components/Navbar.css";
 
 const navLinks = [
   { to: "/", icon: home, alt: "home", label: "Home" },
-  { to: "/classes", icon: classes, alt: "classes", label: "Classes" },
+  { to: "/admin/courses", icon: classes, alt: "classes", label: "Courses" },
   { to: "/accounts", icon: account, alt: "account", label: "Accounts" },
   { to: "/notifications", icon: notification, alt: "notification", label: "Notifications" },
   { to: "/me", icon: key, alt: "key", label: "Me" },
