@@ -7,14 +7,18 @@ import StudentPage from './pages/Student/MePage.jsx';
 import ProtectedRoutes from './middlewares/ProtectedRoute.jsx';
 import UnauthorizedRoutes from './middlewares/UnauthorizedRoute.jsx';
 import HomePage from './pages/Admin/Home.jsx';
+import Notifications from './pages/Admin/Notifications.jsx';
+import Classes from './pages/Admin/Classes.jsx';
 
 const App = () => {
   return (
     <Routes>
       <Route element={<ProtectedRoutes />}>
         <Route path="/admin" >
-          <Route index element={<AdminPage />} />
-          <Route path="home" element={<HomePage />} />
+          <Route index element={<HomePage />} />
+          {/* <Route path="" element={<HomePage />} /> */}
+          <Route path="notifications" element={<Notifications />} />
+          <Route path="classes" element={<Classes />} />
         </Route>
         <Route path="/teacher" element={<TeacherPage />} /> 
         <Route path="/student" element={<StudentPage />} />
