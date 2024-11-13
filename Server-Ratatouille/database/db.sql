@@ -16,7 +16,7 @@ CREATE TABLE users (
 
 -- Bảng terms
 CREATE TABLE terms (
-    term_id VARCHAR(5) PRIMARY KEY,
+    term_id VARCHAR(50) PRIMARY KEY,
     term_name NVARCHAR(255)
 );
 
@@ -25,7 +25,7 @@ CREATE TABLE courses (
     course_id VARCHAR(50) PRIMARY KEY UNIQUE NOT NULL,
     course_name NVARCHAR(255) NOT NULL,
     classroom NVARCHAR(255),
-    term_id VARCHAR(5),
+    term_id VARCHAR(50),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (term_id) REFERENCES terms(term_id) ON DELETE CASCADE
 );
