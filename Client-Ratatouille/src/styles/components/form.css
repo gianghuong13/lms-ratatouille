@@ -1,10 +1,10 @@
 @layer components {
     .form-container {
-        @apply bg-white p-4 rounded-lg shadow-md;
+        @apply max-w-5xl mx-auto bg-white p-4 rounded-lg shadow-md; 
     }
 
     .form-input {
-        @apply mt-1 p-2 w-full border border-gray-300 rounded-md;
+        @apply mt-1 p-2 w-full max-w-xl border border-gray-300 rounded-md;
     }
 
     .form-label {
@@ -16,7 +16,7 @@
     }
 
     .form-section {
-        @apply mb-6;
+        @apply mb-6 w-full;
     }
 
     .form-actions {
@@ -25,5 +25,8 @@
 
     .form-header {
         @apply text-2xl font-bold text-center;
+    }
+    .info-container {
+        @apply flex space-x-6;
     }
 }

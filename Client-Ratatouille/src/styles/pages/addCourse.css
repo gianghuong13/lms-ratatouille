@@ -1,5 +1,5 @@
 @layer components {
     .add-class-container {
-        @apply max-w-4xl mx-auto p-6;
+        @apply w-full mx-auto p-6;
     }
 }
