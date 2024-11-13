@@ -16,51 +16,51 @@ CREATE TABLE users (
 
 -- Bảng terms
 CREATE TABLE terms (
-    term_id VARCHAR(5) PRIMARY KEY,
+    term_id VARCHAR(50) PRIMARY KEY,
     term_name NVARCHAR(255)
 );
 
--- Bảng classes
-CREATE TABLE classes (
-    class_id VARCHAR(50) PRIMARY KEY UNIQUE NOT NULL,
-    class_name NVARCHAR(255) NOT NULL,
+-- Bảng courses
+CREATE TABLE courses (
+    course_id VARCHAR(50) PRIMARY KEY UNIQUE NOT NULL,
+    course_name NVARCHAR(255) NOT NULL,
     classroom NVARCHAR(255),
-    term_id VARCHAR(5),
+    term_id VARCHAR(50),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (term_id) REFERENCES terms(term_id) ON DELETE CASCADE
 );
 
--- Bảng class_teachers
-CREATE TABLE class_teachers (
-    class_teacher_id INT PRIMARY KEY AUTO_INCREMENT,
-    class_id VARCHAR(50) NOT NULL,
+-- Bảng course_teachers
+CREATE TABLE course_teachers (
+    course_teacher_id INT PRIMARY KEY AUTO_INCREMENT,
+    course_id VARCHAR(50) NOT NULL,
     teacher_id VARCHAR(8) NOT NULL,
-    FOREIGN KEY (class_id) REFERENCES classes(class_id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE,
     FOREIGN KEY (teacher_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
--- Bảng class_members
-CREATE TABLE class_members (
-    class_member_id INT PRIMARY KEY AUTO_INCREMENT,
-    class_id VARCHAR(50) NOT NULL,
+-- Bảng course_members
+CREATE TABLE course_members (
+    course_member_id INT PRIMARY KEY AUTO_INCREMENT,
+    course_id VARCHAR(50) NOT NULL,
     student_id VARCHAR(8) NOT NULL,
-    FOREIGN KEY (class_id) REFERENCES classes(class_id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE,
     FOREIGN KEY (student_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
 -- Bảng modules
 CREATE TABLE modules (
     module_id INT PRIMARY KEY AUTO_INCREMENT,
-    class_id VARCHAR(50) NOT NULL,
+    course_id VARCHAR(50) NOT NULL,
     module_name NVARCHAR(255) NOT NULL,
     description TEXT,
-    FOREIGN KEY (class_id) REFERENCES classes(class_id) ON DELETE CASCADE
+    FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE
 );
 
 -- Bảng materials
 CREATE TABLE materials (
     material_id INT PRIMARY KEY AUTO_INCREMENT,
-    class_id VARCHAR(50) NOT NULL,
+    course_id VARCHAR(50) NOT NULL,
     uploader_id VARCHAR(8),
     module_id INT DEFAULT NULL,
     material_type ENUM('document', 'video', 'link', 'zip') NOT NULL,
@@ -69,7 +69,7 @@ CREATE TABLE materials (
     description TEXT,
     file_path VARCHAR(255),
     upload_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (class_id) REFERENCES classes(class_id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE,
     FOREIGN KEY (uploader_id) REFERENCES users(user_id) ON DELETE SET NULL,
     FOREIGN KEY (module_id) REFERENCES modules(module_id) ON DELETE SET NULL
 );
@@ -77,14 +77,14 @@ CREATE TABLE materials (
 -- Bảng assignments
 CREATE TABLE assignments (
     assignment_id INT PRIMARY KEY AUTO_INCREMENT,
-    class_id VARCHAR(50) NOT NULL,
+    course_id VARCHAR(50) NOT NULL,
     creator_id VARCHAR(8),
     title NVARCHAR(255) NOT NULL,
     description TEXT,
     due_date DATETIME,
     upload_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     last_modified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (class_id) REFERENCES classes(class_id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE,
     FOREIGN KEY (creator_id) REFERENCES users(user_id) ON DELETE SET NULL
 );
 
@@ -102,13 +102,13 @@ CREATE TABLE assignment_allowed_formats (
 CREATE TABLE posts (
     post_id INT PRIMARY KEY AUTO_INCREMENT,
     creator_id VARCHAR(8),
-    class_id VARCHAR(50) DEFAULT NULL,
+    course_id VARCHAR(50) DEFAULT NULL,
     title TEXT NOT NULL,
     content TEXT NOT NULL,
     created_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     last_modified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (creator_id) REFERENCES users(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (class_id) REFERENCES classes(class_id) ON DELETE CASCADE
+    FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE
 );
 
 -- Bảng comments
@@ -150,13 +150,13 @@ CREATE TABLE notifications (
 );
 
 
--- Bảng notification_classes
-CREATE TABLE notification_classes (
+-- Bảng notification_courses
+CREATE TABLE notification_courses (
     notification_id INT NOT NULL,
-    class_id VARCHAR(50) NOT NULL,
-    PRIMARY KEY (notification_id, class_id),
+    course_id VARCHAR(50) NOT NULL,
+    PRIMARY KEY (notification_id, course_id),
     FOREIGN KEY (notification_id) REFERENCES notifications(notification_id) ON DELETE CASCADE,
-    FOREIGN KEY (class_id) REFERENCES classes(class_id) ON DELETE CASCADE
+    FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE
 );
 
 -- Bảng lưu file cho các bài tập
@@ -192,11 +192,11 @@ CREATE TABLE submission_files (
 -- Bảng lưu file cho các thông báo
 CREATE TABLE notification_files (
     file_id INT PRIMARY KEY AUTO_INCREMENT,
-    announcement_id INT NOT NULL,
+    notification_id INT NOT NULL,
     file_name NVARCHAR(255) NOT NULL,
     file_path VARCHAR(255) NOT NULL,
     upload_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (announcement_id) REFERENCES notifications(notification_id) ON DELETE CASCADE
+    FOREIGN KEY (notification_id) REFERENCES notifications(notification_id) ON DELETE CASCADE
 );
 
 INSERT INTO users (user_id, username, password, full_name, role, email) VALUES 
