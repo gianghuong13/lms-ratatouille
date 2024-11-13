@@ -13,7 +13,7 @@ const navLinks = [
   { to: "/admin/courses", icon: classes, alt: "classes", label: "Courses" },
   { to: "/accounts", icon: account, alt: "account", label: "Accounts" },
   { to: "/notifications", icon: notification, alt: "notification", label: "Notifications" },
-  { to: "/me", icon: key, alt: "key", label: "Me" },
+  { to: "/me", icon: me, alt: "key", label: "Me" },
 ];
 
 export default function Navbar() {
