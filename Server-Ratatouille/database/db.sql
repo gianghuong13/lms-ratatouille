@@ -192,11 +192,11 @@ CREATE TABLE submission_files (
 -- Bảng lưu file cho các thông báo
 CREATE TABLE notification_files (
     file_id INT PRIMARY KEY AUTO_INCREMENT,
-    announcement_id INT NOT NULL,
+    notification_id INT NOT NULL,
     file_name NVARCHAR(255) NOT NULL,
     file_path VARCHAR(255) NOT NULL,
     upload_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (announcement_id) REFERENCES notifications(notification_id) ON DELETE CASCADE
+    FOREIGN KEY (notification_id) REFERENCES notifications(notification_id) ON DELETE CASCADE
 );
 
 INSERT INTO users (user_id, username, password, full_name, role, email) VALUES 
