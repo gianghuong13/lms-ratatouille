@@ -1,0 +1,29 @@
+@layer components {
+    .form-container {
+        @apply bg-white p-4 rounded-lg shadow-md;
+    }
+
+    .form-input {
+        @apply mt-1 p-2 w-full border border-gray-300 rounded-md;
+    }
+
+    .form-label {
+        @apply block text-sm font-medium text-gray-700;
+    }
+
+    .form-select {
+        @apply mt-1 p-2 w-full border border-gray-300 rounded-md;
+    }
+
+    .form-section {
+        @apply mb-6;
+    }
+
+    .form-actions {
+        @apply flex justify-end;
+    }
+
+    .form-header {
+        @apply text-2xl font-bold text-center;
+    }
+}

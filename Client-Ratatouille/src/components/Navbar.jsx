@@ -9,11 +9,11 @@ import { Link, NavLink } from "react-router-dom";
 import "../styles/components/Navbar.css";
 
 const navLinks = [
-  { to: "/admin", icon: home, alt: "home", label: "Home" },
-  { to: "/admin/classes", icon: classes, alt: "classes", label: "Classes" },
-  { to: "/admin/accounts", icon: account, alt: "account", label: "Accounts" },
-  { to: "/admin/notifications", icon: notification, alt: "notification", label: "Notifications" },
-  { to: "/admin/me", icon: me, alt: "key", label: "Me" },
+  { to: "/", icon: home, alt: "home", label: "Home" },
+  { to: "/classes", icon: classes, alt: "classes", label: "Classes" },
+  { to: "/accounts", icon: account, alt: "account", label: "Accounts" },
+  { to: "/notifications", icon: notification, alt: "notification", label: "Notifications" },
+  { to: "/me", icon: key, alt: "key", label: "Me" },
 ];
 
 export default function Navbar() {

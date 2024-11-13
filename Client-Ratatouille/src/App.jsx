@@ -10,15 +10,21 @@ import HomePage from './pages/Admin/Home.jsx';
 import Notifications from './pages/Admin/Notifications.jsx';
 import Classes from './pages/Admin/Classes.jsx';
 
+import CourseManagePage from './pages/Admin/CourseManage/CourseManagePage.jsx';
+import AddCoursePage from './pages/Admin/CourseManage/AddCoursePage.jsx';
+import EditCoursePage from './pages/Admin/CourseManage/EditCourse.jsx';
+
 const App = () => {
   return (
     <Routes>
       <Route element={<ProtectedRoutes />}>
         <Route path="/admin" >
-          <Route index element={<HomePage />} />
-          {/* <Route path="" element={<HomePage />} /> */}
           <Route path="notifications" element={<Notifications />} />
-          <Route path="classes" element={<Classes />} />
+          <Route index element={<AdminPage />} />
+          <Route path="home" element={<HomePage />} />
+          <Route path='courses'element={<CourseManagePage />} />
+          <Route path='courses/add' element={<AddCoursePage />} />
+          <Route path='courses/edit/:id' element={<EditCoursePage />}/>
         </Route>
         <Route path="/teacher" element={<TeacherPage />} /> 
         <Route path="/student" element={<StudentPage />} />
