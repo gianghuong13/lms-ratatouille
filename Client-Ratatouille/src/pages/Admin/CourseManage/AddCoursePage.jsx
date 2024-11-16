@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import AddCourseForm from "../../../features/Course/AddCourseForm.jsx";
 import Navbar from "../../../components/Navbar.jsx";
-import StudentCard from "../../../components/NameCard.jsx";
 
 const AddCoursePage = () => {
     const handleFormSubmit = (data) => {

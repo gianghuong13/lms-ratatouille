@@ -8,10 +8,8 @@ router.post('/courses/add', courseManageController.createCourse);
 router.get('/teachers', courseManageController.getAllTeachers);
 router.get('/students', courseManageController.getAllStudents);
 router.get('/terms', courseManageController.getAllTerms);
-router.get('/courses/:course_id/teachers', courseManageController.getCourseTeachers);
-router.get('/courses/:course_id/students', courseManageController.getCourseStudents);
-// router.get('/:id', courseController.getCourseById);
-// router.put('/:id', courseController.updateCourse);
-// router.delete('/:id', courseController.deleteCourse);
+router.get('/courses/:course_id', courseManageController.getCourseById);
+router.put('/courses/:course_id', courseManageController.updateCourse);
+router.delete('/courses/:course_id', courseManageController.deleteCourse);
 
 export default router;
