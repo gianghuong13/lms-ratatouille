@@ -1,11 +1,16 @@
-import React, { useState } from "react";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import AddCourseForm from "../../../features/Course/AddCourseForm.jsx";
 import Navbar from "../../../components/Navbar.jsx";
 
 const AddCoursePage = () => {
+    const navigate = useNavigate();
+
     const handleFormSubmit = (data) => {
         console.log(data);
-        // Call API
+        // Add course to database
+        // Redirect to course manage page
+        navigate('/admin/courses');
     };
 
     return (

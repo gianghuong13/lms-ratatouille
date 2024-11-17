@@ -58,8 +58,8 @@ const courseManageController = {
         // Khởi tạo query cho bảng course_teachers
         const teacherQuery = `INSERT INTO course_teachers (course_id, teacher_id) VALUES (?, ?)`;
     
-        // Khởi tạo query cho bảng course_students
-        const studentQuery = `INSERT INTO course_students (course_id, student_id) VALUES (?, ?)`;
+        // Khởi tạo query cho bảng course_members
+        const studentQuery = `INSERT INTO course_members (course_id, student_id) VALUES (?, ?)`;
     
         connection.beginTransaction((err) => {
             if (err) {
@@ -86,7 +86,7 @@ const courseManageController = {
                     })
                 );
     
-                // Thêm học sinh vào bảng course_students
+                // Thêm học sinh vào bảng course_members
                 const studentPromises = students.map((studentId) =>
                     new Promise((resolve, reject) => {
                         connection.query(studentQuery, [course_id, studentId], (err) => {
