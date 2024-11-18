@@ -1,7 +1,7 @@
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { S3Client, GetObjectCommand,PutObjectCommand,ListObjectsV2Command,DeleteObjectCommand} from '@aws-sdk/client-s3';
 
-
+import axios from "axios";
 const s3Client = new S3Client({
   region: "ap-southeast-1",
   credentials: {
@@ -18,15 +18,36 @@ async function getObject(key) {
   return await getSignedUrl(s3Client, command);
 }
 
-async function putObject(filename,contentType) {
+
+
+async function generateUploadUrl(filename, contentType) {
+  try {
     const command = new PutObjectCommand({
-        Bucket: "tatcalatai",
-        Key: 'upload/'+filename,
-        ContentType: contentType,
+      Bucket: "tatcalatai",
+      Key: `upload/${filename}`,
+      ContentType: contentType,
     });
-    const url = await getSignedUrl(s3Client, command);
-    return url;
-    
+    return await getSignedUrl(s3Client, command, { expiresIn: 3600 }); // Signed URL valid for 1 hour
+  } catch (error) {
+    console.error("Error generating signed URL for PUT:", error);
+    throw error;
+  }
+}
+
+async function putObject(uploadUrl, fileBinary) {
+  try {
+    const response = await axios.put(uploadUrl, fileBinary, {
+      headers: {
+        "Content-Type": "application/octet-stream", // Hoặc loại file phù hợp
+      },
+    });
+    return response.status === 200
+      ? { message: "File uploaded successfully" }
+      : { message: "File upload failed", status: response.status };
+  } catch (error) {
+    console.error("Error uploading file:", error);
+    throw error;
+  }
 }
 
 async function listObjects() {
@@ -45,4 +66,4 @@ async function deleteObject(key) {
     return await s3Client.send(command);
 }
 
-export { getObject, putObject, listObjects, deleteObject };
+export default { getObject, putObject, listObjects, deleteObject, generateUploadUrl };
