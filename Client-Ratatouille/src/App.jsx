@@ -8,11 +8,9 @@ import ProtectedRoutes from './middlewares/ProtectedRoute.jsx';
 import UnauthorizedRoutes from './middlewares/UnauthorizedRoute.jsx';
 import HomePage from './pages/Admin/Home.jsx';
 import Notifications from './pages/Admin/Notifications.jsx';
-import Classes from './pages/Admin/Classes.jsx';
-
 import CourseManagePage from './pages/Admin/CourseManage/CourseManagePage.jsx';
 import AddCoursePage from './pages/Admin/CourseManage/AddCoursePage.jsx';
-import EditCoursePage from './pages/Admin/CourseManage/EditCourse.jsx';
+import EditCoursePage from './pages/Admin/CourseManage/EditCoursePage.jsx';
 
 import CreateNotification from './pages/Admin/CreateNotification.jsx';
 import UpdateNotification from './pages/Admin/UpdateNotification.jsx';
@@ -32,6 +30,7 @@ const App = () => {
           <Route path="notifications" element={<Notifications />} />
           <Route path="notifications/create-notification" element={<CreateNotification />} />
           <Route path="notifications/update-notification/:id" element={<UpdateNotification />} />
+          <Route path='courses/edit/:courseId' element={<EditCoursePage />}/>
         </Route>
         <Route path="/teacher" element={<TeacherPage />} /> 
         <Route path="/student" element={<StudentPage />} />
