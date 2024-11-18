@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import AddCourseForm from "../../../features/Course/AddCourseForm.jsx";
+import AddCourseForm from "../../../features/admin/CourseManage/AddCourseForm.jsx";
 import Navbar from "../../../components/Navbar.jsx";
 
 const AddCoursePage = () => {

@@ -1,8 +1,8 @@
-import Navbar from "../../components/Navbar";
-import PageTitle from "../../components/PageTitle";
+import Navbar from "../../../components/Navbar";
+import PageTitle from "../../../components/PageTitle";
 // import {Editor} from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import UpdateNotiForm from "../../features/admin/UpdateNotiForm";
+import UpdateNotiForm from "../../../features/admin/NotiManage/UpdateNotiForm";
 export default function UpdateNotification(){
     return(
         <>
