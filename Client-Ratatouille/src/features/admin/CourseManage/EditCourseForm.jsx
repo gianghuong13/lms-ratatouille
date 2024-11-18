@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import NameCard from "../../components/NameCard";
-import Searchbar from "../../components/Searchbar";
-import '../../index.css';
+import NameCard from '../../../components/NameCard';
+import Searchbar from "../../../components/Searchbar";
+import '../../../index.css';
 
 const EditCourseForm = ({ courseId, onSubmit }) => {
   const [courseName, setCourseName] = useState('');

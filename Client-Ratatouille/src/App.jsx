@@ -1,19 +1,19 @@
 import React from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage.jsx';
-import AdminPage from './pages/Admin/MePage.jsx';
+import MePage from './pages/Admin/MePage.jsx';
 import TeacherPage from './pages/Teacher/MePage.jsx';
 import StudentPage from './pages/Student/MePage.jsx';
 import ProtectedRoutes from './middlewares/ProtectedRoute.jsx';
 import UnauthorizedRoutes from './middlewares/UnauthorizedRoute.jsx';
-import HomePage from './pages/Admin/Home.jsx';
-import Notifications from './pages/Admin/Notifications.jsx';
+import DashboardPage from './pages/Admin/Dashboard.jsx';
+
 import CourseManagePage from './pages/Admin/CourseManage/CourseManagePage.jsx';
 import AddCoursePage from './pages/Admin/CourseManage/AddCoursePage.jsx';
 import EditCoursePage from './pages/Admin/CourseManage/EditCoursePage.jsx';
-
-import CreateNotification from './pages/Admin/CreateNotification.jsx';
-import UpdateNotification from './pages/Admin/UpdateNotification.jsx';
+import Notifications from './pages/Admin/NotiManage/Notifications.jsx';
+import CreateNotification from './pages/Admin/NotiManage/CreateNotification.jsx';
+import UpdateNotification from './pages/Admin/NotiManage/UpdateNotification.jsx';
 
 import 'global';
 
@@ -22,17 +22,17 @@ const App = () => {
     <Routes>
       <Route element={<ProtectedRoutes />}>
         <Route path="/admin" >
-          <Route index element={<AdminPage />} />
-          <Route path="home" element={<HomePage />} />
+          <Route index element={<DashboardPage />} />
+          <Route path="" element={<DashboardPage />} />
+          <Route path="me" element={<MePage />} />
           <Route path='courses'element={<CourseManagePage />} />
           <Route path='courses/add' element={<AddCoursePage />} />
-          <Route path='courses/edit/:id' element={<EditCoursePage />}/>
+          <Route path='courses/edit/:courseId' element={<EditCoursePage />}/>
           <Route path="notifications" element={<Notifications />} />
           <Route path="notifications/create-notification" element={<CreateNotification />} />
           <Route path="notifications/update-notification/:id" element={<UpdateNotification />} />
-          <Route path='courses/edit/:courseId' element={<EditCoursePage />}/>
         </Route>
-        <Route path="/teacher" element={<TeacherPage />} /> 
+        <Route path="/teacher" element={<TeacherPage />} />
         <Route path="/student" element={<StudentPage />} />
       </Route>
       <Route element={<UnauthorizedRoutes />}>

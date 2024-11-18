@@ -9,17 +9,17 @@ import { Link, NavLink } from "react-router-dom";
 import "../styles/components/Navbar.css";
 
 const navLinks = [
-  { to: "/admin", icon: home, alt: "home", label: "Home", end: true },
+  { to: "/admin", icon: home, alt: "home", label: "Dashboard", end: true },
   { to: "/admin/courses", icon: classes, alt: "classes", label: "Courses", end:false },
   { to: "/admin/accounts", icon: account, alt: "account", label: "Accounts", end:false},
   { to: "/admin/notifications", icon: notification, alt: "notification", label: "Notifications", end:false },
-  { to: "/me", icon: me, alt: "key", label: "Me", end:false },
+  { to: "/admin/me", icon: me, alt: "key", label: "Me", end:false },
 ];
 
 export default function Navbar() {
   return (
     <nav>
-      <Link to="/admin">
+      <Link to="/admin/dashboard">
         <img src={logo} alt="logo-UET" />
       </Link>
       <ul>

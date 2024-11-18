@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import EditCourseForm from '../../../features/Course/EditCourseForm';
+import EditCourseForm from '../../../features/admin/CourseManage/EditCourseForm';
 import Navbar from '../../../components/Navbar';
 
 const EditCoursePage = () => {
