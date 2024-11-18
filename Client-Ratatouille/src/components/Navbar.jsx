@@ -9,11 +9,11 @@ import { Link, NavLink } from "react-router-dom";
 import "../styles/components/Navbar.css";
 
 const navLinks = [
-  { to: "/", icon: home, alt: "home", label: "Home" },
-  { to: "/admin/courses", icon: classes, alt: "classes", label: "Courses" },
-  { to: "/accounts", icon: account, alt: "account", label: "Accounts" },
-  { to: "/notifications", icon: notification, alt: "notification", label: "Notifications" },
-  { to: "/me", icon: me, alt: "key", label: "Me" },
+  { to: "/admin", icon: home, alt: "home", label: "Home", end: true },
+  { to: "/admin/courses", icon: classes, alt: "classes", label: "Courses", end:false },
+  { to: "/admin/accounts", icon: account, alt: "account", label: "Accounts", end:false},
+  { to: "/admin/notifications", icon: notification, alt: "notification", label: "Notifications", end:false },
+  { to: "/me", icon: me, alt: "key", label: "Me", end:false },
 ];
 
 export default function Navbar() {
@@ -24,7 +24,7 @@ export default function Navbar() {
       </Link>
       <ul>
         {navLinks.map((link, index) => (
-          <CustomLink key={index} to={link.to} icon={link.icon} alt={link.alt}>
+          <CustomLink key={index} to={link.to} icon={link.icon} alt={link.alt} end={link.end}>
             {link.label}
           </CustomLink>
         ))}
@@ -33,10 +33,10 @@ export default function Navbar() {
   );
 }
 
-function CustomLink({ to, children, icon, alt, ...props }) {
+function CustomLink({ to, children, icon, alt, end,...props }) {
   return (
     <li>
-      <NavLink to={to} end className={({ isActive }) => (isActive ? "active" : "")} {...props}>
+      <NavLink to={to} end={end} className={({ isActive }) => (isActive ? "active" : "")} {...props}>
         <img src={icon} alt={alt} className="nav-icon" />
         <span>{children}</span>
       </NavLink>
