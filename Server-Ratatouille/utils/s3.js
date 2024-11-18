@@ -12,14 +12,26 @@ const s3Client = new S3Client({
 });
 
 async function getObject(key) {
-  const command = new GetObjectCommand({
-    Bucket: "tatcalatai",
-    Key: key,
-  });
-  return await getSignedUrl(s3Client, command);
+  try {
+    // Tạo URL nếu key hợp lệ
+    const command = new GetObjectCommand({
+      Bucket: "lmsbucket-tva",
+      Key: key,
+    });
+
+    const signedUrl = await getSignedUrl(s3Client, command, {
+      expiresIn: 3600, // URL hết hạn trong 1 giờ
+    });
+
+    return signedUrl;
+  } catch (error) {
+    if (error.name === "NotFound" || error.$metadata?.httpStatusCode === 404) {
+      throw new Error(`File not found: ${key}`);
+    }
+    console.error("Error generating signed URL:", error);
+    throw new Error("Internal Server Error");
+  }
 }
-
-
 
 // Hàm tạo URL đã ký và trả về URL kèm Key
 async function generateUploadUrl(filename, contentType, folder) {
@@ -29,7 +41,7 @@ async function generateUploadUrl(filename, contentType, folder) {
     const key = `${targetFolder}/${filename}`; // Key file trong bucket
 
     const command = new PutObjectCommand({
-      Bucket: "tatcalatai",
+      Bucket: "lmsbucket-tva",
       Key: key,
       ContentType: contentType,
     });
@@ -40,7 +52,6 @@ async function generateUploadUrl(filename, contentType, folder) {
     throw error;
   }
 }
-
 
 // Hàm tải file sử dụng URL đã ký
 async function putObject(signedUrl, fileBinary) {
@@ -55,22 +66,48 @@ async function putObject(signedUrl, fileBinary) {
   }
 }
 
-async function listObjects(prefix) {
-  const command = new ListObjectsV2Command({
-    Bucket: "tatcalatai",
-    Prefix: prefix, // Liệt kê các file bắt đầu bằng prefix
-  });
-  const response = await s3Client.send(command);
-  return response;
-}
+// async function listObjects(prefix) {
+//   try {
+//     const command = new ListObjectsV2Command({
+//       Bucket: "lmsbucket-tva",
+//       Prefix: prefix, // Liệt kê các file bắt đầu bằng prefix
+//     });
+
+//     const response = await s3Client.send(command);
+//     if (!response.Contents || response.Contents.length === 0) {
+//       return { message: "No objects found", objects: [] };
+//     }
+
+//     // Trả về danh sách đối tượng dưới dạng cấu trúc cụ thể
+//     const objects = response.Contents.map(item => ({
+//       key: item.Key,
+//       lastModified: item.LastModified,
+//       size: item.Size,
+//     }));
+//     return { message: "Objects listed successfully", objects };
+//   } catch (error) {
+//     console.error("Error listing objects:", error);
+//     throw new Error("Failed to list objects");
+//   }
+// }
+
+// async function deleteObject(key) {
+//   try {
+//     const command = new DeleteObjectCommand({
+//       Bucket: "lmsbucket-tva",
+//       Key: key,
+//     });
+
+//     await s3Client.send(command);
+//     return { message: `Object with key "${key}" deleted successfully` };
+//   } catch (error) {
+//     if (error.name === "NotFound" || error.$metadata?.httpStatusCode === 404) {
+//       return { message: `Object not found: ${key}` };
+//     }
+//     console.error("Error deleting object:", error);
+//     throw new Error("Failed to delete object");
+//   }
+// }
 
 
-async function deleteObject(key) {
-    const command = new DeleteObjectCommand({
-        Bucket: "tatcalatai",
-        Key: key,
-    });
-    return await s3Client.send(command);
-}
-
-export default { getObject, putObject, listObjects, deleteObject, generateUploadUrl };
+export default { getObject, putObject, generateUploadUrl };

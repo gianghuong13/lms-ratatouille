@@ -6,6 +6,9 @@ const router = express.Router();
 
 // Route upload nhiều file
 router.post("/upload-files", upload.array("files", 100),fileManageController.uploadFiles);
-// router.get("/get-files", fileManageController.getFiles);
+router.get("/object-url/:key", fileManageController.getObjectUrl);
+// router.get("/list-objects/:prefix", fileManageController.getFiles);
+
+// router.delete("/delete-object/:key", fileManageController.deleteFiles);
 
 export default router;
