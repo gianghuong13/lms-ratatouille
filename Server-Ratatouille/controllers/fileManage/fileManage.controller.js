@@ -2,18 +2,19 @@ import s3 from "../../utils/s3.js";
 import upload from "../../middleware/upload.middleware.js";
 
 const fileManageController = {
+  // Upload multiple files
   uploadFiles: async (req, res) => {
     try {
-      const files = req.files; // Nhận mảng file từ request
-      const folder = req.body.folder || "upload"; // Folder mặc định
-      
+      const files = req.files; // Get an array of files from the request
+      const folder = req.body.folder || "upload"; // Default folder if not specified
+
       if (!files || files.length === 0) {
         return res.status(400).json({
           message: "No files were uploaded",
         });
       }
 
-      // Upload từng file và lưu kết quả
+      // Upload each file and store the result
       const results = await Promise.all(
         files.map(async (file) => {
           const { signedUrl, key } = await s3.generateUploadUrl(
@@ -22,105 +23,91 @@ const fileManageController = {
             folder
           );
           await s3.putObject(signedUrl, file.buffer); // Upload file
-          return { fileName: file.originalname, key }; // Lưu thông tin file đã upload
+          return { fileName: file.originalname, key }; // Store uploaded file information
         })
       );
 
       res.status(200).json({
         message: "Files uploaded successfully",
-        uploadedFiles: results, // Danh sách file đã upload
+        uploadedFiles: results, // List of uploaded files
       });
     } catch (error) {
-      console.error(error);
+      console.error("Error uploading files:", error);
       res.status(500).json({
         message: "Internal Server Error",
       });
     }
   },
-  
- 
+
+  // Generate a temporary URL to access a file
   getObjectUrl: async (req, res) => {
     try {
       const key = req.params.key;
-  
-      // Kiểm tra key có được truyền không
+      console.log(key);
       if (!key) {
         return res.status(400).json({ message: "Key is required" });
       }
   
-      // Tạo URL truy cập tạm thời cho đối tượng trong S3
-      const url = await s3.getObject(key);
-  
-      // Trả về URL thành công
+      const url = await s3.getObject(key); 
       res.status(200).json({ url });
     } catch (error) {
       console.error("Error in getObjectUrl:", error);
   
-      // Xử lý lỗi không tồn tại key
       if (error.name === "NotFound" || error.message.includes("NoSuchKey")) {
         return res.status(404).json({ message: `File not found: ${req.params.key}` });
       }
   
-      // Xử lý lỗi không xác định
       res.status(500).json({
         message: "Internal Server Error",
       });
     }
   },
-
-  // getFiles: async (req, res) => { // đang bug
-  //   try {
-  //     const { prefix } = req.params;
-      
-  //     // Gửi yêu cầu để liệt kê các đối tượng với prefix đã chỉ định
-  //     const response = await s3.listObjects(prefix);
-  
-  //     // Kiểm tra nếu không có đối tượng nào được tìm thấy
-  //     if (!response.objects || response.objects.length === 0) {
-  //       return res.status(404).json({ message: "Không tìm thấy tệp nào với prefix được cung cấp" });
-  //     }
-  
-  //     // Trả về danh sách các đối tượng đã tìm thấy
-  //     return res.status(200).json({ objects: response.objects });
-  //   } catch (error) {
-  //     // Ghi lỗi và trả về thông báo lỗi
-  //     console.error("Lỗi khi lấy tệp:", error);
-  //     return res.status(500).json({ message: "Lỗi máy chủ nội bộ" });
-  //   }
-  // },
   
 
-  // deleteFiles: async (req, res) => {  đang bug
-  //   try {
-  //     const { keys } = req.body; // Nhận danh sách keys từ body (mảng các keys cần xóa)
-      
-  //     if (!keys || keys.length === 0) {
-  //       return res.status(400).json({ message: "No file keys provided" });
-  //     }
+  // List all files in a folder
+  getFiles: async (req, res) => {
+    try {
+      const { prefix } = req.params;
 
-  //     // Xóa từng file và kiểm tra kết quả
-  //     const results = await Promise.all(
-  //       keys.map(async (key) => {
-  //         try {
-  //           await s3.deleteObject(key); // Gọi hàm deleteObject từ s3
-  //           return { key, message: "File deleted successfully" };
-  //         } catch (error) {
-  //           return { key, message: "Error deleting file", error: error.message };
-  //         }
-  //       })
-  //     );
+      const response = await s3.listObjects(prefix);
 
-  //     // Trả về kết quả xóa
-  //     res.status(200).json({ results });
-  //   } catch (error) {
-  //     console.error("Error deleting files:", error);
-  //     res.status(500).json({ message: "Internal Server Error" });
-  //   }
-  // }
-  
-  
+      if (!response || response.length === 0) {
+        return res.status(404).json({ message: "No files found with the provided prefix" });
+      }
 
+      res.status(200).json({ files: response }); // Return the list of files
+    } catch (error) {
+      console.error("Error listing files:", error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  },
 
+  // Delete multiple files
+  deleteFiles: async (req, res) => {
+    try {
+      const { keys } = req.body; // Array of keys to delete
+
+      if (!keys || keys.length === 0) {
+        return res.status(400).json({ message: "No file keys provided" });
+      }
+
+      const results = await Promise.all(
+        keys.map(async (key) => {
+          try {
+            await s3.deleteObject(key); // Delete file from S3
+            return { key, message: "File deleted successfully" };
+          } catch (error) {
+            return { key, message: "Error deleting file", error: error.message };
+          }
+        })
+      );
+
+      res.status(200).json({ results }); // Return results of deletion
+    } catch (error) {
+      console.error("Error deleting files:", error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  },
 };
 
 export default fileManageController;
