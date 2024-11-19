@@ -42,8 +42,7 @@ const fileManageController = {
   // Generate a temporary URL to access a file
   getObjectUrl: async (req, res) => {
     try {
-      const key = req.params.key;
-      console.log(key);
+      const {key} = req.body;
       if (!key) {
         return res.status(400).json({ message: "Key is required" });
       }
@@ -85,29 +84,48 @@ const fileManageController = {
   // Delete multiple files
   deleteFiles: async (req, res) => {
     try {
-      const { keys } = req.body; // Array of keys to delete
+        const { keys } = req.body; // Mảng các keys cần xóa
 
-      if (!keys || keys.length === 0) {
-        return res.status(400).json({ message: "No file keys provided" });
-      }
+        // Kiểm tra đầu vào
+        if (!Array.isArray(keys) || keys.length === 0) {
+            return res.status(400).json({ message: "No file keys provided" });
+        }
 
-      const results = await Promise.all(
-        keys.map(async (key) => {
-          try {
-            await s3.deleteObject(key); // Delete file from S3
-            return { key, message: "File deleted successfully" };
-          } catch (error) {
-            return { key, message: "Error deleting file", error: error.message };
-          }
-        })
-      );
+        // Xóa từng tệp từ S3
+        const results = await Promise.all(
+            keys.map(async (key) => {
+                try {
+                    await s3.deleteObject(key); // Gọi hàm deleteObject đã cải tiến
+                    return { key, message: "File deleted successfully" };
+                } catch (error) {
+                    console.error(`Error deleting file ${key}:`, error);
+                    return { key, message: "Error deleting file", error: error.message };
+                }
+            })
+        );
 
-      res.status(200).json({ results }); // Return results of deletion
+        // Kiểm tra xem có lỗi xảy ra trong quá trình xóa
+        const hasErrors = results.some((result) => result.error);
+        if (hasErrors) {
+            return res.status(207).json({
+                message: "Some files could not be deleted",
+                results,
+            }); // Trả về trạng thái 207 (Multi-Status) nếu có lỗi
+        }
+
+        // Nếu tất cả đều xóa thành công
+        res.status(200).json({
+            message: "All files deleted successfully",
+            results,
+        });
     } catch (error) {
-      console.error("Error deleting files:", error);
-      res.status(500).json({ message: "Internal Server Error" });
+        console.error("Error deleting files:", error);
+        res.status(500).json({ message: "Internal Server Error" });
     }
-  },
+},
+
+
+
 };
 
 export default fileManageController;

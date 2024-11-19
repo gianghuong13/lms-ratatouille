@@ -43,12 +43,28 @@ async function getObject(key) {
 }
 
 async function deleteObject(key) {
-  const command = new DeleteObjectCommand({
-    Bucket: bucketName,
-    Key: key,
-  });
-  await s3Client.send(command);
+  try {
+      // Kiểm tra đầu vào
+      if (!key) {
+          throw new Error("Key is required");
+      }
+
+      // Tạo lệnh xóa đối tượng S3
+      const command = new DeleteObjectCommand({
+          Bucket: bucketName,
+          Key: key,
+      });
+
+      // Gửi yêu cầu xóa đến S3
+      await s3Client.send(command);
+      console.log(`Successfully deleted: ${key}`);
+  } catch (error) {
+      // Ghi log lỗi và truyền lỗi lên
+      console.error(`Error deleting object with key "${key}":`, error);
+      throw error; // Để hàm gọi biết rằng đã có lỗi xảy ra
+  }
 }
+
 
 async function listObjects(folder) {
   const command = new ListObjectsV2Command({
