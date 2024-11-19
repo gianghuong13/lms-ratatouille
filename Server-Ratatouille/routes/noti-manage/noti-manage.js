@@ -11,5 +11,6 @@ router.get('/admin-posted-noti/:id', notiController.getPostedNotification);
 router.get('/admin-selected-courses/:id', notiController.getSelectedCourses);
 router.put('/admin-update-noti/:id', notiController.updateNotification);
 router.delete('/admin-delete-noti/:id', notiController.deleteNotification);
+router.get('/admin-all-title-notification', notiController.getAllTitleNotification);
 
 export default router;

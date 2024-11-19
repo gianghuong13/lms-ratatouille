@@ -4,8 +4,11 @@ import Select from 'react-dropdown-select'
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 
+
+
 export default function NewNotiForm(){
     //Get all courses from server
+
     const [allCourses, setAllCourses] = useState([]);
     useEffect(()=>{
         axios
@@ -52,6 +55,9 @@ export default function NewNotiForm(){
         .then(res => navigate('/admin/notifications'))
         .catch(err => console.log(err));
     }
+
+    const apiKey = import.meta.env.VITE_API_KEY_EDITOR;
+
     return(
         <form className="p-1 md:p-2 lg:p-5 h-auto"
             onSubmit={handleSubmit}
@@ -63,7 +69,8 @@ export default function NewNotiForm(){
             </label>
 
             <Editor
-                apiKey='kmkdiqqb79l6gte334tkg3drtreguyv3rm7qcuve8wip7mtq'
+                // apiKey='kmkdiqqb79l6gte334tkg3drtreguyv3rm7qcuve8wip7mtq'
+                apiKey={apiKey}
                 id='noti-content'
                 init={{
                     plugins: [
@@ -86,7 +93,7 @@ export default function NewNotiForm(){
                     exportpdf_converter_options: { 'format': 'Letter', 'margin_top': '1in', 'margin_right': '1in', 'margin_bottom': '1in', 'margin_left': '1in' },
                     exportword_converter_options: { 'document': { 'size': 'Letter' } },
                     importword_converter_options: { 'formatting': { 'styles': 'inline', 'resets': 'inline',	'defaults': 'inline', } },
-                    height: 300,
+                    height: 350,
                     resize: false,
                 }}
                 onEditorChange={(content) => setNoti({...noti, content: content})}
@@ -131,7 +138,8 @@ export default function NewNotiForm(){
                         }}
                         color="#015DAF"
                         searchable='true'
-                        style={{borderRadius:'6px'}}                        required
+                        style={{borderRadius:'6px'}}                        
+                        required
                     />
                 </div>
             </label>
