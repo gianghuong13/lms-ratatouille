@@ -43,25 +43,26 @@ const fileManageController = {
   getObjectUrl: async (req, res) => {
     try {
       const key = req.params.key;
-
+      console.log(key);
       if (!key) {
         return res.status(400).json({ message: "Key is required" });
       }
-
-      const url = await s3.getObject(key); // Generate temporary URL
+  
+      const url = await s3.getObject(key); 
       res.status(200).json({ url });
     } catch (error) {
       console.error("Error in getObjectUrl:", error);
-
+  
       if (error.name === "NotFound" || error.message.includes("NoSuchKey")) {
         return res.status(404).json({ message: `File not found: ${req.params.key}` });
       }
-
+  
       res.status(500).json({
         message: "Internal Server Error",
       });
     }
   },
+  
 
   // List all files in a folder
   getFiles: async (req, res) => {
