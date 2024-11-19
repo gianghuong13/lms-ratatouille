@@ -5,6 +5,8 @@ import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 
 export default function UpdateNotiForm() {
+    const apiKey = import.meta.env.VITE_API_KEY_EDITOR;
+
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -106,7 +108,7 @@ export default function UpdateNotiForm() {
 
             {/* Editor */}
             <Editor
-                apiKey="kmkdiqqb79l6gte334tkg3drtreguyv3rm7qcuve8wip7mtq"
+                apiKey={apiKey}
                 id="noti-content"
                 init={{
                     plugins: [
@@ -116,7 +118,7 @@ export default function UpdateNotiForm() {
                     ],
                     toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
                     tinycomments_mode: 'embedded',
-                    height: 300,
+                    height: 350,
                     resize: false,
                 }}
                 onEditorChange={(content) => setNoti({ ...noti, content })}
