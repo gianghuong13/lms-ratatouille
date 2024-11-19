@@ -1,8 +1,8 @@
-import Navbar from "../../components/Navbar";
-import NotiLists from "../../features/admin/NotiLists";
+import Navbar from "../../../components/Navbar";
+import NotiLists from "../../../features/admin/NotiManage/NotiLists";
 import { Link } from "react-router-dom";
-import PageTitle from "../../components/PageTitle";
-import plus from "./../../assets/Admin_screen/Plus.svg"
+import PageTitle from "../../../components/PageTitle";
+import plus from "../../../assets/Admin_screen/Plus.svg"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Searchbar from "../../components/Searchbar";
 import { useEffect, useState } from "react";

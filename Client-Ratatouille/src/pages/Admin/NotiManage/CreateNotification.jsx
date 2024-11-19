@@ -1,7 +1,7 @@
-import Navbar from "../../components/Navbar";
-import PageTitle from "../../components/PageTitle";
+import Navbar from "../../../components/Navbar";
+import PageTitle from "../../../components/PageTitle";
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';;
-import NewNotiForm from "../../features/admin/NewNotiForm";
+import NewNotiForm from "../../../features/admin/NotiManage/NewNotiForm";
 export default function CreateNotification(){
     return(
         <>
