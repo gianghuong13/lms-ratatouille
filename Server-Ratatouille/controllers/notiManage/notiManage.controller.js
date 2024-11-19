@@ -152,6 +152,23 @@ const notiManageController = {
             }
             res.status(200).send("Delete notification succesfully")
         })
+    },
+
+    getAllTitleNotification: (req, res) => {
+        const input = req.body;
+        const sql = `SELECT notification_id, title FROM notifications n
+                        JOIN users u on u.user_id = n.creator_id 
+                        WHERE role = 'admin' AND n.title LIKE "%?%"
+                        ORDER BY created_date DESC;`;
+        connection.query(sql, [input], (err, data) => {
+            if(err){
+                console.log("Error query at getAllTitleNotification", err);
+                return res.status(500).send("Error executing query getting all title notification");
+            }
+            // console.log(data);
+            res.status(200).json(data);
+        })
+        
     }
 }
 
