@@ -7,9 +7,19 @@ import { useNavigate } from "react-router-dom";
 
 
 export default function NewNotiForm(){
-    //Get all courses from server
+    const [allCourses, setAllCourses] = useState([]); // for selector
+    const [allAdmins, setAllAdmins] = useState([]);// for selector
+    const [selectedFiles, setSelectedFiles] = useState(null);
+    const [noti, setNoti] = useState({
+        title: '', 
+        notifyTo: '',
+        createdBy: '',
+        notiFile: [],
+        content: ''
+    });
+    const apiKey = import.meta.env.VITE_API_KEY_EDITOR;
 
-    const [allCourses, setAllCourses] = useState([]);
+    //Get all courses from server
     useEffect(()=>{
         axios
         .get('/api/admin-course_id-4-noti')
@@ -19,10 +29,8 @@ export default function NewNotiForm(){
         })
         .catch(err => console.log(err));
     }, []);
-    //const [noti2Courses, setNoti2Courses] = useState([]);//courses what is choosed to notify
     
     //Get all admins from server
-    const [allAdmins, setAllAdmins] = useState([]);
     useEffect(()=>{
         axios
         .get('/api/admin-creator_id-4-noti')
@@ -35,28 +43,58 @@ export default function NewNotiForm(){
         admin => ({label: admin.user_id, value:admin.user_id})
     );
 
-    //const [notiCreator, setNotiCreator] = useState();//notification was created by 
-    const [noti, setNoti] = useState({
-        title: '', 
-        notifyTo: '',
-        createdBy: '',
-        notiFile: '',
-        content: ''
-    });
+    
 
     function handleChange(e){
+        console.log(e.target.value);
         setNoti({...noti, [e.target.name]: [e.target.value]})
     }
 
     const navigate = useNavigate();
-    function handleSubmit(e){
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        axios.post('/api/admin-create-new-noti', noti)
-        .then(res => navigate('/admin/notifications'))
-        .catch(err => console.log(err));
+        if(selectedFiles.length === 0 || !selectedFiles){
+            console.log(noti);
+            axios.post('/api/admin-create-new-noti', noti)
+            .then(res => navigate('/admin/notifications'))
+            .catch(err => console.log(err));
+        }
+        console.log("selectedfiles",selectedFiles);
+        const formData = new FormData();
+        for(let i = 0; i < selectedFiles.length; i++){
+            formData.append("files", selectedFiles[i]);
+        }
+        formData.append("folder", "notifications");
+        for (const [key, value] of formData.entries()) {
+            console.log(key, value);
+        }
+        try{
+            const response = await axios.post('/api/upload-files', formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                }
+            })
+            const uploadedInfos = response.data.uploadedFiles;
+            console.log("uploadedInfos",uploadedInfos);
+            console.log(Array.isArray(uploadedInfos));
+            setNoti((prevNoti) => {
+                const updatedNoti = {
+                    ...prevNoti,
+                    notiFile: Array.isArray(uploadedInfos) ? [...uploadedInfos] : [uploadedInfos],
+                };
+                console.log("Updated noti before API call:", updatedNoti);
+        
+                // Gửi trực tiếp updatedNoti đến API
+                axios.post('/api/admin-create-new-noti', updatedNoti)
+                    .then((res) => navigate('/admin/notifications'))
+                    .catch((err) => console.log(err));
+        
+                return updatedNoti; // Cập nhật state
+            });
+        }catch (err){
+            console.log("Error at upload or insert noti", err)
+        }
     }
-
-    const apiKey = import.meta.env.VITE_API_KEY_EDITOR;
 
     return(
         <form className="p-1 md:p-2 lg:p-5 h-auto"
@@ -145,7 +183,10 @@ export default function NewNotiForm(){
             </label>
             
             <label className="block my-2">
-            File Attachment:<input type="file" name='notiFile' id='notiFile' onChange={(e)=> handleChange(e)}/>
+            File Attachment:<input multiple type="file" name='notiFile' id='notiFile' 
+                onChange={(e)=> {
+                    setSelectedFiles(e.target.files);
+                }}/>
             </label>
 
             <div>
