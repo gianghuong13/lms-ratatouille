@@ -7,6 +7,12 @@ export default function ProtectedRoutes() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  const rolePaths = {
+    admin: "/admin",
+    teacher: "/teacher",
+    student: "/student",
+  };
+
   const handleToken = async (accessToken) => {
     try {
       const response = await fetch('/api/decode', {
@@ -39,15 +45,19 @@ export default function ProtectedRoutes() {
   useEffect(() => {
     if (!loading && role) {
       const currentPath = window.location.pathname;
-      console.log(currentPath);
-      const rolePaths = {
-        admin: "/admin",
-        teacher: "/teacher",
-        student: "/student",
-      };
+      const expectedPathPrefix = rolePaths[role];
+      const previousPath = sessionStorage.getItem("previousPath");
 
-      if (role && !currentPath.startsWith(rolePaths[role])) {
-        navigate(rolePaths[role], { replace: true });
+      // Nếu đường dẫn hiện tại không hợp lệ
+      if (!currentPath.startsWith(expectedPathPrefix)) {
+        if (previousPath && previousPath.startsWith(expectedPathPrefix)) {
+          navigate(previousPath, { replace: true });
+        } else {
+          navigate(expectedPathPrefix, { replace: true });
+        }
+      } else {
+        // Lưu đường dẫn hợp lệ
+        sessionStorage.setItem("previousPath", currentPath);
       }
     }
   }, [loading, role, navigate]);
