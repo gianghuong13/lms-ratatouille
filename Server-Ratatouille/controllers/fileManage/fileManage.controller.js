@@ -8,6 +8,9 @@ const fileManageController = {
       const files = req.files; // Get an array of files from the request
       const folder = req.body.folder || "upload"; // Default folder if not specified
 
+      console.log("folder",folder);
+      console.log("files", files)
+
       if (!files || files.length === 0) {
         return res.status(400).json({
           message: "No files were uploaded",
@@ -26,7 +29,7 @@ const fileManageController = {
           return { fileName: file.originalname, key }; // Store uploaded file information
         })
       );
-
+      console.log("results",results);
       res.status(200).json({
         message: "Files uploaded successfully",
         uploadedFiles: results, // List of uploaded files
