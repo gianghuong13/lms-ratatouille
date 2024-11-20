@@ -124,6 +124,29 @@ const fileManageController = {
     }
 },
 
+  updateFiles: async (req, res) => {
+    try {
+      const { key, newKey } = req.body;
+      if (!key || !newKey) {
+        return res.status(400).json({ message: "Key and newKey are required" });
+      }
+
+      const response = await s3.copyObject(key, newKey);
+
+      res.status(200).json({ message: "File updated successfully", response });
+    } catch (error) {
+      console.error("Error in updateFiles:", error);
+
+      if (error.name === "NotFound" || error.message.includes("NoSuchKey")) {
+        return res.status(404).json({ message: `File not found: ${req.params.key}` });
+      }
+
+      res.status(500).json({
+        message: "Internal Server Error",
+      });
+    }
+  },
+
 
 
 };
