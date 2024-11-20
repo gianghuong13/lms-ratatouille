@@ -16,4 +16,6 @@ router.get("/list-files/:prefix", fileManageController.getFiles);
 // Route to delete multiple files
 router.post("/delete-files", fileManageController.deleteFiles);
 
+router.post("/update-file", fileManageController.updateFiles);
+
 export default router;
