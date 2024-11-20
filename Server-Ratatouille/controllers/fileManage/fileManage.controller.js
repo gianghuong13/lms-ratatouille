@@ -8,6 +8,9 @@ const fileManageController = {
       const files = req.files; // Get an array of files from the request
       const folder = req.body.folder || "upload"; // Default folder if not specified
 
+      console.log("folder",folder);
+      console.log("files", files)
+
       if (!files || files.length === 0) {
         return res.status(400).json({
           message: "No files were uploaded",
@@ -26,7 +29,7 @@ const fileManageController = {
           return { fileName: file.originalname, key }; // Store uploaded file information
         })
       );
-
+      console.log("results",results);
       res.status(200).json({
         message: "Files uploaded successfully",
         uploadedFiles: results, // List of uploaded files
@@ -123,6 +126,29 @@ const fileManageController = {
         res.status(500).json({ message: "Internal Server Error" });
     }
 },
+
+  updateFiles: async (req, res) => {
+    try {
+      const { key, newKey } = req.body;
+      if (!key || !newKey) {
+        return res.status(400).json({ message: "Key and newKey are required" });
+      }
+
+      const response = await s3.copyObject(key, newKey);
+
+      res.status(200).json({ message: "File updated successfully", response });
+    } catch (error) {
+      console.error("Error in updateFiles:", error);
+
+      if (error.name === "NotFound" || error.message.includes("NoSuchKey")) {
+        return res.status(404).json({ message: `File not found: ${req.params.key}` });
+      }
+
+      res.status(500).json({
+        message: "Internal Server Error",
+      });
+    }
+  },
 
 
 

@@ -1,7 +1,6 @@
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { S3Client, GetObjectCommand,PutObjectCommand,ListObjectsV2Command,DeleteObjectCommand} from '@aws-sdk/client-s3';
+import { S3Client, GetObjectCommand,PutObjectCommand,ListObjectsV2Command,DeleteObjectCommand,CopyObjectCommand} from '@aws-sdk/client-s3';
 import dotenv from "dotenv";
-import e from 'express';
 dotenv.config();
 const region = process.env.AWS_REGION;
 const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
@@ -57,7 +56,6 @@ async function deleteObject(key) {
 
       // Gửi yêu cầu xóa đến S3
       await s3Client.send(command);
-      console.log(`Successfully deleted: ${key}`);
   } catch (error) {
       // Ghi log lỗi và truyền lỗi lên
       console.error(`Error deleting object with key "${key}":`, error);
@@ -75,4 +73,39 @@ async function listObjects(folder) {
   return response.Contents;
 }
 
-export default {generateUploadUrl, putObject, getObject, deleteObject, listObjects};
+async function copyObject(key, newKey) {
+  if (typeof key !== 'string' || typeof newKey !== 'string') {
+    throw new TypeError('Both key and newKey must be strings');
+  }
+
+  const copyCommand = new CopyObjectCommand({
+    Bucket: bucketName,
+    CopySource: `${bucketName}/${key}`,
+    Key: newKey,
+  });
+
+  try {
+    // Sao chép object
+    const copyResponse = await s3Client.send(copyCommand);
+    console.log(`Object copied from ${key} to ${newKey}:`, copyResponse);
+
+    // Xóa object cũ
+    const deleteCommand = new DeleteObjectCommand({
+      Bucket: bucketName,
+      Key: key,
+    });
+    const deleteResponse = await s3Client.send(deleteCommand);
+    console.log(`Object deleted from ${key}:`, deleteResponse);
+
+    return {
+      copyResponse,
+      deleteResponse,
+    };
+  } catch (error) {
+    console.error(`Error processing copy and delete from ${key} to ${newKey}:`, error);
+    throw error;
+  }
+}
+
+
+export default {generateUploadUrl, putObject, getObject, deleteObject, listObjects,copyObject};
