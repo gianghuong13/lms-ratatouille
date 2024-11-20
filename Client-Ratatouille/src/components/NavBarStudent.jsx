@@ -7,15 +7,15 @@ import home from "../assets/User_Screen/Calendar.svg";
 import notification from "../assets/User_Screen/Noti.svg";
 import help from "../assets/User_Screen/Help.svg";
 import { Link, NavLink } from "react-router-dom";
-import "../styles/components/Navbar.css";
+import "../styles/components/NavbarUser.css";
 
 const navLinks = [
-    { to: "/teacher/account", icon: me, alt: "account", label: "Account", end: false },
-    { to: "/teacher", icon: dashboard, alt: "home", label: "Dashboard", end: true },
-    { to: "/teacher/courses", icon: classes, alt: "courses", label: "Courses", end: false},
-    { to: "teacher/calendar", icon: home, alt: "calendar", label: "Calendar", end: false },
-    { to: "/teacher/notification", icon: notification, alt: "notification", label: "Notifications", end: false },
-    { to: "/teacher/help", icon: help, alt: "help", label: "Help", end: false }, 
+    { to: "/student/account", icon: me, alt: "account", label: "Account", end: false },
+    { to: "/student", icon: dashboard, alt: "home", label: "Dashboard", end: true },
+    { to: "/student/courses", icon: classes, alt: "courses", label: "Courses", end: false},
+    { to: "student/calendar", icon: home, alt: "calendar", label: "Calendar", end: false },
+    { to: "/student/notification", icon: notification, alt: "notification", label: "Notifications", end: false },
+    { to: "/student/help", icon: help, alt: "help", label: "Help", end: false }, 
 ];
 
 export default function Navbar() {

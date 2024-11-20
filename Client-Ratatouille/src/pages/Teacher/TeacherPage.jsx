@@ -2,7 +2,7 @@ import React from "react";
 import Navbar from "../../components/NavBarStudent.jsx";
 
 
-export const StudentPage = () => {
+export const TeacherPage = () => {
   return (
     <div className="bg-[#f5f8fb] flex h-screen w-screen">
       <Navbar />
@@ -10,4 +10,4 @@ export const StudentPage = () => {
   );
 };
 
-export default StudentPage;
+export default TeacherPage;

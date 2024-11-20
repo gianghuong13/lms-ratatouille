@@ -33,10 +33,12 @@ const App = () => {
           <Route path="notifications/create-notification" element={<CreateNotification />} />
           <Route path="notifications/update-notification/:id" element={<UpdateNotification />} />
         </Route>
-        <Route path="/teacher" element={<TeacherPage />} />
+        <Route path="/teacher">
+          <Route index element={<TeacherPage />} />
+        </Route>
         <Route path="/student">
           <Route index element={<DashboardHome />} />
-          
+          <Route path="me" element={<DashboardHome />} />
         </Route>
       </Route>
       <Route element={<UnauthorizedRoutes />}>

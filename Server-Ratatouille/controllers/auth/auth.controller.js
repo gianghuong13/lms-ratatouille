@@ -17,7 +17,7 @@ const authController = {
                 const user = results[0];
                 const isPasswordValid = await bcrypt.compare(password, user.password);
                 if (isPasswordValid) {
-                    const accessToken = createAccessToken({ userId: user.user_id, role: user.role });
+                    const accessToken = createAccessToken({ userId: user.user_id, role: user.role, full_name: user.full_name });
                     const refreshToken = createRefreshToken({ userId: user.user_id });
                     res.cookie("accessToken", accessToken, {
                         httpOnly: true,
@@ -52,6 +52,34 @@ const authController = {
             console.log("Error from decode: ", error);
             return errorResponse(res, StatusCodes.UNAUTHORIZED, "Unauthorized! Vui lòng đăng nhập lại");
         }
+    },
+
+    changePassword: (req, res) => {
+        const { oldPassword, newPassword , userId} = req.body;
+        const query = 'SELECT * FROM users WHERE user_id = ?';
+        connection.query(query, [userId], async (err, results) => {
+            if (err) {
+                return res.status(500).send('Error executing query');
+            }
+            if (results.length > 0) {
+                const user = results[0];
+                const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
+                if (isPasswordValid) {
+                    const hashedPassword = await bcrypt.hash(newPassword, 10);
+                    const updateQuery = 'UPDATE users SET password = ? WHERE user_id = ?';
+                    connection.query(updateQuery, [hashedPassword, userId], (err, results) => {
+                        if (err) {
+                            return res.status(500).send('Error executing query');
+                        }
+                        return successResponse(res, StatusCodes.OK, 'Change password successfully');
+                    });
+                } else {
+                    res.status(401).json({ message: 'Invalid old password' });
+                }
+            } else {
+                res.status(401).json({ message: 'Invalid old password' });
+            }
+        });
     }
 };
 
