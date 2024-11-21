@@ -80,7 +80,34 @@ const authController = {
                 res.status(401).json({ message: 'Invalid old password' });
             }
         });
+    },
+
+    resetPassword: (req, res) => {
+        const { email } = req.body;
+        const newPassword = 'testingPassword'; // Mật khẩu mặc định mới
+        const query = 'SELECT * FROM users WHERE email = ?';
+    
+        connection.query(query, [email], async (err, results) => {
+            if (err) {
+                return res.status(500).send('Error executing query');
+            }
+            if (results.length > 0) {
+                const hashedPassword = await bcrypt.hash(newPassword, 10);
+                const updateQuery = 'UPDATE users SET password = ? WHERE email = ?';
+                connection.query(updateQuery, [hashedPassword, email], (err, results) => {
+                    if (err) {
+                        return res.status(500).send('Error executing query');
+                    }
+                    // Trả về mật khẩu mặc định mới cho người dùng
+                    return successResponse(res, StatusCodes.OK, 'Reset password successfully', { newPassword });
+                });
+            } else {
+                res.status(401).json({ message: 'Invalid email' });
+            }
+        });
     }
+    
+
 };
 
 export default authController;

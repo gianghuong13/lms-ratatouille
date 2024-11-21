@@ -65,12 +65,25 @@ async function deleteObject(key) {
 
 
 async function listObjects(folder) {
-  const command = new ListObjectsV2Command({
-    Bucket: bucketName,
-    Prefix: folder,
-  });
-  const response = await s3Client.send(command);
-  return response.Contents;
+  try {
+    // Đảm bảo folder kết thúc bằng "/"
+    if (!folder.endsWith("/")) {
+      folder += "/";
+    }
+
+    const command = new ListObjectsV2Command({
+      Bucket: bucketName, // Tên bucket
+      Prefix: folder,     // Folder hoặc tiền tố
+    });
+
+    const response = await s3Client.send(command);
+
+    // Trả về danh sách các file nếu có
+    return response.Contents ? response.Contents.map(item => item.Key) : [];
+  } catch (error) {
+    console.error("Error listing objects:", error);
+    throw new Error("Unable to list objects from S3");
+  }
 }
 
 async function copyObject(key, newKey) {
