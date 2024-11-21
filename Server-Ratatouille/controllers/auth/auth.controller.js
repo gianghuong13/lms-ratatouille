@@ -17,7 +17,7 @@ const authController = {
                 const user = results[0];
                 const isPasswordValid = await bcrypt.compare(password, user.password);
                 if (isPasswordValid) {
-                    const accessToken = createAccessToken({ userId: user.user_id, role: user.role });
+                    const accessToken = createAccessToken({ userId: user.user_id, role: user.role,name: user.full_name });
                     const refreshToken = createRefreshToken({ userId: user.user_id });
                     res.cookie("accessToken", accessToken, {
                         httpOnly: true,

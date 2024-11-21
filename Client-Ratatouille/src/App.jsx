@@ -14,6 +14,9 @@ import EditCoursePage from './pages/Admin/CourseManage/EditCoursePage.jsx';
 import Notifications from './pages/Admin/NotiManage/Notifications.jsx';
 import CreateNotification from './pages/Admin/NotiManage/CreateNotification.jsx';
 import UpdateNotification from './pages/Admin/NotiManage/UpdateNotification.jsx';
+import AccountManagePage from './pages/Admin/AccountManage/AccountManagePage.jsx';
+import EditAccountPage from './pages/Admin/AccountManage/EditAccountPage.jsx';
+import CreateAccountPage from './pages/Admin/AccountManage/CreateAccountPage.jsx';
 
 import 'global';
 
@@ -31,6 +34,10 @@ const App = () => {
           <Route path="notifications" element={<Notifications />} />
           <Route path="notifications/create-notification" element={<CreateNotification />} />
           <Route path="notifications/update-notification/:id" element={<UpdateNotification />} />
+          <Route path='accounts' element={<AccountManagePage />} />
+          <Route path='accounts/edit/:userId' element={<EditAccountPage />} />
+          <Route path='accounts/create' element={<CreateAccountPage />} />
+
         </Route>
         <Route path="/teacher" element={<TeacherPage />} />
         <Route path="/student" element={<StudentPage />} />
