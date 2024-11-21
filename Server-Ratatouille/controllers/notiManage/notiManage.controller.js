@@ -53,14 +53,15 @@ const notiManageController = {
         const sql = `INSERT INTO notifications (title, content, creator_id, is_global) VALUES (?, ?, ?, ?)`;
         const sql2 = `SELECT notification_id FROM notifications ORDER BY notification_id DESC LIMIT 1`;
         const sql3 = `INSERT INTO notification_courses (notification_id, course_id) VALUES ?`;
-    
+        const sql4 = `INSERT INTO notification_files (notification_id, file_name, file_path) VALUES ?`;
         try {
             // Insert notification
             await connection.promise().query(sql, [title, content, createdBy, is_global]);
-    
+            
+            const [rows] = await connection.promise().query(sql2);
+            const notification_id = rows[0].notification_id;
             if (!is_global) {
-                const [rows] = await connection.promise().query(sql2);
-                const notification_id = rows[0].notification_id;
+                
     
                 const notifyToValue = notifyTo.filter(item => item !== 'all');
                 const valueInsert2NotiCourses = notifyToValue.map(to => [notification_id, to]);
@@ -68,7 +69,11 @@ const notiManageController = {
                 // Insert into notification_courses
                 await connection.promise().query(sql3, [valueInsert2NotiCourses]);
             }
-    
+            console.log("notiFile",notiFile);
+            if(notiFile.length > 0){
+                const notiFileValues = notiFile.map(file => [notification_id, file.fileName, file.key])
+                await connection.promise().query(sql4, [notiFileValues]);
+            }
             return res.status(200).send("Create new notification successfully");
         } catch (err) {
             console.error("Error in createNewNoti:", err);
@@ -152,6 +157,23 @@ const notiManageController = {
             }
             res.status(200).send("Delete notification succesfully")
         })
+    },
+
+    getAllTitleNotification: (req, res) => {
+        const input = req.body;
+        const sql = `SELECT notification_id, title FROM notifications n
+                        JOIN users u on u.user_id = n.creator_id 
+                        WHERE role = 'admin' AND n.title LIKE "%?%"
+                        ORDER BY created_date DESC;`;
+        connection.query(sql, [input], (err, data) => {
+            if(err){
+                console.log("Error query at getAllTitleNotification", err);
+                return res.status(500).send("Error executing query getting all title notification");
+            }
+            // console.log(data);
+            res.status(200).json(data);
+        })
+        
     }
 }
 

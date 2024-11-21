@@ -4,9 +4,22 @@ import Select from 'react-dropdown-select'
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 
+
+
 export default function NewNotiForm(){
+    const [allCourses, setAllCourses] = useState([]); // for selector
+    const [allAdmins, setAllAdmins] = useState([]);// for selector
+    const [selectedFiles, setSelectedFiles] = useState(null);
+    const [noti, setNoti] = useState({
+        title: '', 
+        notifyTo: '',
+        createdBy: '',
+        notiFile: [],
+        content: ''
+    });
+    const apiKey = import.meta.env.VITE_API_KEY_EDITOR;
+
     //Get all courses from server
-    const [allCourses, setAllCourses] = useState([]);
     useEffect(()=>{
         axios
         .get('/api/admin-course_id-4-noti')
@@ -16,10 +29,8 @@ export default function NewNotiForm(){
         })
         .catch(err => console.log(err));
     }, []);
-    //const [noti2Courses, setNoti2Courses] = useState([]);//courses what is choosed to notify
     
     //Get all admins from server
-    const [allAdmins, setAllAdmins] = useState([]);
     useEffect(()=>{
         axios
         .get('/api/admin-creator_id-4-noti')
@@ -32,26 +43,59 @@ export default function NewNotiForm(){
         admin => ({label: admin.user_id, value:admin.user_id})
     );
 
-    //const [notiCreator, setNotiCreator] = useState();//notification was created by 
-    const [noti, setNoti] = useState({
-        title: '', 
-        notifyTo: '',
-        createdBy: '',
-        notiFile: '',
-        content: ''
-    });
+    
 
     function handleChange(e){
+        console.log(e.target.value);
         setNoti({...noti, [e.target.name]: [e.target.value]})
     }
 
     const navigate = useNavigate();
-    function handleSubmit(e){
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        axios.post('/api/admin-create-new-noti', noti)
-        .then(res => navigate('/admin/notifications'))
-        .catch(err => console.log(err));
+        if(selectedFiles.length === 0 || !selectedFiles){
+            console.log(noti);
+            axios.post('/api/admin-create-new-noti', noti)
+            .then(res => navigate('/admin/notifications'))
+            .catch(err => console.log(err));
+        }
+        console.log("selectedfiles",selectedFiles);
+        const formData = new FormData();
+        for(let i = 0; i < selectedFiles.length; i++){
+            formData.append("files", selectedFiles[i]);
+        }
+        formData.append("folder", "notifications");
+        for (const [key, value] of formData.entries()) {
+            console.log(key, value);
+        }
+        try{
+            const response = await axios.post('/api/upload-files', formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                }
+            })
+            const uploadedInfos = response.data.uploadedFiles;
+            console.log("uploadedInfos",uploadedInfos);
+            console.log(Array.isArray(uploadedInfos));
+            setNoti((prevNoti) => {
+                const updatedNoti = {
+                    ...prevNoti,
+                    notiFile: Array.isArray(uploadedInfos) ? [...uploadedInfos] : [uploadedInfos],
+                };
+                console.log("Updated noti before API call:", updatedNoti);
+        
+                // Gửi trực tiếp updatedNoti đến API
+                axios.post('/api/admin-create-new-noti', updatedNoti)
+                    .then((res) => navigate('/admin/notifications'))
+                    .catch((err) => console.log(err));
+        
+                return updatedNoti; // Cập nhật state
+            });
+        }catch (err){
+            console.log("Error at upload or insert noti", err)
+        }
     }
+
     return(
         <form className="p-1 md:p-2 lg:p-5 h-auto"
             onSubmit={handleSubmit}
@@ -63,7 +107,8 @@ export default function NewNotiForm(){
             </label>
 
             <Editor
-                apiKey='kmkdiqqb79l6gte334tkg3drtreguyv3rm7qcuve8wip7mtq'
+                // apiKey='kmkdiqqb79l6gte334tkg3drtreguyv3rm7qcuve8wip7mtq'
+                apiKey={apiKey}
                 id='noti-content'
                 init={{
                     plugins: [
@@ -86,7 +131,7 @@ export default function NewNotiForm(){
                     exportpdf_converter_options: { 'format': 'Letter', 'margin_top': '1in', 'margin_right': '1in', 'margin_bottom': '1in', 'margin_left': '1in' },
                     exportword_converter_options: { 'document': { 'size': 'Letter' } },
                     importword_converter_options: { 'formatting': { 'styles': 'inline', 'resets': 'inline',	'defaults': 'inline', } },
-                    height: 300,
+                    height: 350,
                     resize: false,
                 }}
                 onEditorChange={(content) => setNoti({...noti, content: content})}
@@ -131,13 +176,17 @@ export default function NewNotiForm(){
                         }}
                         color="#015DAF"
                         searchable='true'
-                        style={{borderRadius:'6px'}}                        required
+                        style={{borderRadius:'6px'}}                        
+                        required
                     />
                 </div>
             </label>
             
             <label className="block my-2">
-            File Attachment:<input type="file" name='notiFile' id='notiFile' onChange={(e)=> handleChange(e)}/>
+            File Attachment:<input multiple type="file" name='notiFile' id='notiFile' 
+                onChange={(e)=> {
+                    setSelectedFiles(e.target.files);
+                }}/>
             </label>
 
             <div>

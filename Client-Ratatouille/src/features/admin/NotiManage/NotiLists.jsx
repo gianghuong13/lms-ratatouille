@@ -1,7 +1,9 @@
 import logo from "../../../assets/logo-uet.webp";
 import { useState, useEffect } from "react";
 import axios from 'axios';
-import {Link} from 'react-router-dom'
+import {Link} from 'react-router-dom';
+import { convert } from 'html-to-text';
+
 export default function NotiLists(){
     const [notifications, setNotifications] = useState([]);
     useEffect(()=>{
@@ -25,7 +27,7 @@ export default function NotiLists(){
                                 <div className="mr-2 my-1"><img className="object-fill w-full min-w-[30px] max-w-[40px] h-auto aspect-square" src={logo} alt="admin-logo" /></div>
                                 <div>
                                     <h6 className="font-bold font-sans m-0">{noti.title}</h6>
-                                    <p className="m-0">{noti.content}</p>
+                                    <p className="m-0">{(convert(noti.content, {wordwrap: 130})).length > 130 ? (convert(noti.content, {wordwrap: 130})).slice(0, 130) + " ..." : (convert(noti.content, {wordwrap: 130}))}</p>
                                     <p className="text-sm italic m-0">{noti.created_date}</p>
                                 </div>
                                 </Link>
@@ -37,7 +39,7 @@ export default function NotiLists(){
         </div>
     );
 }
-
+// (convert(noti.content, {wordwrap: 130})).length > 100 ? (convert(noti.content, {wordwrap: 130})).slice(0, 100) + "..." : (convert(noti.content, {wordwrap: 130}));
 // className={`hover:bg-[#f1f5fd] ${
 //     index % 2 === 1 ? "bg-gray-50" : "" // Áp dụng màu xám cho các phần tử chẵn (bắt đầu từ 0)
 //   }`
