@@ -11,7 +11,7 @@ router.post("/upload-files", upload.array("files", 100), fileManageController.up
 router.get("/object-url", fileManageController.getObjectUrl);
 
 // Route to list all files in a specified folder
-router.get("/list-files/:prefix", fileManageController.getFiles);
+router.get("/list-files", fileManageController.getFiles);
 
 // Route to delete multiple files
 router.post("/delete-files", fileManageController.deleteFiles);

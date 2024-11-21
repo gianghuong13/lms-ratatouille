@@ -69,15 +69,16 @@ const fileManageController = {
   // List all files in a folder
   getFiles: async (req, res) => {
     try {
-      const { prefix } = req.params;
+      const { prefix } = req.body;
+      // Gọi hàm listObjects để lấy danh sách file
+      const files = await s3.listObjects(prefix);
 
-      const response = await s3.listObjects(prefix);
-
-      if (!response || response.length === 0) {
-        return res.status(404).json({ message: "No files found with the provided prefix" });
+      // Kiểm tra nếu không có file nào
+      if (files.length === 0) {
+        return res.status(404).json({ message: "No files found in the specified folder" });
       }
 
-      res.status(200).json({ files: response }); // Return the list of files
+      res.status(200).json({ files });
     } catch (error) {
       console.error("Error listing files:", error);
       res.status(500).json({ message: "Internal Server Error" });
