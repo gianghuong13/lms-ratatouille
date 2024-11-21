@@ -57,13 +57,11 @@ const LoginForm = () => {
         const decodeData = await decodeResponse.json();
         const role = decodeData.data.role;
 
-        if (role === 'admin') {
-          navigate('/admin');
-        } else if (role === 'student') {
-          navigate('/student');
-        } else if (role === 'teacher') {
-          navigate('/teacher');
-        }
+        // Lưu role vào localStorage
+        localStorage.setItem('role', role);
+
+        // Điều hướng dựa trên role
+        navigate(`/${role}`);
       } else {
         setMessage(loginData.message || 'Login failed. Please try again.');
       }

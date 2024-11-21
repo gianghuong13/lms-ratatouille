@@ -58,9 +58,9 @@ const CourseManagePage = () => {
     
   return (
     <>
-    <div>
+    {/* <div>
       <Navbar/>
-    </div>
+    </div> */}
     <div className="p-4 w-full">
       <div className="container mx-auto">
         <h1 className="text-3xl font-bold mb-4">Course Management</h1>
