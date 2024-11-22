@@ -4,7 +4,7 @@ import Navbar from "../../../components/Navbar"; // Import Navbar component
 import PageTitle from "../../../components/PageTitle"; // Import PageTitle component
 import CreateAccountForm from "../../../features/admin/AccountManage/CreateAccountForm";
 
-export default function CreateAccountPage() {
+export default function EditAccountPage() {
     return (
         <>
 

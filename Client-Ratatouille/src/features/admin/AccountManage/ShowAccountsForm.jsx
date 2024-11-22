@@ -65,7 +65,7 @@ export default function ShowAccountForm() {
             <div className="flex justify-between items-center">
                 <ToggleSwitch selected={selected} setSelected={setSelected} />
                 <Searchbar onSearch={handleSearch} value={searchQuery} />
-                <Link to="/admin/manageaccounts/create">
+                <Link to="/admin/accounts/create">
                     <AddButton label="New Account" />
                 </Link>
             </div>
@@ -89,7 +89,7 @@ export default function ShowAccountForm() {
                             <td className="py-3 w-[200px] border-[1px] border-white pl-2">{account.phone_number}</td>
                             <td className="py-1 w-[200px] border-[1px] border-white text-center">
                                 <Link className="mr-5 px-2 py-1 rounded bg-green-500 text-white hover:bg-green-700" 
-                                to={`/admin/manageaccounts/edit/${account.user_id}`}>Edit</Link>      
+                                to={`/admin/accounts/edit/${account.user_id}`}>Edit</Link>      
                                 <button className="mr-5 px-2 py-1 rounded bg-red-500 text-white hover:bg-red-700" 
                                 onClick={() => confirmDelete(account)}>Delete</button>
                             </td>

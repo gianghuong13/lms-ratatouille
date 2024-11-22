@@ -44,16 +44,16 @@ const App = () => {
           <Route path="/admin">
             <Route index element={<AdminDashboardPage />} />
             <Route path="" element={<AdminDashboardPage />} />
-            <Route path="myaccount" element={<MePage />} />
+            <Route path="me" element={<MePage />} />
             <Route path='courses' element={<CourseManagePage />} />
             <Route path='courses/add' element={<AddCoursePage />} />
             <Route path='courses/edit/:courseId' element={<EditCoursePage />} />
             <Route path="notifications" element={<Notifications />} />
             <Route path="notifications/create-notification" element={<CreateNotification />} />
             <Route path="notifications/update-notification/:id" element={<UpdateNotification />} />
-            <Route path='manageaccounts' element={<AccountManagePage />} />
-            <Route path='manageaccounts/create' element={<CreateAccountPage />} />
-            <Route path='manageaccounts/edit/:id' element={<EditAccountPage />} />
+            <Route path='accounts' element={<AccountManagePage />} />
+            <Route path='accounts/create' element={<CreateAccountPage />} />
+            <Route path='accounts/edit/:userId' element={<EditAccountPage />} />
           </Route>
           <Route path="/teacher">
             <Route index element={<Dashboard />} />
