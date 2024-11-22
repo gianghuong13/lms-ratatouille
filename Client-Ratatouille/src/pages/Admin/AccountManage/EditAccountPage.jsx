@@ -6,8 +6,6 @@ import Navbar from "../../../components/Navbar"; // Import Navbar component
 import PageTitle from "../../../components/PageTitle"; // Import PageTitle component
 
 export default function EditAccountPage() {
-    
-
     return (
         <>
             <div className="bg-[#F5F8FB] flex-1">

@@ -12,7 +12,7 @@ export default function CreateAccountForm() {
         phone_number: '',
         birth_date: '',
         gender: 'male',
-        role: 'student',
+        role: 'teacher',
         password: '',
     });
     const [loading, setLoading] = useState(false);
