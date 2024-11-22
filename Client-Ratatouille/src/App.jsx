@@ -53,13 +53,14 @@ const App = () => {
           <Route path="/teacher">
             <Route index element={<Dashboard />} />
             <Route path="" element={<Dashboard />} />
-            <Route path="account" element={<MePage />} />
+            {/* <Route path="account" element={<MePage />} /> */}
             <Route path="courses" element={<AllCoursesList />} />
           </Route>
           <Route path="/student">
             <Route index element={<Dashboard />} />
             <Route path="" element={<Dashboard />} />
-            <Route path="account" element={<MePage />} />
+            {/* <Route path="account" element={<MePage />} /> */}
+            <Route path="courses" element={<AllCoursesList />} />
           </Route>
         </Route>
         <Route element={<UnauthorizedRoutes />}>
