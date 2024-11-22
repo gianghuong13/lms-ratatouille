@@ -21,7 +21,9 @@ import Dashboard from './pages/Teacher/TeacherPage.jsx';
 // Page Student
 // Page Teacher
 import AllCoursesList from './pages/Teacher/AllCourses.jsx';
-
+import AccountManagePage from './pages/Admin/AccountManage/AccountManagePage.jsx';
+import CreateAccountPage from './pages/Admin/AccountManage/CreateAccountPage.jsx';
+import EditAccountPage from './pages/Admin/AccountManage/EditAccountPage.jsx';
 const App = () => {
   const [role, setRole] = useState(null);
   const location = useLocation(); // Hook để lấy đường dẫn hiện tại
@@ -42,24 +44,28 @@ const App = () => {
           <Route path="/admin">
             <Route index element={<AdminDashboardPage />} />
             <Route path="" element={<AdminDashboardPage />} />
-            <Route path="account" element={<MePage />} />
+            <Route path="me" element={<MePage />} />
             <Route path='courses' element={<CourseManagePage />} />
             <Route path='courses/add' element={<AddCoursePage />} />
             <Route path='courses/edit/:courseId' element={<EditCoursePage />} />
             <Route path="notifications" element={<Notifications />} />
             <Route path="notifications/create-notification" element={<CreateNotification />} />
             <Route path="notifications/update-notification/:id" element={<UpdateNotification />} />
+            <Route path='accounts' element={<AccountManagePage />} />
+            <Route path='accounts/create' element={<CreateAccountPage />} />
+            <Route path='accounts/edit/:userId' element={<EditAccountPage />} />
           </Route>
           <Route path="/teacher">
             <Route index element={<Dashboard />} />
             <Route path="" element={<Dashboard />} />
-            <Route path="account" element={<MePage />} />
+            {/* <Route path="account" element={<MePage />} /> */}
             <Route path="courses" element={<AllCoursesList />} />
           </Route>
           <Route path="/student">
             <Route index element={<Dashboard />} />
             <Route path="" element={<Dashboard />} />
-            <Route path="account" element={<MePage />} />
+            {/* <Route path="account" element={<MePage />} /> */}
+            <Route path="courses" element={<AllCoursesList />} />
           </Route>
         </Route>
         <Route element={<UnauthorizedRoutes />}>

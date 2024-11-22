@@ -22,9 +22,9 @@ const NAV_LINKS = {
   admin: [
     { to: "/admin", icon: adminHome, alt: "home", label: "Dashboard", end: true },
     { to: "/admin/courses", icon: adminClasses, alt: "classes", label: "Courses", end: false },
-    { to: "/admin/account", icon: adminAccount, alt: "account", label: "Accounts", end: false },
+    { to: "/admin/accounts", icon: adminAccount, alt: "account", label: "Accounts", end: false },
     { to: "/admin/notifications", icon: adminNotification, alt: "notification", label: "Notifications", end: false },
-    { to: "/admin/account", icon: adminMe, alt: "key", label: "Me", end: false },
+    { to: "/admin/me", icon: adminMe, alt: "key", label: "Me", end: false },
   ],
   student: [
     { to: "/student", icon: dashboard, alt: "dashboard", label: "Dashboard", end: true },

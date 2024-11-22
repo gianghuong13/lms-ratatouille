@@ -3,18 +3,19 @@ import { useEffect, useState } from 'react';
 import Select from 'react-dropdown-select'
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
-
+import {Link} from "react-router-dom"
 
 
 export default function NewNotiForm(){
     const [allCourses, setAllCourses] = useState([]); // for selector
     const [allAdmins, setAllAdmins] = useState([]);// for selector
-    const [selectedFiles, setSelectedFiles] = useState(null);
+    const [selectedFiles, setSelectedFiles] = useState(null); // lưu các file đã chọn ở dạng file list
+    const [selectedFileNames, setSelectedFileNames] = useState([]); // lưu tên các file đã chọn ở dạng array
+
     const [noti, setNoti] = useState({
         title: '', 
         notifyTo: '',
         createdBy: '',
-        notiFile: [],
         content: ''
     });
     const apiKey = import.meta.env.VITE_API_KEY_EDITOR;
@@ -53,47 +54,45 @@ export default function NewNotiForm(){
     const navigate = useNavigate();
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if(selectedFiles.length === 0 || !selectedFiles){
-            console.log(noti);
-            axios.post('/api/admin-create-new-noti', noti)
-            .then(res => navigate('/admin/notifications'))
-            .catch(err => console.log(err));
-        }
-        console.log("selectedfiles",selectedFiles);
-        const formData = new FormData();
-        for(let i = 0; i < selectedFiles.length; i++){
-            formData.append("files", selectedFiles[i]);
-        }
-        formData.append("folder", "notifications");
-        for (const [key, value] of formData.entries()) {
-            console.log(key, value);
-        }
-        try{
-            const response = await axios.post('/api/upload-files', formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                }
-            })
-            const uploadedInfos = response.data.uploadedFiles;
-            console.log("uploadedInfos",uploadedInfos);
-            console.log(Array.isArray(uploadedInfos));
-            setNoti((prevNoti) => {
-                const updatedNoti = {
-                    ...prevNoti,
-                    notiFile: Array.isArray(uploadedInfos) ? [...uploadedInfos] : [uploadedInfos],
-                };
-                console.log("Updated noti before API call:", updatedNoti);
+
+        console.log(noti);
+        const res = await axios.post('/api/admin-create-new-noti', noti)
+        const noti_id = res.data.notification_id; // Lấy giá trị từ API
         
-                // Gửi trực tiếp updatedNoti đến API
-                axios.post('/api/admin-create-new-noti', updatedNoti)
-                    .then((res) => navigate('/admin/notifications'))
-                    .catch((err) => console.log(err));
-        
-                return updatedNoti; // Cập nhật state
-            });
-        }catch (err){
-            console.log("Error at upload or insert noti", err)
+        console.log("noti_id: ", noti_id)
+        if(selectedFiles.length > 0){
+            console.log("selectedfiles",selectedFiles);
+            const formData = new FormData();
+            for(let i = 0; i < selectedFiles.length; i++){
+                formData.append("files", selectedFiles[i]);
+            }
+            formData.append("folder", "notifications/"+noti_id);
+            for (const [key, value] of formData.entries()) {
+                console.log(key, value);
+            }
+            try{
+                const response = await axios.post('/api/upload-files', formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    }
+                })
+                const notiFile = response.data.uploadedFiles;
+                console.log("uploadedInfos",notiFile);
+                console.log(Array.isArray(notiFile));
+
+                console.log("notiFile",notiFile);
+                await axios.post('/api/admin-create-noti-file', notiFile)
+                        .then((res) => navigate('/admin/notifications'))
+                        .catch((err) => console.log(err));
+                
+            }catch (err){
+                console.log("Error at upload or insert noti", err)
+            }
+        }else{
+            navigate('/admin/notifications'); // Điều hướng sau khi nhận được noti_id
         }
+        
+        
     }
 
     return(
@@ -182,12 +181,33 @@ export default function NewNotiForm(){
                 </div>
             </label>
             
-            <label className="block my-2">
-            File Attachment:<input multiple type="file" name='notiFile' id='notiFile' 
-                onChange={(e)=> {
-                    setSelectedFiles(e.target.files);
-                }}/>
-            </label>
+            <div className="flex flex-col md:flex-row items-start">
+                <label className="flex items-center m-0">
+                    <span>File Attachment:</span>
+                    <input
+                    multiple
+                    type="file"
+                    name="notiFile"
+                    id="notiFile"
+                    onChange={(e) => {
+                        const files = e.target.files;
+                        setSelectedFiles(files);
+                        setSelectedFileNames(Array.from(files).map((file) => file.name));
+                    }}
+                    className="ml-2" // Giảm khoảng cách giữa input và span
+                    />
+                </label>
+                {/* Danh sách các file vừa chọn */}
+                {selectedFileNames.length > 0 && (
+                    <ul className="ml-2 mt-0 block">
+                    {selectedFileNames.map((name, index) => (
+                        <li key={index} className="italic block">
+                        {name}
+                        </li>
+                    ))}
+                    </ul>
+                )}
+            </div>
 
             <div>
                 <button type='button' className="text-white bg-[#015DAF] hover: hover:bg-[#397bfe] font-medium rounded-full px-5 py-2.5 mr-5"
@@ -196,7 +216,6 @@ export default function NewNotiForm(){
                 </button>
                 <button type='submit' className="text-white bg-[#015DAF] hover: hover:bg-[#397bfe] font-medium rounded-full px-5 py-2.5">Create</button>
             </div>
-            
         </form>
     );
 }
