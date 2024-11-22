@@ -2,7 +2,7 @@ import { Editor } from '@tinymce/tinymce-react';
 import { useEffect, useState } from 'react';
 import Select from 'react-dropdown-select';
 import axios from 'axios';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 export default function UpdateNotiForm() {
     const apiKey = import.meta.env.VITE_API_KEY_EDITOR;
@@ -15,7 +15,6 @@ export default function UpdateNotiForm() {
         title: '',
         notifyTo: '',
         createdBy: '',
-        notiFile: '',
         content: ''
     });
 
@@ -25,6 +24,11 @@ export default function UpdateNotiForm() {
     const [allAdmins, setAllAdmins] = useState([]);
     // Selected courses
     const [selectedCourses, setSelectedCourses] = useState([]);
+
+    const [filesList, setFilesList] = useState([]);
+
+    const [selectedFiles, setSelectedFiles] = useState(null);// lưu các file đã chọn ở dạng file list
+    const [selectedFileNames, setSelectedFileNames] = useState([]);// lưu tên các file đã chọn ở dạng array
 
     // Fetch all required data
     useEffect(() => {
@@ -57,6 +61,18 @@ export default function UpdateNotiForm() {
                 } else {
                     setSelectedCourses([{ course_id: 'all', course_name: 'All courses' }]);
                 }
+
+                const filesDB = await axios.get(`/api/admin-posted-noti-file/${id}`);
+                console.log("filesDB", filesDB.data);
+                if(filesDB.data.length > 0){
+                    const fileInfos = {files: filesDB.data}
+                    console.log("fileInfos", fileInfos)
+                    const filesListRes = await axios.post('/api/object-urls', fileInfos);
+                    console.log("filesList response", filesListRes.data)
+                    setFilesList(filesListRes.data.results);
+                    console.log(filesList);
+                }
+                
             } catch (err) {
                 console.error('Error fetching data:', err);
             }
@@ -64,6 +80,7 @@ export default function UpdateNotiForm() {
         fetchData();
     }, [id]);
 
+    
     // Admins options for dropdown
     const allAdminsOptions = allAdmins.map(admin => ({
         label: admin.user_id,
@@ -76,19 +93,77 @@ export default function UpdateNotiForm() {
     }
 
     // Handle form submission
-    function handleSubmit(e) {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        axios
-        .put('/api/admin-update-noti/' + id, noti)
-        .then(res => navigate('/admin/notifications'))
-        .catch(err => console.log(err))
+        await axios.put('/api/admin-update-noti/' + id, noti);
+        // .then(res => navigate('/admin/notifications'))
+        // .catch(err => console.log(err))
+        console.log("selected files", selectedFiles)
+        console.log("co la mang ko", Array.isArray(selectedFiles) );
+        if(selectedFiles !== null){
+            // xoa cac file da chon tren s3
+            const filesDB = await axios.get(`/api/admin-posted-noti-file/${id}`);
+            if(filesDB.data.length > 0){
+                console.log("filesDB", filesDB.data);
+                const fileInfos = {keys: filesDB.data.map(file => file.file_path)}
+                console.log("file infos", fileInfos)
+                await axios.post('/api/delete-files', fileInfos)
+            }
+            
+            // thay bang cac file vua chon
+            const formData = new FormData();
+            for(let i = 0; i < selectedFiles.length; i++){
+                formData.append("files", selectedFiles[i]);
+            }
+            formData.append("folder", "notifications/"+id);
+            for (const [key, value] of formData.entries()) {
+                console.log(key, value);
+            }
+            try{
+                const response = await axios.post('/api/upload-files', formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    }
+                })
+                const notiFile = response.data.uploadedFiles;
+                console.log("uploadedInfos",notiFile);
+                console.log(Array.isArray(notiFile));
+
+                console.log("notiFile",notiFile);
+                // await axios.post('/api/admin-create-noti-file', notiFile)
+                //         .then((res) => navigate('/admin/notifications'))
+                //         .catch((err) => console.log(err));
+                // them vao noti_file
+
+                await axios.put(`/api/admin-update-noti-file/${id}`, notiFile)
+                .then((res) => navigate('/admin/notifications'))
+                .catch((err) => console.log(err));
+
+            }catch (err){
+                console.log("Error at upload or insert noti", err)
+            }
+        }
+        navigate('/admin/notifications');
     }
 
     // Handle delete notification 
-    function handleDelete(id){
-        axios.delete('/api/admin-delete-noti/' + id)
+    const handleDelete = async(id) => {
+         // xoa cac file da chon tren s3
+         if(filesList.length > 0){
+            const filesDB = await axios.get(`/api/admin-posted-noti-file/${id}`);
+            console.log("filesDB", filesDB.data);
+            const fileInfos = {keys: filesDB.data.map(file => file.file_path)}
+            console.log("file infos", fileInfos)
+            await axios.post('/api/delete-files', fileInfos)
+            .then((res) => console.log("delete file successfully"))
+                .catch((err) => console.log(err));
+         }
+         // xoa noti trong DB
+        await axios.delete(`/api/admin-delete-noti/${id}`)
         .then(res => navigate('/admin/notifications'))
         .catch(err => console.log(err))
+
+
     }
     return (
         <form className="p-1 md:p-2 lg:p-5 h-auto" onSubmit={handleSubmit}>
@@ -171,18 +246,59 @@ export default function UpdateNotiForm() {
                 </div>
             </label>
             
+            <div className='flex flex-col md:flex-row'>
+                {/* Các file đính kèm đã đăng (lưu trên S3)*/}
+                <div className='flex-1'>
+                    {filesList.length > 0 ? (
+                        <div className="flex items-start">
+                          <p className="m-0">Posted File Attachment:</p>
+                          <ul className="ml-2">
+                            {filesList.map((file) => (
+                              <li key={file.file_name}>
+                                <Link to={file.url} className="underline italic text-[#015DAF]">
+                                  {file.file_name}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      
+                    ) : (
+                        <>
+                            <p className='m-0 inline-block'>Posted File Attachment:</p>
+                            <p className='m-0 inline-block'>No Posted File</p>
+                        </>   
+                    )}
+                </div>
 
-            {/* File Attachment */}
-            <label className="block my-2">
-                File Attachment:
-                <input
-                    type="file"
-                    name="notiFile"
-                    id="notiFile"
-                    onChange={(e) => handleChange(e)}
-                />
-            </label>
+                {/* Đính kèm các file khác */}
+                <div className="inline-block flex-1 mb-2">
+                    <label>
+                        Choose other File Attachment:
+                        <input
+                        multiple
+                        type="file"
+                        name="notiFile"
+                        id="notiFile"
+                        className="ml-2"
+                        onChange={(e) => {
+                            const files = e.target.files; 
+                            setSelectedFiles(files); 
+                            setSelectedFileNames(Array.from(files).map((file) => file.name)); // Chuyển đổi FileList thành mảng tên file
+                        }}
+                        />
+                    </label>
+                    {/* Danh sách các file vừa chọn */}
+                    {selectedFileNames.length > 1 && (
+                        <ul>
+                        {selectedFileNames.map((name, index) => (
+                            <li key={index} className='italic'>{name}</li>
+                        ))}
+                        </ul>
+                    )}
+                </div>
 
+            </div>
 
             
 
