@@ -14,7 +14,7 @@ const EditCoursePage = () => {
 
     return (
         <>
-          <Navbar />
+          {/* <Navbar /> */}
           <div className="container mx-auto p-4">
               <h1 className="text-2xl mb-4">Edit Course</h1>
               <EditCourseForm courseId={courseId} onSubmit={handleFormSubmit} />
