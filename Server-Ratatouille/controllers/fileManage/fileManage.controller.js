@@ -64,13 +64,59 @@ const fileManageController = {
       });
     }
   },
+  getObjectUrls: async (req, res) => {
+    try {
+      const { files } = req.body; // Nhận mảng files từ body request
+      console.log("files", files)
+      if (!Array.isArray(files) || files.length === 0) {
+        return res.status(400).json({ message: "Files must be a non-empty array" });
+      }
+      // Kiểm tra mỗi phần tử trong mảng có đủ thuộc tính file_name và file_path
+      const invalidFiles = files.filter(
+        (file) => !file.file_name || !file.file_path
+      );
+      if (invalidFiles.length > 0) {
+        return res.status(400).json({ message: "Each file must have file_name and file_path" });
+      }
+
+      // Sử dụng Promise.all để lấy URL cho từng key
+      const results = await Promise.all(
+        files.map(async (file) => {
+          try {
+            const url = await s3.getObject(file.file_path); 
+            return { 
+              file_name: file.file_name,
+              file_path: file.file_path,
+              url  
+            };
+          } catch (error) {
+            console.error(`Error getting URL for file_path: ${file.file_path}`, error);
+            return { 
+              file_name: file.file_name,
+              file_path: file.file_path,
+              error: error.message }; // Trả lỗi nếu không thể tạo URL cho key
+          }
+        })
+      );
+      console.log(results);
+      res.status(200).json({ results });
+    } catch (error) {
+      console.error("Error in getObjectUrls:", error);
+  
+      res.status(500).json({
+        message: "Internal Server Error",
+        error: error.message,
+      });
+    }
+  },
+  
   
 
   // List all files in a folder
   getFiles: async (req, res) => {
     try {
-      const { prefix } = req.params;
-
+      const {prefix} = req.body;
+      console.log("prefix",prefix);
       const response = await s3.listObjects(prefix);
 
       if (!response || response.length === 0) {
@@ -84,11 +130,15 @@ const fileManageController = {
     }
   },
 
+ 
+  
+
   // Delete multiple files
   deleteFiles: async (req, res) => {
     try {
         const { keys } = req.body; // Mảng các keys cần xóa
 
+        console.log("keys", keys);
         // Kiểm tra đầu vào
         if (!Array.isArray(keys) || keys.length === 0) {
             return res.status(400).json({ message: "No file keys provided" });

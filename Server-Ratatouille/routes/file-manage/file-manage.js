@@ -9,9 +9,10 @@ router.post("/upload-files", upload.array("files", 100), fileManageController.up
 
 // Route to get a temporary URL to access a file
 router.get("/object-url", fileManageController.getObjectUrl);
+router.post("/object-urls", fileManageController.getObjectUrls);
 
 // Route to list all files in a specified folder
-router.get("/list-files/:prefix", fileManageController.getFiles);
+router.get("/list-files", fileManageController.getFiles);
 
 // Route to delete multiple files
 router.post("/delete-files", fileManageController.deleteFiles);
