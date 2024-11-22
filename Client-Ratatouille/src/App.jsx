@@ -20,10 +20,12 @@ import 'global';
 import Dashboard from './pages/Teacher/TeacherPage.jsx';
 // Page Student
 // Page Teacher
-import AllCoursesList from './pages/Teacher/AllCourses.jsx';
+// import AllCoursesList from './pages/Teacher/AllCourses.jsx';
 import AccountManagePage from './pages/Admin/AccountManage/AccountManagePage.jsx';
 import CreateAccountPage from './pages/Admin/AccountManage/CreateAccountPage.jsx';
 import EditAccountPage from './pages/Admin/AccountManage/EditAccountPage.jsx';
+import CoursesList from './pages/CoursesList.jsx';
+
 const App = () => {
   const [role, setRole] = useState(null);
   const location = useLocation(); // Hook để lấy đường dẫn hiện tại
@@ -59,13 +61,15 @@ const App = () => {
             <Route index element={<Dashboard />} />
             <Route path="" element={<Dashboard />} />
             {/* <Route path="account" element={<MePage />} /> */}
-            <Route path="courses" element={<AllCoursesList />} />
+            {/* <Route path="courses" element={<AllCoursesList />} /> */}
+            {/* <Route path="courses" element={<CoursesList />} /> */}
           </Route>
           <Route path="/student">
             <Route index element={<Dashboard />} />
             <Route path="" element={<Dashboard />} />
             {/* <Route path="account" element={<MePage />} /> */}
-            <Route path="courses" element={<AllCoursesList />} />
+            {/* <Route path="courses" element={<AllCoursesList />} /> */}
+            <Route path="courses" element={<CoursesList />} />
           </Route>
         </Route>
         <Route element={<UnauthorizedRoutes />}>

@@ -12,4 +12,6 @@ router.get('/courses/:course_id', courseManageController.getCourseById);
 router.put('/courses/:course_id', courseManageController.updateCourse);
 router.delete('/courses/:course_id', courseManageController.deleteCourse);
 
+router.get('/users-courses/:user_id', courseManageController.getLoginedUsersCourses);
+
 export default router;
