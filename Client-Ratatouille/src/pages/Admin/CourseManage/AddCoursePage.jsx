@@ -15,7 +15,7 @@ const AddCoursePage = () => {
 
     return (
         <>
-            <Navbar />
+            {/* <Navbar /> */}
             <div className="add-class-container">
                 <h1 className="text-3xl font-bold mb-4">Create New Course</h1>
                 <div className="">

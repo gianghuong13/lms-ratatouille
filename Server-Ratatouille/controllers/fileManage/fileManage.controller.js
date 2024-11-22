@@ -121,9 +121,10 @@ const fileManageController = {
 
       if (!response || response.length === 0) {
         return res.status(404).json({ message: "No files found with the provided prefix" });
+
       }
 
-      res.status(200).json({ files: response }); // Return the list of files
+      res.status(200).json({ files });
     } catch (error) {
       console.error("Error listing files:", error);
       res.status(500).json({ message: "Internal Server Error" });

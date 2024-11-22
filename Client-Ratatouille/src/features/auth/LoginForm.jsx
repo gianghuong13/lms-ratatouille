@@ -1,19 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
-// mvc
+
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberPassword, setRememberPassword] = useState(false);
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
+
+  // Lấy email và mật khẩu từ localStorage khi component được tải
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('email');
+    const savedPassword = localStorage.getItem('password');
+
+    if (savedEmail) setEmail(savedEmail);
+    if (savedPassword) setPassword(atob(savedPassword)); // Giải mã Base64
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      // Login request
       const loginResponse = await fetch('/api/login', {
         method: 'POST',
         headers: {
@@ -28,7 +37,15 @@ const LoginForm = () => {
         const accessToken = loginData.data.accessToken;
         localStorage.setItem('accessToken', accessToken);
 
-        // Decode request
+        if (rememberPassword) {
+          // Lưu email và mật khẩu khi người dùng chọn "Remember me"
+          localStorage.setItem('email', email);
+          localStorage.setItem('password', btoa(password)); // Mã hóa Base64
+        } else {
+          // Xóa mật khẩu nếu không chọn "Remember me"
+          localStorage.removeItem('password');
+        }
+
         const decodeResponse = await fetch('/api/decode', {
           method: 'POST',
           headers: {
@@ -40,14 +57,11 @@ const LoginForm = () => {
         const decodeData = await decodeResponse.json();
         const role = decodeData.data.role;
 
-        // Navigate based on role
-        if (role === 'admin') {
-          navigate('/admin');
-        } else if (role === 'student') {
-          navigate('/student');
-        } else if (role === 'teacher') {
-          navigate('/teacher');
-        }
+        // Lưu role vào localStorage
+        localStorage.setItem('role', role);
+
+        // Điều hướng dựa trên role
+        navigate(`/${role}`);
       } else {
         setMessage(loginData.message || 'Login failed. Please try again.');
       }
@@ -56,6 +70,22 @@ const LoginForm = () => {
       setMessage('An error occurred. Please try again.');
     }
   };
+
+  const handleEmailChange = (e) => {
+    const value = e.target.value;
+    setEmail(value);
+    localStorage.setItem('email', value);
+  };
+
+  const handlePasswordChange = (e) => {
+    const value = e.target.value;
+    setPassword(value);
+  };
+
+  const toggleRememberPassword = () => {
+    setRememberPassword(!rememberPassword);
+  };
+
   return (
     <form onSubmit={handleLogin} className="w-full max-w-md p-8 bg-[#fffafa] rounded-2xl border-2 border-solid border-[#015daf] shadow-lg">
       <h1 className="text-center text-4xl font-medium text-black mb-8">
@@ -67,7 +97,7 @@ const LoginForm = () => {
           type="email"
           placeholder="Email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={handleEmailChange}
           className="w-full p-2 border border-gray-300 rounded"
         />
       </div>
@@ -76,14 +106,20 @@ const LoginForm = () => {
           type="password"
           placeholder="Password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={handlePasswordChange}
           className="w-full p-2 border border-gray-300 rounded"
         />
       </div>
       <div className="flex items-center mb-4">
-        <input type="checkbox" id="custom-checkbox" className="mr-2" />
-        <label htmlFor="custom-checkbox" className="text-black text-[15px]">
-          Remember me
+        <input
+          type="checkbox"
+          id="remember-password"
+          checked={rememberPassword}
+          onChange={toggleRememberPassword}
+          className="mr-2"
+        />
+        <label htmlFor="remember-password" className="text-black text-[15px]">
+          Remember Password
         </label>
       </div>
       <div className="text-right mb-4">
