@@ -63,7 +63,7 @@ const LoginForm = () => {
         // Điều hướng dựa trên role
         navigate(`/${role}`);
       } else {
-        setMessage(loginData.message || 'Login failed. Please try again.');
+        setMessage(loginData.message );
       }
     } catch (error) {
       console.error(error);
@@ -113,6 +113,8 @@ const LoginForm = () => {
       setMessage("An error occurred. Please try again later.");
     }
   };
+
+
   
 
   return (
