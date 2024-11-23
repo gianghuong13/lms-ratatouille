@@ -260,6 +260,7 @@ const courseManageController = {
             SELECT 
             c.course_id,
             c.course_name,
+            t.term_id,
             t.term_name,
                 CASE 
                     WHEN cm.student_id IS NOT NULL THEN 'Student'

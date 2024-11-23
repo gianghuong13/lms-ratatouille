@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
+import { useDispatch } from "react-redux";
+import { setRole } from "../../redux/slices/authSlice";
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
@@ -18,6 +20,8 @@ const LoginForm = () => {
     if (savedEmail) setEmail(savedEmail);
     if (savedPassword) setPassword(atob(savedPassword)); // Giải mã Base64
   }, []);
+
+  const dispatch = useDispatch();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -60,6 +64,7 @@ const LoginForm = () => {
 
         // Lưu role vào localStorage
         localStorage.setItem('role', role);
+        dispatch(setRole(role));
 
         //Lưu userId vào localStorage
         localStorage.setItem('userId', userId);
