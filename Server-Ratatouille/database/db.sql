@@ -14,7 +14,7 @@ CREATE TABLE users (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     phone_number VARCHAR(10),
     gender ENUM('male','female'),
-    birth_date DATE,
+    birth_date DATE
 );
 
 -- Bảng terms

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
+import { useDispatch } from "react-redux";
+import { setRole } from "../../redux/slices/authSlice";
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
@@ -18,6 +20,8 @@ const LoginForm = () => {
     if (savedEmail) setEmail(savedEmail);
     if (savedPassword) setPassword(atob(savedPassword)); // Giải mã Base64
   }, []);
+
+  const dispatch = useDispatch();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -56,14 +60,19 @@ const LoginForm = () => {
 
         const decodeData = await decodeResponse.json();
         const role = decodeData.data.role;
+        const userId = decodeData.data.userId;
 
         // Lưu role vào localStorage
         localStorage.setItem('role', role);
+        dispatch(setRole(role));
+
+        //Lưu userId vào localStorage
+        localStorage.setItem('userId', userId);
 
         // Điều hướng dựa trên role
         navigate(`/${role}`);
       } else {
-        setMessage(loginData.message || 'Login failed. Please try again.');
+        setMessage(loginData.message );
       }
     } catch (error) {
       console.error(error);
@@ -86,33 +95,38 @@ const LoginForm = () => {
     setRememberPassword(!rememberPassword);
   };
 
-  // const ForgotPassword = async () => {
-  //   const userEmail = email;
-  //   if (!userEmail) {
-  //     setMessage("Please enter your email to reset password.");
-  //     return;
-  //   };
-  //   try {
-  //     const response = await fetch('/api/forgot-password', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify({ email: userEmail }),
-  //     });
+  const ForgotPassword = async (e) => {
+    e.preventDefault(); // Ngăn form submit
+    const userEmail = email;
   
-  //     const data = await response.json();
-  //     const newPass = data.data.newPassword;
-  //     if (response.status === 200) {
-  //       setMessage("Your new password is: " + newPass);
-  //     } else {
-  //       setMessage("Failed to process your request. Please try again.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error during forgot password request:", error);
-  //     setMessage("An error occurred. Please try again later.");
-  //   }
-  // };
+    if (!userEmail) {
+      setMessage("Please enter your email to reset password.");
+      return;
+    }
+  
+    try {
+      const response = await fetch('/api/forgot-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: userEmail }),
+      });
+  
+      const data = await response.json();
+      if (response.status === 200) {
+        setMessage("Your new password is: " + data.data.newPassword);
+      } else {
+        setMessage("Failed to process your request. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error during forgot password request:", error);
+      setMessage("An error occurred. Please try again later.");
+    }
+  };
+  
+
+
   
 
   return (
@@ -151,14 +165,14 @@ const LoginForm = () => {
           Remember Password
         </label>
       </div>
-      {/* <div className="text-right mb-4">
-        <button
+      <div className="text-right mb-4">
+        <button type="button"
           className="text-[15px] text-black hover:underline focus:outline-none"
           onClick={ForgotPassword}
         >
           Forgot Password?
         </button>
-      </div> */}
+      </div>
 
       <button
         type="submit"

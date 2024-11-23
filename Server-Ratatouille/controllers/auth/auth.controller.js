@@ -28,7 +28,7 @@ const authController = {
                         maxAge: ms("7 days"),
                     });
                     return successResponse(res, StatusCodes.OK, 'Login successfully', { 
-                        user: { fullName: user.full_name, email: user.email }, 
+                        user: { fullName: user.full_name, email: user.email, userId: user.user_id }, 
                         accessToken, 
                         refreshToken 
                     });
