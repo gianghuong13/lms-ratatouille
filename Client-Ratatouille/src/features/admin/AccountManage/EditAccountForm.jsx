@@ -31,6 +31,7 @@ export default function EditAccountForm() {
         const fetchUserData = async () => {
             try {
                 const response = await axios.get(`/api/admin-accounts/${userId}`);
+                console.log(response.data);
                 setUserData(response.data);
                 setLoading(false);
             } catch (error) {
@@ -84,69 +85,68 @@ export default function EditAccountForm() {
 
     const handleConfirm = async () => {
         setShowConfirm(false);
-        try {
-            await axios.put(`/api/admin-accounts/edit/${userId}`, userData);
-            setToast({ show: true, type: "success", message: "Account updated successfully!" });
-        } catch (error) {
-            console.error("Error updating account", error);
-            setToast({ show: true, type: "danger", message: "Failed to update account." });
-        }
-    };
+        try { await axios.put(`/api/admin-accounts/edit/${userId}`, userData);
+        setToast({ show: true, type: "success", message: "Account updated successfully!" });
+    } catch (error) {
+        console.error("Error updating account", error);
+        setToast({ show: true, type: "danger", message: "Failed to update account." });
+    }
+};
 
-    const handleCancel = () => {
-        setShowConfirm(false); // Đóng ConfirmCard
-    };
+const handleCancel = () => {
+    setShowConfirm(false); // Đóng ConfirmCard
+};
 
-    const closeToast = () => {
-        setToast({ ...toast, show: false });
-    };
+const closeToast = () => {
+    setToast({ ...toast, show: false });
+};
 
-    return (
-        <>
-            <h1 className="m-3 font-bold text-lg">Detail Information of {userData.full_name}</h1>
-            <hr className="border-t-2 my-3"></hr>
-            <form className="m-5" onSubmit={handleSubmit}>
-                <div className="flex space-x-10 mb-4">
-                    <div>
-                        <label className="block text-sm text-gray-700 font-bold">Full Name</label>
-                        <input
-                            type="text"
-                            name="full_name"
-                            value={userData.full_name || ""}
-                            onChange={handleChange}
-                            className="mt-1 p-2 border border-gray-300 rounded-md w-[300px] shadow focus:border-blue-700 bg-[#d4e6fc]"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm text-gray-700 font-bold">User Id</label>
-                        <input
-                            type="text"
-                            name="user_id"
-                            value={userData.user_id || ""}
-                            onChange={handleChange}
-                            className="mt-1 p-2 border border-gray-300 rounded-md w-[300px] shadow focus:border-blue-700 bg-[#d4e6fc]"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm text-gray-700 font-bold">Gender</label>
-                        <div className="flex mt-1 space-x-4">
-                            <label className="flex items-center space-x-2">
-                                <input
-                                    type="radio"
-                                    name="gender"
-                                    value="male"
-                                    checked={userData.gender === "male"}
-                                    onChange={handleChange}
-                                    className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                                />
-                                <span className="text-sm">Male</span>
-                            </label>
-                            <label className="flex items-center space-x-2">
-                                <input
-                                    type="radio"
-                                    name="gender"
-                                    value="female"
-                                    checked={userData.gender === "female"}
+return (
+    <>
+        <h1 className="m-3 font-bold text-lg">Detail Information of {userData.full_name}</h1>
+        <hr className="border-t-2 my-3"></hr>
+        <form className="m-5" onSubmit={handleSubmit}>
+            <div className="flex space-x-10 mb-4">
+                <div>
+                    <label className="block text-sm text-gray-700 font-bold">Full Name</label>
+                    <input
+                        type="text"
+                        name="full_name"
+                        value={userData.full_name || ""}
+                        onChange={handleChange}
+                        className="mt-1 p-2 border border-gray-300 rounded-md w-[300px] shadow focus:border-blue-700 bg-[#d4e6fc]"
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm text-gray-700 font-bold">User Id</label>
+                    <input
+                        type="text"
+                        name="user_id"
+                        value={userData.user_id || ""}
+                        onChange={handleChange}
+                        className="mt-1 p-2 border border-gray-300 rounded-md w-[300px] shadow focus:border-blue-700 bg-[#d4e6fc]"
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm text-gray-700 font-bold">Gender</label>
+                    <div className="flex mt-1 space-x-4">
+                        <label className="flex items-center space-x-2">
+                            <input
+                                type="radio"
+                                name="gender"
+                                value="male"
+                                checked={userData.gender === "male"}
+                                onChange={handleChange}
+                                className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                            />
+                            <span className="text-sm">Male</span>
+                        </label>
+                        <label className="flex items-center space-x-2">
+                            <input
+                                type="radio"
+                                name="gender"
+                                value="female"
+                                checked={userData.gender === "female"}
                                     onChange={handleChange}
                                     className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                                 />

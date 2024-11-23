@@ -25,7 +25,6 @@ import Dashboard from './pages/Teacher/TeacherPage.jsx';
 // Page Teacher
 import Notification from './pages/Teacher/NotiManage/Notification.jsx';
 import AllCoursesList from './pages/Teacher/AllCourses.jsx';
-
 const App = () => {
   const [role, setRole] = useState(null);
   const location = useLocation(); // Hook để lấy đường dẫn hiện tại
