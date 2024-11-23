@@ -38,7 +38,7 @@ const NAV_LINKS = {
     { to: "/teacher", icon: dashboard, alt: "dashboard", label: "Dashboard", end: true },
     { to: "/teacher/courses", icon: classes, alt: "courses", label: "Courses", end: false },
     { to: "/teacher/calendar", icon: home, alt: "calendar", label: "Calendar", end: false },
-    { to: "/teacher/notification", icon: notification, alt: "notification", label: "Notifications", end: false },
+    { to: "/teacher/notifications", icon: notification, alt: "notification", label: "Notifications", end: false },
     { to: "/teacher/help", icon: help, alt: "help", label: "Help", end: false },
     { to: "/teacher/account", icon: me, alt: "account", label: "Account", end: false },
   ],

@@ -7,6 +7,10 @@ import {Link} from "react-router-dom"
 
 
 export default function NewNotiForm(){
+    const apiKey = import.meta.env.VITE_API_KEY_EDITOR;
+
+    const navigate = useNavigate();
+
     const [allCourses, setAllCourses] = useState([]); // for selector
     const [allAdmins, setAllAdmins] = useState([]);// for selector
     const [selectedFiles, setSelectedFiles] = useState(null); // lưu các file đã chọn ở dạng file list
@@ -18,7 +22,6 @@ export default function NewNotiForm(){
         createdBy: '',
         content: ''
     });
-    const apiKey = import.meta.env.VITE_API_KEY_EDITOR;
 
     //Get all courses from server
     useEffect(()=>{
@@ -44,44 +47,29 @@ export default function NewNotiForm(){
         admin => ({label: admin.user_id, value:admin.user_id})
     );
 
-    
-
-    function handleChange(e){
-        console.log(e.target.value);
-        setNoti({...noti, [e.target.name]: [e.target.value]})
-    }
-
-    const navigate = useNavigate();
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         console.log(noti);
-        const res = await axios.post('/api/admin-create-new-noti', noti)
+        const res = await axios.post('/api/admin-create-new-noti', noti) // chèn các thông báo vào bảng notifications và trả về id cảu thông báo vừa tạo
         const noti_id = res.data.notification_id; // Lấy giá trị từ API
         
-        console.log("noti_id: ", noti_id)
         if(selectedFiles.length > 0){
-            console.log("selectedfiles",selectedFiles);
             const formData = new FormData();
             for(let i = 0; i < selectedFiles.length; i++){
                 formData.append("files", selectedFiles[i]);
             }
             formData.append("folder", "notifications/"+noti_id);
-            for (const [key, value] of formData.entries()) {
-                console.log(key, value);
-            }
+
             try{
                 const response = await axios.post('/api/upload-files', formData, {
                     headers: {
                         "Content-Type": "multipart/form-data",
                     }
                 })
-                const notiFile = response.data.uploadedFiles;
-                console.log("uploadedInfos",notiFile);
-                console.log(Array.isArray(notiFile));
+                const notiFile = response.data.uploadedFiles;// kết quả trả về từ việc đẩy file lên S3 là thông tin về file lưu trên S3 (gồm fileName và key), để chuản bị chèn thông tin vào bảng notification_files của DB
 
-                console.log("notiFile",notiFile);
-                await axios.post('/api/admin-create-noti-file', notiFile)
+                await axios.post('/api/admin-create-noti-file', notiFile) // chèn các thông tin vừa nhận vào bảng notification_files
                         .then((res) => navigate('/admin/notifications'))
                         .catch((err) => console.log(err));
                 
@@ -101,12 +89,13 @@ export default function NewNotiForm(){
         >
             <label className='flex items-center mb-2'>
             Notification Tittle:
-                <input type="text" name='title' id='title' className='border border-gray-300 p-2 rounded-md flex-1 ml-2'
+                <input type="text" name='title' id='title' 
+                className="border border-gray-300 rounded-md flex-1 ml-2 focus:outline focus:outline-2 focus:outline-[#D2DEF0] focus:border-[#015DAF] p-2 hover:border-[#015DAF]"
                 onChange={(e)=> setNoti({...noti, title: e.target.value})} required/>
             </label>
 
+            {/* Editor */}
             <Editor
-                // apiKey='kmkdiqqb79l6gte334tkg3drtreguyv3rm7qcuve8wip7mtq'
                 apiKey={apiKey}
                 id='noti-content'
                 init={{
@@ -137,6 +126,7 @@ export default function NewNotiForm(){
                 required
             />
 
+            {/* Notify to Courses */}
             <label htmlFor="notify2Courses" className="flex items-center my-2">
                 <span className="mr-2">Notify to:</span>
                 <div className="flex-1">
@@ -158,7 +148,7 @@ export default function NewNotiForm(){
                 </div>
             </label>
 
-
+            {/* Created By */}
             <label htmlFor="created-by" className="flex items-center mb-2">
                 <span className="mr-2">Created by:</span>
                 <div className="flex-1">
@@ -181,6 +171,7 @@ export default function NewNotiForm(){
                 </div>
             </label>
             
+            {/* Đính kèm các file */}
             <div className="flex flex-col md:flex-row items-start">
                 <label className="flex items-center m-0">
                     <span>File Attachment:</span>
@@ -198,7 +189,7 @@ export default function NewNotiForm(){
                     />
                 </label>
                 {/* Danh sách các file vừa chọn */}
-                {selectedFileNames.length > 0 && (
+                {selectedFileNames.length > 1 && (
                     <ul className="ml-2 mt-0 block">
                     {selectedFileNames.map((name, index) => (
                         <li key={index} className="italic block">
@@ -209,7 +200,8 @@ export default function NewNotiForm(){
                 )}
             </div>
 
-            <div>
+            {/* Submit Button */}
+            <div className='mt-2'>
                 <button type='button' className="text-white bg-[#015DAF] hover: hover:bg-[#397bfe] font-medium rounded-full px-5 py-2.5 mr-5"
                     onClick={()=> {window.location.reload();}}>
                     Reset
