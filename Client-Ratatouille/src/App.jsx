@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Route, Routes, Navigate, useLocation } from 'react-router-dom';
-
+import { useSelector } from 'react-redux';
 import ProtectedRoutes from './middlewares/ProtectedRoute.jsx';
 import UnauthorizedRoutes from './middlewares/UnauthorizedRoute.jsx';
 import Navbar from './components/Navbar.jsx';
@@ -9,6 +9,9 @@ import LoginPage from './pages/LoginPage.jsx';
 // Page Admin
 import MePage from './pages/Admin/MePage.jsx';
 import AdminDashboardPage from './pages/Admin/AdminDashboard.jsx';
+import AccountManagePage from './pages/Admin/AccountManage/AccountManagePage.jsx';
+import CreateAccountPage from './pages/Admin/AccountManage/CreateAccountPage.jsx';
+import EditAccountPage from './pages/Admin/AccountManage/EditAccountPage.jsx';
 import CourseManagePage from './pages/Admin/CourseManage/CourseManagePage.jsx';
 import AddCoursePage from './pages/Admin/CourseManage/AddCoursePage.jsx';
 import EditCoursePage from './pages/Admin/CourseManage/EditCoursePage.jsx';
@@ -23,16 +26,14 @@ import 'global';
 import Dashboard from './pages/Teacher/TeacherPage.jsx';
 // Page Student
 // Page Teacher
+// import AllCoursesList from './pages/Teacher/AllCourses.jsx';
+import CoursesList from './pages/CoursesList.jsx';
+import Menu from './components/Menu.jsx';
 import Notification from './pages/Teacher/NotiManage/Notification.jsx';
-import AllCoursesList from './pages/Teacher/AllCourses.jsx';
-const App = () => {
-  const [role, setRole] = useState(null);
-  const location = useLocation(); // Hook để lấy đường dẫn hiện tại
 
-  useEffect(() => {
-    const savedRole = localStorage.getItem('role');
-    setRole(savedRole);
-  }, []);
+const App = () => {
+  const role = useSelector((state) => state.auth.role);
+  const location = useLocation(); // Hook để lấy đường dẫn hiện tại
 
   // Điều kiện để Navbar chỉ hiển thị ở các trang không phải login
   const shouldShowNavbar = role && location.pathname !== '/login';
@@ -64,13 +65,15 @@ const App = () => {
             <Route index element={<Dashboard />} />
             <Route path="" element={<Dashboard />} />
             <Route path="account" element={<MePage />} />
-            <Route path="courses" element={<AllCoursesList />} />
+            <Route path="courses" element={<CoursesList />} />
+            <Route path="test" element={<Menu />} />
             <Route path="notifications" element={<Notification  />} />
           </Route>
           <Route path="/student">
             <Route index element={<Dashboard />} />
             <Route path="" element={<Dashboard />} />
             <Route path="account" element={<MePage />} />
+            <Route path="courses" element={<CoursesList />} />
           </Route>
         </Route>
         <Route element={<UnauthorizedRoutes />}>
