@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  role: null, // Trạng thái ban đầu
+  role: localStorage.getItem('role') || null, // Trạng thái ban đầu
 };
 
 const authSlice = createSlice({

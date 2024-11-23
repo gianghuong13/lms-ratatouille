@@ -18,17 +18,15 @@ import EditCoursePage from './pages/Admin/CourseManage/EditCoursePage.jsx';
 import Notifications from './pages/Admin/NotiManage/Notifications.jsx';
 import CreateNotification from './pages/Admin/NotiManage/CreateNotification.jsx';
 import UpdateNotification from './pages/Admin/NotiManage/UpdateNotification.jsx';
-import AccountManagePage from './pages/Admin/AccountManage/AccountManagePage.jsx';
-import CreateAccountPage from './pages/Admin/AccountManage/CreateAccountPage.jsx';
-import EditAccountPage from './pages/Admin/AccountManage/EditAccountPage.jsx';
+
 import 'global';
-// Page chung cho Student va Teacher
+// Page chung cho Student và Teacher
 import Dashboard from './pages/Teacher/TeacherPage.jsx';
 // Page Student
 // Page Teacher
 // import AllCoursesList from './pages/Teacher/AllCourses.jsx';
 import CoursesList from './pages/CoursesList.jsx';
-import Menu from './components/Menu.jsx';
+import CourseHomePage from './pages/Teacher/Course/CourseHomePage.jsx';
 import Notification from './pages/Teacher/NotiManage/Notification.jsx';
 
 const App = () => {
@@ -66,7 +64,7 @@ const App = () => {
             <Route path="" element={<Dashboard />} />
             <Route path="account" element={<MePage />} />
             <Route path="courses" element={<CoursesList />} />
-            <Route path="test" element={<Menu />} />
+            <Route path="courses/:courseId" element={<CourseHomePage />} />
             <Route path="notifications" element={<Notification  />} />
           </Route>
           <Route path="/student">
