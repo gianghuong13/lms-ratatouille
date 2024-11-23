@@ -86,33 +86,33 @@ const LoginForm = () => {
     setRememberPassword(!rememberPassword);
   };
 
-  const ForgotPassword = async () => {
-    const userEmail = email;
-    if (!userEmail) {
-      setMessage("Please enter your email to reset password.");
-      return;
-    };
-    try {
-      const response = await fetch('/api/forgot-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email: userEmail }),
-      });
+  // const ForgotPassword = async () => {
+  //   const userEmail = email;
+  //   if (!userEmail) {
+  //     setMessage("Please enter your email to reset password.");
+  //     return;
+  //   };
+  //   try {
+  //     const response = await fetch('/api/forgot-password', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({ email: userEmail }),
+  //     });
   
-      const data = await response.json();
-      const newPass = data.data.newPassword;
-      if (response.status === 200) {
-        setMessage("Your new password is: " + newPass);
-      } else {
-        setMessage("Failed to process your request. Please try again.");
-      }
-    } catch (error) {
-      console.error("Error during forgot password request:", error);
-      setMessage("An error occurred. Please try again later.");
-    }
-  };
+  //     const data = await response.json();
+  //     const newPass = data.data.newPassword;
+  //     if (response.status === 200) {
+  //       setMessage("Your new password is: " + newPass);
+  //     } else {
+  //       setMessage("Failed to process your request. Please try again.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error during forgot password request:", error);
+  //     setMessage("An error occurred. Please try again later.");
+  //   }
+  // };
   
 
   return (
@@ -151,14 +151,14 @@ const LoginForm = () => {
           Remember Password
         </label>
       </div>
-      <div className="text-right mb-4">
+      {/* <div className="text-right mb-4">
         <button
           className="text-[15px] text-black hover:underline focus:outline-none"
           onClick={ForgotPassword}
         >
           Forgot Password?
         </button>
-      </div>
+      </div> */}
 
       <button
         type="submit"
