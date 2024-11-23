@@ -23,6 +23,7 @@ import 'global';
 import Dashboard from './pages/Teacher/TeacherPage.jsx';
 // Page Student
 // Page Teacher
+import Notification from './pages/Teacher/NotiManage/Notification.jsx';
 import AllCoursesList from './pages/Teacher/AllCourses.jsx';
 
 const App = () => {
@@ -48,7 +49,7 @@ const App = () => {
 
             <Route path="accounts" element={<AccountManagePage />} />
             <Route path="accounts/create" element={<CreateAccountPage />} />
-            <Route path="account/edit/:userId" element={<EditAccountPage />} />
+            <Route path="accounts/edit/:userId" element={<EditAccountPage />} />
 
             <Route path='courses' element={<CourseManagePage />} />
             <Route path='courses/add' element={<AddCoursePage />} />
@@ -65,6 +66,7 @@ const App = () => {
             <Route path="" element={<Dashboard />} />
             <Route path="account" element={<MePage />} />
             <Route path="courses" element={<AllCoursesList />} />
+            <Route path="notifications" element={<Notification  />} />
           </Route>
           <Route path="/student">
             <Route index element={<Dashboard />} />
