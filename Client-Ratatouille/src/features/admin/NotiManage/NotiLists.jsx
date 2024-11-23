@@ -35,7 +35,7 @@ export default function NotiLists(){
                         )
                     }
                 </ul>
-            ) : (<p>Bạn chưa đăng bất kỳ thông báo nào.</p>)}
+            ) : (<p className="italic">No Posted Notification.</p>)}
         </div>
     );
 }

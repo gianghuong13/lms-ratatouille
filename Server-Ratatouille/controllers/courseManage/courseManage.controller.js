@@ -253,6 +253,35 @@ const courseManageController = {
             res.status(500).send('Failed to delete course');
         }
     },
+
+    getLoginedUsersCourses: (req, res) => {
+        const { user_id } = req.params;
+        const query = `
+            SELECT 
+            c.course_id,
+            c.course_name,
+            t.term_id,
+            t.term_name,
+                CASE 
+                    WHEN cm.student_id IS NOT NULL THEN 'Student'
+                    WHEN ct.teacher_id IS NOT NULL THEN 'Teacher'
+                END AS enrolled_as
+            FROM courses c
+            LEFT JOIN course_members cm ON c.course_id = cm.course_id AND cm.student_id = ?
+            LEFT JOIN course_teachers ct ON c.course_id = ct.course_id AND ct.teacher_id = ?
+            JOIN terms t ON c.term_id = t.term_id
+            WHERE cm.student_id IS NOT NULL OR ct.teacher_id IS NOT NULL;
+        `;
+    
+        connection.query(query, [user_id, user_id], (err, results) => {
+            if (err) {
+                console.log('Error fetching user courses:', err);
+                return res.status(500).send('Error fetching user courses');
+            }
+            res.status(200).json(results);
+        });
+    },
+    
 };
 
 export default courseManageController;
