@@ -18,6 +18,9 @@ import EditCoursePage from './pages/Admin/CourseManage/EditCoursePage.jsx';
 import Notifications from './pages/Admin/NotiManage/Notifications.jsx';
 import CreateNotification from './pages/Admin/NotiManage/CreateNotification.jsx';
 import UpdateNotification from './pages/Admin/NotiManage/UpdateNotification.jsx';
+import AccountManagePage from './pages/Admin/AccountManage/AccountManagePage.jsx';
+import CreateAccountPage from './pages/Admin/AccountManage/CreateAccountPage.jsx';
+import EditAccountPage from './pages/Admin/AccountManage/EditAccountPage.jsx';
 import 'global';
 // Page chung cho Student va Teacher
 import Dashboard from './pages/Teacher/TeacherPage.jsx';
@@ -26,6 +29,8 @@ import Dashboard from './pages/Teacher/TeacherPage.jsx';
 // import AllCoursesList from './pages/Teacher/AllCourses.jsx';
 import CoursesList from './pages/CoursesList.jsx';
 import Menu from './components/Menu.jsx';
+import Notification from './pages/Teacher/NotiManage/Notification.jsx';
+
 const App = () => {
   const role = useSelector((state) => state.auth.role);
   const location = useLocation(); // Hook để lấy đường dẫn hiện tại
@@ -41,30 +46,33 @@ const App = () => {
           <Route path="/admin">
             <Route index element={<AdminDashboardPage />} />
             <Route path="" element={<AdminDashboardPage />} />
-            <Route path="me" element={<MePage />} />
+
+            <Route path="accounts" element={<AccountManagePage />} />
+            <Route path="accounts/create" element={<CreateAccountPage />} />
+            <Route path="accounts/edit/:userId" element={<EditAccountPage />} />
+
             <Route path='courses' element={<CourseManagePage />} />
             <Route path='courses/add' element={<AddCoursePage />} />
             <Route path='courses/edit/:courseId' element={<EditCoursePage />} />
+
             <Route path="notifications" element={<Notifications />} />
             <Route path="notifications/create-notification" element={<CreateNotification />} />
             <Route path="notifications/update-notification/:id" element={<UpdateNotification />} />
-            <Route path='accounts' element={<AccountManagePage />} />
-            <Route path='accounts/create' element={<CreateAccountPage />} />
-            <Route path='accounts/edit/:userId' element={<EditAccountPage />} />
+            
+            <Route path="me" element={<MePage />} />
           </Route>
           <Route path="/teacher">
             <Route index element={<Dashboard />} />
             <Route path="" element={<Dashboard />} />
             <Route path="account" element={<MePage />} />
-            {/* <Route path="courses" element={<AllCoursesList />} /> */}
             <Route path="courses" element={<CoursesList />} />
             <Route path="test" element={<Menu />} />
+            <Route path="notifications" element={<Notification  />} />
           </Route>
           <Route path="/student">
             <Route index element={<Dashboard />} />
             <Route path="" element={<Dashboard />} />
             <Route path="account" element={<MePage />} />
-            {/* <Route path="courses" element={<AllCoursesList />} /> */}
             <Route path="courses" element={<CoursesList />} />
           </Route>
         </Route>

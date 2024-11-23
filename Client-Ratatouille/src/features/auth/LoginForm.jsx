@@ -95,6 +95,35 @@ const LoginForm = () => {
     setRememberPassword(!rememberPassword);
   };
 
+  const ForgotPassword = async () => {
+    const userEmail = email;
+    if (!userEmail) {
+      setMessage("Please enter your email to reset password.");
+      return;
+    };
+    try {
+      const response = await fetch('/api/forgot-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: userEmail }),
+      });
+  
+      const data = await response.json();
+      const newPass = data.data.newPassword;
+      if (response.status === 200) {
+        setMessage("Your new password is: " + newPass);
+      } else {
+        setMessage("Failed to process your request. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error during forgot password request:", error);
+      setMessage("An error occurred. Please try again later.");
+    }
+  };
+  
+
   return (
     <form onSubmit={handleLogin} className="w-full max-w-md p-8 bg-[#fffafa] rounded-2xl border-2 border-solid border-[#015daf] shadow-lg">
       <h1 className="text-center text-4xl font-medium text-black mb-8">
@@ -132,10 +161,14 @@ const LoginForm = () => {
         </label>
       </div>
       <div className="text-right mb-4">
-        <a href="#" className="text-[15px] text-black">
+        <button
+          className="text-[15px] text-black hover:underline focus:outline-none"
+          onClick={ForgotPassword}
+        >
           Forgot Password?
-        </a>
+        </button>
       </div>
+
       <button
         type="submit"
         className="w-full h-10 mb-4 bg-[#d9d9d9] rounded text-[15px] text-black flex items-center justify-center"

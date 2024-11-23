@@ -10,24 +10,25 @@ export default function UpdateNotiForm() {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    // Notification state
-    const [noti, setNoti] = useState({
+    const [createdDate, setCreatedDate] = useState();
+    const [lastModified, setLastModified] = useState();
+
+    const [noti, setNoti] = useState({ // Notification state
         title: '',
         notifyTo: '',
         createdBy: '',
         content: ''
     });
 
-    // All courses
-    const [allCourses, setAllCourses] = useState([]);
-    // All admins
-    const [allAdmins, setAllAdmins] = useState([]);
-    // Selected courses
-    const [selectedCourses, setSelectedCourses] = useState([]);
+    const [allCourses, setAllCourses] = useState([]); // All courses
+   
+    const [allAdmins, setAllAdmins] = useState([]); // All admins
+    
+    const [selectedCourses, setSelectedCourses] = useState([]); // Selected courses
 
-    const [filesList, setFilesList] = useState([]);
+    const [filesList, setFilesList] = useState([]); // posted file list
 
-    const [selectedFiles, setSelectedFiles] = useState(null);// lưu các file đã chọn ở dạng file list
+    const [selectedFiles, setSelectedFiles] = useState(null);// lưu các file vừa chọn ở dạng file list
     const [selectedFileNames, setSelectedFileNames] = useState([]);// lưu tên các file đã chọn ở dạng array
 
     // Fetch all required data
@@ -46,6 +47,8 @@ export default function UpdateNotiForm() {
                 const notiRes = await axios.get(`/api/admin-posted-noti/${id}`);
                 if (notiRes.data && notiRes.data.length > 0) {
                     const { title, content, creator_id } = notiRes.data[0];
+                    setCreatedDate(notiRes.data[0].created_date);
+                    setLastModified(notiRes.data[0].last_modified);
                     setNoti(prev => ({
                         ...prev,
                         title,
@@ -56,21 +59,17 @@ export default function UpdateNotiForm() {
 
                 // Fetch selected courses
                 const selectedCoursesRes = await axios.get(`/api/admin-selected-courses/${id}`);
-                if (selectedCoursesRes.data && selectedCoursesRes.data.length > 0) {
+                if (selectedCoursesRes.data && selectedCoursesRes.data.length > 0) { // nếu ko có courses nào trong bảng notification_courses, chứng tỏ TB đó là is_global = 1
                     setSelectedCourses(selectedCoursesRes.data);
                 } else {
                     setSelectedCourses([{ course_id: 'all', course_name: 'All courses' }]);
                 }
 
                 const filesDB = await axios.get(`/api/admin-posted-noti-file/${id}`);
-                console.log("filesDB", filesDB.data);
-                if(filesDB.data.length > 0){
+                if(filesDB.data.length > 0){ // nếu có dữ liệu trả về từ notification_files, chứng tỏ thông báo đó đính kèm file 
                     const fileInfos = {files: filesDB.data}
-                    console.log("fileInfos", fileInfos)
-                    const filesListRes = await axios.post('/api/object-urls', fileInfos);
-                    console.log("filesList response", filesListRes.data)
+                    const filesListRes = await axios.post('/api/object-urls', fileInfos); // lấy các urls ứng với các file trên S3 về 
                     setFilesList(filesListRes.data.results);
-                    console.log(filesList);
                 }
                 
             } catch (err) {
@@ -87,26 +86,17 @@ export default function UpdateNotiForm() {
         value: admin.user_id
     }));
 
-    // Handle input changes
-    function handleChange(e) {
-        setNoti(prev => ({ ...prev, [e.target.name]: e.target.value }));
-    }
-
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await axios.put('/api/admin-update-noti/' + id, noti);
-        // .then(res => navigate('/admin/notifications'))
-        // .catch(err => console.log(err))
-        console.log("selected files", selectedFiles)
-        console.log("co la mang ko", Array.isArray(selectedFiles) );
+        await axios.put('/api/admin-update-noti/' + id, noti); // cập nhật thông tin update cho bảng notifications
+
+        {/* Xử lý nếu người dùng chọn các file khác */}
         if(selectedFiles !== null){
             // xoa cac file da chon tren s3
-            const filesDB = await axios.get(`/api/admin-posted-noti-file/${id}`);
-            if(filesDB.data.length > 0){
-                console.log("filesDB", filesDB.data);
+            const filesDB = await axios.get(`/api/admin-posted-noti-file/${id}`); // lấy thông tin các file từ DB
+            if(filesDB.data.length > 0){ // nếu có thông tin các file trong DB thì xóa các file đó trên S3 bằng keys 
                 const fileInfos = {keys: filesDB.data.map(file => file.file_path)}
-                console.log("file infos", fileInfos)
                 await axios.post('/api/delete-files', fileInfos)
             }
             
@@ -116,26 +106,16 @@ export default function UpdateNotiForm() {
                 formData.append("files", selectedFiles[i]);
             }
             formData.append("folder", "notifications/"+id);
-            for (const [key, value] of formData.entries()) {
-                console.log(key, value);
-            }
+            
             try{
-                const response = await axios.post('/api/upload-files', formData, {
+                const response = await axios.post('/api/upload-files', formData, { // đẩy các file lên S3
                     headers: {
                         "Content-Type": "multipart/form-data",
                     }
                 })
-                const notiFile = response.data.uploadedFiles;
-                console.log("uploadedInfos",notiFile);
-                console.log(Array.isArray(notiFile));
+                const notiFile = response.data.uploadedFiles; // kết quả trả về từ việc đẩy file lên S3 là thông tin về file lưu trên S3 (gồm fileName và key), để chuản bị chèn thông tin vào bảng notification_files của DB
 
-                console.log("notiFile",notiFile);
-                // await axios.post('/api/admin-create-noti-file', notiFile)
-                //         .then((res) => navigate('/admin/notifications'))
-                //         .catch((err) => console.log(err));
-                // them vao noti_file
-
-                await axios.put(`/api/admin-update-noti-file/${id}`, notiFile)
+                await axios.put(`/api/admin-update-noti-file/${id}`, notiFile) // đẩy thông tin các file vào bảng notification_files ở DB
                 .then((res) => navigate('/admin/notifications'))
                 .catch((err) => console.log(err));
 
@@ -149,16 +129,14 @@ export default function UpdateNotiForm() {
     // Handle delete notification 
     const handleDelete = async(id) => {
          // xoa cac file da chon tren s3
-         if(filesList.length > 0){
+         if(filesList.length > 0){ // nếu có các file được lưu trên S3 
             const filesDB = await axios.get(`/api/admin-posted-noti-file/${id}`);
-            console.log("filesDB", filesDB.data);
             const fileInfos = {keys: filesDB.data.map(file => file.file_path)}
-            console.log("file infos", fileInfos)
             await axios.post('/api/delete-files', fileInfos)
             .then((res) => console.log("delete file successfully"))
-                .catch((err) => console.log(err));
+            .catch((err) => console.log(err));
          }
-         // xoa noti trong DB
+         // xoa thông tin các file trong bảng notification_files của DB
         await axios.delete(`/api/admin-delete-noti/${id}`)
         .then(res => navigate('/admin/notifications'))
         .catch(err => console.log(err))
@@ -171,7 +149,7 @@ export default function UpdateNotiForm() {
             <label className='flex items-center mb-2'>
                 Notification Title:
                 <input
-                    className='border border-gray-300 p-2 rounded-md flex-1 ml-2'
+                    className="border border-gray-300 rounded-md flex-1 ml-2 focus:outline focus:outline-2 focus:outline-[#D2DEF0] focus:border-[#015DAF] p-2 hover:border-[#015DAF]"
                     type="text"
                     name="title"
                     id="title"
@@ -223,6 +201,7 @@ export default function UpdateNotiForm() {
                     />
                 </div>
             </label>
+            
             {/* Created By */}
             <label htmlFor="createdBy" className="flex items-center mb-2">
                 <span className="mr-2">Created by:</span>
@@ -272,7 +251,7 @@ export default function UpdateNotiForm() {
                 </div>
 
                 {/* Đính kèm các file khác */}
-                <div className="inline-block flex-1 mb-2">
+                <div className="inline-block flex-1 mb-1">
                     <label>
                         Choose other File Attachment:
                         <input
@@ -297,10 +276,13 @@ export default function UpdateNotiForm() {
                         </ul>
                     )}
                 </div>
-
             </div>
 
-            
+            {/* Lịch sử tạo, sửa file */}
+            <div className='flex'>
+                <p className='inline-block flex-1'>Created at: {createdDate}</p>
+                <p className='inline-block flex-1'>Last modified at: {lastModified}</p>
+            </div>
 
             {/* Submit Button */}
             <div>
