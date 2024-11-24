@@ -54,7 +54,7 @@ export default function NewNotiForm(){
         const res = await axios.post('/api/admin-create-new-noti', noti) // chèn các thông báo vào bảng notifications và trả về id cảu thông báo vừa tạo
         const noti_id = res.data.notification_id; // Lấy giá trị từ API
         
-        if(selectedFiles.length > 0){
+        if(selectedFiles && selectedFiles.length > 0){
             const formData = new FormData();
             for(let i = 0; i < selectedFiles.length; i++){
                 formData.append("files", selectedFiles[i]);
@@ -79,7 +79,6 @@ export default function NewNotiForm(){
         }else{
             navigate('/admin/notifications'); // Điều hướng sau khi nhận được noti_id
         }
-        
         
     }
 

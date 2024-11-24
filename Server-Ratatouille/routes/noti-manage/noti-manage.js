@@ -16,4 +16,7 @@ router.post('/admin-create-noti-file', notiController.createNotiFile);
 router.get('/admin-posted-noti-file/:id', notiController.getPostedNotiFile);
 router.put('/admin-update-noti-file/:id', notiController.updateNotiFile);
 
+router.post('/teacher-general-noti', notiController.getAllNotificationsGeneralOfTeacher);
+
+
 export default router;

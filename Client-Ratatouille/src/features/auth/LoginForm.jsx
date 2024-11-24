@@ -72,7 +72,7 @@ const LoginForm = () => {
         // Điều hướng dựa trên role
         navigate(`/${role}`);
       } else {
-        setMessage(loginData.message || 'Login failed. Please try again.');
+        setMessage(loginData.message );
       }
     } catch (error) {
       console.error(error);
@@ -95,12 +95,15 @@ const LoginForm = () => {
     setRememberPassword(!rememberPassword);
   };
 
-  const ForgotPassword = async () => {
+  const ForgotPassword = async (e) => {
+    e.preventDefault(); // Ngăn form submit
     const userEmail = email;
+  
     if (!userEmail) {
       setMessage("Please enter your email to reset password.");
       return;
-    };
+    }
+  
     try {
       const response = await fetch('/api/forgot-password', {
         method: 'POST',
@@ -111,9 +114,8 @@ const LoginForm = () => {
       });
   
       const data = await response.json();
-      const newPass = data.data.newPassword;
       if (response.status === 200) {
-        setMessage("Your new password is: " + newPass);
+        setMessage("Your new password is: " + data.data.newPassword);
       } else {
         setMessage("Failed to process your request. Please try again.");
       }
@@ -122,6 +124,9 @@ const LoginForm = () => {
       setMessage("An error occurred. Please try again later.");
     }
   };
+  
+
+
   
 
   return (
@@ -161,7 +166,7 @@ const LoginForm = () => {
         </label>
       </div>
       <div className="text-right mb-4">
-        <button
+        <button type="button"
           className="text-[15px] text-black hover:underline focus:outline-none"
           onClick={ForgotPassword}
         >
