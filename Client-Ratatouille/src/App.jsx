@@ -23,10 +23,16 @@ import 'global';
 // Page chung cho Student và Teacher
 import Dashboard from './pages/Teacher/TeacherPage.jsx';
 // Page Student
+
 // Page Teacher
 // import AllCoursesList from './pages/Teacher/AllCourses.jsx';
 import CoursesList from './pages/CoursesList.jsx';
-import CourseHomePage from './pages/Teacher/Course/CourseHomePage.jsx';
+import CourseHome from './pages/Teacher/Course/CourseHome.jsx';
+import CourseAssignments from './pages/Teacher/Course/CourseAssignments.jsx';
+import CourseDiscussions from './pages/Teacher/Course/CourseDiscussions.jsx';
+import CourseGrades from './pages/Teacher/Course/CourseGrades.jsx';
+import CoursePeople from './pages/Teacher/Course/CoursePeople.jsx';
+import CourseFiles from './pages/Teacher/Course/CourseFiles.jsx';
 import Notification from './pages/Teacher/NotiManage/Notification.jsx';
 
 const App = () => {
@@ -64,7 +70,12 @@ const App = () => {
             <Route path="" element={<Dashboard />} />
             <Route path="account" element={<MePage />} />
             <Route path="courses" element={<CoursesList />} />
-            <Route path="courses/:courseId" element={<CourseHomePage />} />
+            <Route path="courses/:courseId" element={<CourseHome />} />
+            <Route path='courses/:courseId/assignments' element={<CourseAssignments />} />
+            <Route path='courses/:courseId/discussions' element={<CourseDiscussions />} />
+            <Route path='courses/:courseId/grades' element={<CourseGrades />} />
+            <Route path='courses/:courseId/people' element={<CoursePeople />} />
+            <Route path='courses/:courseId/files' element={<CourseFiles />} />
             <Route path="notifications" element={<Notification  />} />
           </Route>
           <Route path="/student">
