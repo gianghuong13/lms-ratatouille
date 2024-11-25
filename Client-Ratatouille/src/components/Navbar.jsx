@@ -30,7 +30,7 @@ const NAV_LINKS = {
     { to: "/student", icon: dashboard, alt: "dashboard", label: "Dashboard", end: true },
     { to: "/student/courses", icon: classes, alt: "courses", label: "Courses", end: false },
     { to: "/student/calendar", icon: home, alt: "calendar", label: "Calendar", end: false },
-    { to: "/student/notification", icon: notification, alt: "notification", label: "Notifications", end: false },
+    { to: "/student/notifications", icon: notification, alt: "notification", label: "Notifications", end: false },
     { to: "/student/help", icon: help, alt: "help", label: "Help", end: false },
     { to: "/student/account", icon: me, alt: "account", label: "Account", end: false },
   ],
