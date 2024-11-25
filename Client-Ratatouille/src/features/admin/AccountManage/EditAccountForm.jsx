@@ -22,7 +22,7 @@ export default function EditAccountForm() {
             const timer = setTimeout(() => {
                 setToast({ ...toast, show: false }); 
                 if (toast.type === "success") {
-                    navigate("/admin/accounts"); // Chuyển hướng sau 5 giây
+                    navigate("/admin/accounts"); 
                 }
             }, 3000);
 

@@ -111,11 +111,11 @@ const accountManageController = {
                     if (err) {
                         if (err.code === 'ER_DUP_ENTRY') {
                             if (err.sqlMessage.includes('users.email')) {
-                                return res.status(400).send("Email đã tồn tại");
+                                return res.status(400).send("User id hoặc email đã tồn tại");
                             } else if (err.sqlMessage.includes('users.user_id')) {
-                                return res.status(400).send("User id đã tồn tại");
+                                return res.status(400).send("User id hoặc email đã tồn tại");
                             } else if (err.sqlMessage.includes("users.PRIMARY")) {
-                                return res.status(400).send("User id và email đã tồn tại");
+                                return res.status(400).send("User id hoặc email đã tồn tại");
                             }
                         } else {
     
