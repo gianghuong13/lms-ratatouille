@@ -5,7 +5,7 @@ import MainContent from "../../features/auth/MainContent.jsx";
 export const MePage = () => {
   return (
     <div className="bg-[#f5f8fb] flex h-screen w-screen">
-      <Navbar />
+      {/* <Navbar /> */}
       <MainContent />
     </div>
   );

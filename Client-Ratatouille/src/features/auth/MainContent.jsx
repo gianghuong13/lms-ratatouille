@@ -2,11 +2,18 @@ import React from "react";
 import boxArrowRight from "../../assets/Admin_screen/Box_arrow_right.svg";
 import frame from "../../assets/Admin_screen/Frame.svg";
 import key from "../../assets/Admin_screen/key.svg";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { clearRole } from "../../redux/slices/authSlice";
 
 const MainContent = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const Logout = () => {
     localStorage.removeItem("accessToken");
-    window.location.href = "/login";
+    localStorage.removeItem("role");
+    dispatch(clearRole());
+    navigate("/login");
   };
 
   return (

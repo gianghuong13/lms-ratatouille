@@ -34,6 +34,7 @@ export default function EditAccountForm() {
         const fetchUserData = async () => {
             try {
                 const response = await axios.get(`/api/admin-accounts/${userId}`);
+                console.log(response.data);
                 setUserData(response.data);
                 setLoading(false);
             } catch (error) {
@@ -87,22 +88,21 @@ export default function EditAccountForm() {
 
     const handleConfirm = async () => {
         setShowConfirm(false);
-        try {
-            await axios.put(`/api/admin-accounts/edit/${userId}`, userData);
-            setToast({ show: true, type: "success", message: "Account updated successfully!" });
-        } catch (error) {
-            console.error("Error updating account", error);
-            setToast({ show: true, type: "danger", message: "Failed to update account." });
-        }
-    };
+        try { await axios.put(`/api/admin-accounts/edit/${userId}`, userData);
+        setToast({ show: true, type: "success", message: "Account updated successfully!" });
+    } catch (error) {
+        console.error("Error updating account", error);
+        setToast({ show: true, type: "danger", message: "Failed to update account." });
+    }
+};
 
     const handleCancel = () => {
         setShowConfirm(false); 
     };
 
-    const closeToast = () => {
-        setToast({ ...toast, show: false });
-    };
+const closeToast = () => {
+    setToast({ ...toast, show: false });
+};
 
     return (
         <>

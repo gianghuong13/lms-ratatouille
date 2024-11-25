@@ -11,7 +11,10 @@ CREATE TABLE users (
     full_name NVARCHAR(255),
     role ENUM('admin', 'teacher', 'student') NOT NULL,
     email NVARCHAR(255) UNIQUE,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    phone_number VARCHAR(10),
+    gender ENUM('male','female'),
+    birth_date DATE
 );
 
 -- Bảng terms
