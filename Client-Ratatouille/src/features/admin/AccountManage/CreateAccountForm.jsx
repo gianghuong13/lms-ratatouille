@@ -8,48 +8,51 @@ export default function CreateAccountForm() {
     const [userData, setUserData] = useState({
         email: '',
         full_name: '',
-        username: '',
         phone_number: '',
         birth_date: '',
         gender: 'male',
-        role: 'student',
+        role: 'teacher',
         password: '',
+        user_id: ''
     });
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+
+
+    
     const [formErrors, setFormErrors] = useState({
         email: '',
         phone_number: ''
     });
-    const [showConfirm, setShowConfirm] = useState(false); // Confirm card state
-    const [toast, setToast] = useState({ show: false, type: "", message: "" }); // Toast state
-    const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
+    const [showConfirm, setShowConfirm] = useState(false); 
+    const [toast, setToast] = useState({ show: false, type: "", message: "" }); 
+    const [showPassword, setShowPassword] = useState(false); 
 
     // useEffect to auto-hide toast after 5 seconds
     useEffect(() => {
         if (toast.show) {
             const timer = setTimeout(() => {
                 setToast({ ...toast, show: false }); // Hide toast after 3 seconds
-            }, 3000);
+            }, 5000);
 
             return () => clearTimeout(timer); // Cleanup timer if toast changes
         }
     }, [toast]);
 
-    const handleChange = (e) => {
+    const handleChange = async (e) => {
         const { name, value } = e.target;
         setUserData((prevData) => ({
             ...prevData,
             [name]: value,
         }));
+
         setFormErrors((prevErrors) => ({
             ...prevErrors,
             [name]: validateField(name, value),
         }));
+
     };
 
     const validateField = (name, value) => {
-        switch (name) {
+         switch (name) {
             case 'email':
                 return value.endsWith('@vnu.edu.vn') ? '' : 'Email must be in @vnu.edu.vn format';
             case 'phone_number':
@@ -59,26 +62,59 @@ export default function CreateAccountForm() {
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const isFormValid = Object.values(userData).every((value) => value !== '') &&
-                            Object.values(formErrors).every((error) => error === '');
+    
+        const isFormValid =
+            Object.values(userData).every((value) => value !== "") &&
+            Object.values(formErrors).every((error) => error === "");
+    
         if (!isFormValid) {
-            setToast({ show: true, type: "danger", message: "Please fill out all fields correctly." });
+            setToast({
+                show: true,
+                type: "danger",
+                message: "Please fill out all fields correctly.",
+            });
             return;
         }
+    
         setShowConfirm(true); // Hiển thị ConfirmCard
     };
-
+    
+    
+    
     const handleConfirm = async () => {
-        setShowConfirm(false);
+        setShowConfirm(false); // Đóng ConfirmCard
+    
         try {
-            // API endpoint để tạo tài khoản mới
+            // Gửi request để tạo tài khoản mới
             await axios.post(`/api/admin-accounts/create`, userData);
-            setToast({ show: true, type: "success", message: "Account created successfully!" });
+    
+            setToast({
+                show: true,
+                type: "success",
+                message: "Account created successfully!",
+            });
+            setUserData({
+                email: '',
+                full_name: '',
+                phone_number: '',
+                birth_date: '',
+                gender: 'male',
+                role: 'teacher',
+                password: '',
+                user_id: ''
+            });
+
+            
         } catch (error) {
             console.error("Error creating account", error);
-            setToast({ show: true, type: "danger", message: "Failed to create account." });
+            
+            setToast({
+                show: true,
+                type: "danger",
+                message: error.response?.data || "An unexpected error occurred.",
+            });
         }
     };
 
@@ -100,13 +136,14 @@ export default function CreateAccountForm() {
             <h1 className="m-3 font-bold text-lg">Create New Account</h1>
             <hr className="border-t-2 my-3"></hr>
             <form className="m-5" onSubmit={handleSubmit}>
-                <div className="flex space-x-10 mb-4">
+                <div className="flex space-x-10 mb-6">
                     <div>
                         <label className="block text-sm text-gray-700 font-bold">Full Name</label>
                         <input
                             type="text"
                             name="full_name"
                             placeholder="Full Name"
+                            value= {userData.full_name}
                             onChange={handleChange}
                             className="mt-1 p-2 border border-gray-300 rounded-md w-[300px] shadow focus:border-blue-700 bg-[#d4e6fc]"
                         />
@@ -117,6 +154,7 @@ export default function CreateAccountForm() {
                             type="text"
                             name="user_id"
                             placeholder="User Id"
+                            value={userData.user_id}
                             onChange={handleChange}
                             className="mt-1 p-2 border border-gray-300 rounded-md w-[300px] shadow focus:border-blue-700 bg-[#d4e6fc]"
                         />
@@ -149,13 +187,14 @@ export default function CreateAccountForm() {
                         </div>
                     </div>
                 </div>
-                <div className="flex space-x-10 mb-4">
+                <div className="flex space-x-10 mb-6">
                     <div>
                         <label className="block text-sm text-gray-700 font-bold">Email</label>
                         <input
                             type="email"
                             name="email"
                             placeholder="Email"
+                            value={userData.email}
                             onChange={handleChange}
                             className="mt-1 p-2 border border-gray-300 rounded-md w-[200px] shadow focus:border-blue-700 bg-[#d4e6fc]"
                         />
@@ -168,6 +207,7 @@ export default function CreateAccountForm() {
                             type="text"
                             name="phone_number"
                             placeholder="Phone Number"
+                            value={userData.phone_number}
                             onChange={handleChange}
                             className="mt-1 p-2 border border-gray-300 rounded-md w-[200px] shadow focus:border-blue-700 bg-[#d4e6fc]"
                         />
@@ -178,39 +218,28 @@ export default function CreateAccountForm() {
                     <select
                         name="role"
                         onChange={handleChange}
+                        value={userData.role}
                         className="mt-1 p-2 border border-gray-300 rounded-md w-[100px] shadow focus:border-blue-700 bg-[#d4e6fc]"
                     >
                         <option value="teacher">Teacher</option>
-                        <option value="admin">Admin</option>
                         <option value="student">Student</option>
                     </select>
                 </div>
                 
                 </div>
-                <div className="flex space-x-10 mb-4">
+                
+                <div className="flex space-x-10 mb-6">
                 <div>
                     <label className="block text-sm text-gray-700 font-bold">Date of birth (mm/dd/yyyy)</label>
                     <input
                         type="date"
                         name="birth_date"
                         placeholder="Date of birth"
+                        value={userData.birth_date}
                         onChange={handleChange}
                         className="mt-1 p-2 border border-gray-300 rounded-md w-[200px] shadow focus:border-blue-700 bg-[#d4e6fc]"
                     />
                 </div>
-
-                <div>
-                    <label className="block text-sm text-gray-700 font-bold">Username</label>
-                    <input
-                        type="text"
-                        name="username"
-                        placeholder="Username"
-                        onChange={handleChange}
-                        className="mt-1 p-2 border border-gray-300 rounded-md w-[200px] shadow focus:border-blue-700 bg-[#d4e6fc]"
-                    />
-                </div>
-                </div>
-                <div className="flex space-x-10 mb-4">
                     <div>
                         <label className="block text-sm text-gray-700 font-bold">Password</label>
                         <div className="relative">
@@ -218,6 +247,7 @@ export default function CreateAccountForm() {
                                 type={showPassword ? "text" : "password"}
                                 name="password"
                                 placeholder="Password"
+                                value={userData.password}
                                 onChange={handleChange}
                                 className="mt-1 p-2 border border-gray-300 rounded-md w-[200px] shadow focus:border-blue-700 bg-[#d4e6fc]"
                             />

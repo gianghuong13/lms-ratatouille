@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 
 const accountManageController = {
     getAllTeachersAccount: (req, res) => {
-        const sql = `SELECT user_id, email, full_name, username, phone_number,
+        const sql = `SELECT user_id, email, full_name, phone_number,
         birth_date, gender FROM users
                     WHERE role = 'teacher'
                     ORDER BY user_id ;`
@@ -17,7 +17,7 @@ const accountManageController = {
     },
 
     getAllStudentsAccount: (req, res) => {
-        const sql = `SELECT user_id, email, full_name, username, phone_number,
+        const sql = `SELECT user_id, email, full_name, phone_number,
         birth_date, gender FROM users
                     WHERE role = 'student'
                     ORDER BY user_id;`
@@ -46,7 +46,7 @@ const accountManageController = {
 
     getAccountById: (req, res) => {
         const { userId } = req.params; // Lấy userId từ tham số URL
-        const sql = `SELECT user_id, email, full_name, username, phone_number, 
+        const sql = `SELECT user_id, email, full_name, phone_number, 
                     birth_date, gender, role FROM users WHERE user_id = ?`;
     
         connection.query(sql, [userId], (err, data) => {
@@ -62,15 +62,16 @@ const accountManageController = {
     },
 
 
+    
+
     updateAccountById: (req, res) => {
         const { userId } = req.params; 
-        const { email, full_name, username, phone_number, birth_date, gender, role } = req.body; // Lấy dữ liệu từ request body
+        const { email, full_name, phone_number, birth_date, gender, role } = req.body; // Lấy dữ liệu từ request body
     
         const sql = `
             UPDATE users 
             SET email = ?, 
                 full_name = ?, 
-                username = ?, 
                 phone_number = ?, 
                 birth_date = ?, 
                 gender = ?, 
@@ -79,7 +80,7 @@ const accountManageController = {
     
         connection.query(
             sql,
-            [email, full_name, username, phone_number, birth_date, gender, role, userId],
+            [email, full_name, phone_number, birth_date, gender, role, userId],
             (err, result) => {
                 if (err) {
                     console.error("Error query at updateAccountById:", err);
@@ -94,34 +95,42 @@ const accountManageController = {
     },
 
     createAccount: async (req, res) => {
-        const { email, full_name, username, phone_number, birth_date, gender, role, password, user_id } = req.body;
-        
-       
-
+        const { email, full_name, phone_number, birth_date, gender, role, password, user_id } = req.body;
+    
         try {
             const hashedPassword = await bcrypt.hash(password, 10);
-
+    
             const sql = `
-                INSERT INTO users (email, full_name, username, phone_number, birth_date, gender, role, password, user_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-
+                INSERT INTO users (email, full_name, phone_number, birth_date, gender, role, password, user_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+    
             connection.query(
                 sql,
-                [email, full_name, username, phone_number, birth_date, gender, role, hashedPassword, user_id],
+                [email, full_name, phone_number, birth_date, gender, role, hashedPassword, user_id],
                 (err, result) => {
                     if (err) {
+                        if (err.code === 'ER_DUP_ENTRY') {
+                            if (err.sqlMessage.includes('users.email')) {
+                                return res.status(400).send("Email đã tồn tại");
+                            } else if (err.sqlMessage.includes('users.user_id')) {
+                                return res.status(400).send("User id đã tồn tại");
+                            } else if (err.sqlMessage.includes("users.PRIMARY")) {
+                                return res.status(400).send("User id và email đã tồn tại");
+                            }
+                        } else {
+    
                         console.error("Error query at createAccount:", err);
-                        return res.status(500).send("Error creating new account");
+                        return res.status(500).send("Lỗi khi tạo tài khoản");}
                     }
-                    return res.status(201).send("New account created successfully");
+                    return res.status(201).send("Tài khoản mới được tạo thành công");
                 }
             );
         } catch (err) {
             console.error("Error hashing password:", err);
-            return res.status(500).send("Error processing password");
+            return res.status(500).send("Lỗi xử lý mật khẩu");
         }
     },
-
+    
    
     
 }

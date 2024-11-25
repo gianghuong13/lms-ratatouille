@@ -29,7 +29,7 @@ const App = () => {
         <Route path="/admin" >
           <Route index element={<DashboardPage />} />
           <Route path="" element={<DashboardPage />} />
-          <Route path="me" element={<AdminMePage />} />
+          <Route path="me" element={<MePage />} />
           <Route path='courses'element={<CourseManagePage />} />
           <Route path='courses/add' element={<AddCoursePage />} />
           <Route path='courses/edit/:courseId' element={<EditCoursePage />}/>

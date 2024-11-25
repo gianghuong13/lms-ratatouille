@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
 import axios from "axios";
 import ConfirmCard from "../../../components/ConfirmCard";
-import Toast from "../../../components/Toast"; // Import Toast component
+import Toast from "../../../components/Toast"; 
+import { useNavigate, useParams } from 'react-router-dom';
 
 export default function EditAccountForm() {
     const { userId } = useParams();
@@ -13,19 +13,22 @@ export default function EditAccountForm() {
         email: '',
         phone_number: ''
     });
-    const [showConfirm, setShowConfirm] = useState(false); // Confirm card state
-    const [toast, setToast] = useState({ show: false, type: "", message: "" }); // Toast state
+    const [showConfirm, setShowConfirm] = useState(false); 
+    const [toast, setToast] = useState({ show: false, type: "", message: "" }); 
+    const navigate = useNavigate(); // Khởi tạo hook navigate
 
-    // useEffect to auto-hide toast after 5 seconds
     useEffect(() => {
         if (toast.show) {
             const timer = setTimeout(() => {
-                setToast({ ...toast, show: false }); // Hide toast after 5 seconds
+                setToast({ ...toast, show: false }); 
+                if (toast.type === "success") {
+                    navigate("/admin/accounts"); // Chuyển hướng sau 5 giây
+                }
             }, 3000);
 
-            return () => clearTimeout(timer); // Cleanup timer if toast changes
+            return () => clearTimeout(timer); 
         }
-    }, [toast]);
+    }, [toast, navigate]);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -79,7 +82,7 @@ export default function EditAccountForm() {
             setToast({ show: true, type: "danger", message: "Please fill out all fields correctly." });
             return;
         }
-        setShowConfirm(true); // Hiển thị ConfirmCard
+        setShowConfirm(true); 
     };
 
     const handleConfirm = async () => {
@@ -94,7 +97,7 @@ export default function EditAccountForm() {
     };
 
     const handleCancel = () => {
-        setShowConfirm(false); // Đóng ConfirmCard
+        setShowConfirm(false); 
     };
 
     const closeToast = () => {
@@ -118,12 +121,12 @@ export default function EditAccountForm() {
                         />
                     </div>
                     <div>
-                        <label className="block text-sm text-gray-700 font-bold">User Id</label>
+                        <label className="block text-sm text-gray-700 font-bold">User Id (Không thể chỉnh sửa)</label>
                         <input
                             type="text"
                             name="user_id"
                             value={userData.user_id || ""}
-                            onChange={handleChange}
+                            readOnly
                             className="mt-1 p-2 border border-gray-300 rounded-md w-[300px] shadow focus:border-blue-700 bg-[#d4e6fc]"
                         />
                     </div>
@@ -192,16 +195,6 @@ export default function EditAccountForm() {
                     />
                 </div>
 
-                <div className="mb-3">
-                    <label className="block text-sm text-gray-700 font-bold">Username</label>
-                    <input
-                        type="text"
-                        name="username"
-                        value={userData.username || ""}
-                        onChange={handleChange}
-                        className="mt-1 p-2 border border-gray-300 rounded-md w-[200px] shadow focus:border-blue-700 bg-[#d4e6fc]"
-                    />
-                </div>
 
                 <div>
                     <label className="block text-sm text-gray-700 font-bold">Role</label>
@@ -212,7 +205,6 @@ export default function EditAccountForm() {
                         className="mt-1 p-2 border border-gray-300 rounded-md w-[100px] shadow focus:border-blue-700 bg-[#d4e6fc]"
                     >
                         <option value="teacher">Teacher</option>
-                        <option value="admin">Admin</option>
                         <option value="student">Student</option>
                     </select>
                 </div>
@@ -224,7 +216,6 @@ export default function EditAccountForm() {
                 </button>
             </form>
 
-            {/* Hiển thị ConfirmCard khi showConfirm = true */}
             {showConfirm && (
                 <ConfirmCard
                     message="Are you sure you want to save the changes?"
@@ -233,7 +224,6 @@ export default function EditAccountForm() {
                 />
             )}
 
-            {/* Hiển thị Toast khi toast.show = true */}
             {toast.show && (
                 <Toast
                     type={toast.type}
