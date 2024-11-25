@@ -23,12 +23,9 @@ import 'global';
 // Page chung cho Student và Teacher
 import Dashboard from './pages/Teacher/TeacherPage.jsx';
 
+// Page Student
 import SNotifications from './pages/Student/NotiManage/SNotifications.jsx';
 import SDetailNotification from './pages/Student/NotiManage/SDetailNotification.jsx';
-// Page Teacher
-// import AllCoursesList from './pages/Teacher/AllCourses.jsx';
-import CoursesList from './pages/CoursesList.jsx';
-import CourseHomePage from './pages/Teacher/Course/CourseHomePage.jsx';
 
 // Page Teacher
 // import AllCoursesList from './pages/Teacher/AllCourses.jsx';
@@ -39,7 +36,6 @@ import CourseDiscussions from './pages/Teacher/Course/CourseDiscussions.jsx';
 import CourseGrades from './pages/Teacher/Course/CourseGrades.jsx';
 import CoursePeople from './pages/Teacher/Course/CoursePeople.jsx';
 import CourseFiles from './pages/Teacher/Course/CourseFiles.jsx';
-import Notification from './pages/Teacher/NotiManage/Notification.jsx';
 
 import TCreateNotification from './pages/Teacher/NotiManage/TCreateNotification.jsx';
 import TNotifications from './pages/Teacher/NotiManage/TNotifications.jsx';
