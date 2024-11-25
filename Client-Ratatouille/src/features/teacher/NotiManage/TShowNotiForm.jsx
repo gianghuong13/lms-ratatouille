@@ -32,7 +32,7 @@ export default function TShowNotiForm(){
     }, [])
     return (
         <>
-            <div className="flex flex-col sm:flex-row justify-around mb-2">
+            <div className="flex flex-col sm:flex-row justify-around mb-2 pt-2 pb-2 sticky top-0 z-50 bg-white">
                 {
                     isGeneral ? (
                         <div
