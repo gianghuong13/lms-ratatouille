@@ -33,7 +33,7 @@ export default function SShowNotiForm(){
     return (
         <>
             <div className="relative">
-            <div className="flex flex-col sm:flex-row justify-around mb-2 sticky">
+            <div className="flex flex-col sm:flex-row justify-around pt-2 pb-2 sticky top-0 z-50 bg-white">
                 {
                     isGeneral ? (
                         <div
