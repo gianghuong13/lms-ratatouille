@@ -230,13 +230,18 @@ const notiManageController = {
     //Lấy ra các thông báo là global và thông báo được gưỉ đến 1 lớp cụ thể mà GV dạy 
     getAllNotificationsGeneralOfTeacher: (req, res) => {
         const {teacher_id} = req.body;
-        const sql = `SELECT DISTINCT n.notification_id, n.title, n.content, n.created_date, n.is_global
+
+        // const teacher_id = req.body.teacher_id;
+        console.log("teacher_id",req.body);
+        const sql = `SELECT DISTINCT n.notification_id, n.title, n.content, n.created_date, u.role
                     FROM notifications n
                     LEFT JOIN notification_courses nc ON n.notification_id = nc.notification_id
                     LEFT JOIN courses c ON nc.course_id = c.course_id
                     LEFT JOIN course_teachers ct ON c.course_id = ct.course_id
-                    WHERE n.is_global = 1
-                    OR ct.teacher_id = ?;`
+                    LEFT JOIN users u ON n.creator_id = u.user_id
+                    WHERE (n.is_global = 1 OR ct.teacher_id = ?) 
+                    AND u.role = 'admin'
+                    ORDER BY n.created_date DESC;`
         connection.query(sql, [teacher_id], (err, data) => {
             if(err){
                 console.log("Error query at getAllNotificationsGeneralOfTeacher", err);
@@ -250,7 +255,7 @@ const notiManageController = {
     //Lấy ra tất cả các thông báo mà GV đã đăng 
     getAllPostedNotificationByTeacher: (req, res) => {
         const {teacher_id} = req.body;
-        const sql = `SELECT * FROM notifications WHERE creator_id = ?;`;
+        const sql = `SELECT * FROM notifications WHERE creator_id = ? ORDER BY created_date DESC;`;
         connection.query(sql, [teacher_id], (err, data) => {
             if(err){
                 console.error("Error query at getAllPostedNotificationByTeacher", err);
@@ -262,15 +267,17 @@ const notiManageController = {
     },
 
     //Lấy ra các thông báo là global và thông báo được gưỉ đến 1 lớp cụ thể mà SV học
-    getAllNotificationsGeneralOfTeacher: (req, res) => {
+    getAllNotificationsGeneralOfStudent: (req, res) => {
         const {student_id} = req.body;
-        const sql = `SELECT DISTINCT n.notification_id, n.title, n.content, n.created_date, n.is_global
+        const sql = `SELECT DISTINCT n.notification_id, n.title, n.content, n.created_date, u.role
                     FROM notifications n
                     LEFT JOIN notification_courses nc ON n.notification_id = nc.notification_id
                     LEFT JOIN courses c ON nc.course_id = c.course_id
                     LEFT JOIN course_members cm ON c.course_id = cm.course_id
-                    WHERE n.is_global = 1
-                    OR cm.student = ?;`
+                    LEFT JOIN users u ON n.creator_id = u.user_id
+                    WHERE (n.is_global = 1 OR cm.student_id = ?) 
+                    AND u.role = 'admin'
+                    ORDER BY n.created_date DESC;`
         connection.query(sql, [student_id], (err, data) => {
             if(err){
                 console.log("Error query at getAllNotificationsGeneralOfTeacher", err);
@@ -280,6 +287,49 @@ const notiManageController = {
             res.status(200).json(data);
         })
     },
+
+    // Lấy ra tất cả thông báo mà GV đã gửi tới lớp mà SV học 
+    getAllNotificationsCourseOfStudent: (req, res) => {
+        const {student_id} = req.body;
+        const sql = `SELECT DISTINCT n.notification_id, n.title, n.content, n.created_date, u.role
+                    FROM notifications n
+                    LEFT JOIN notification_courses nc ON n.notification_id = nc.notification_id
+                    LEFT JOIN courses c ON nc.course_id = c.course_id
+                    LEFT JOIN course_members cm ON c.course_id = cm.course_id
+                    LEFT JOIN users u ON n.creator_id = u.user_id
+                    WHERE cm.student_id = ? 
+                    AND u.role = 'teacher'
+                    ORDER BY n.created_date DESC;`
+        connection.query(sql, [student_id], (err, data) => {
+            if(err){
+                console.log("Error query at getAllNotificationsGeneralOfTeacher", err);
+                return res.status(500).send("Error executing query getting all notifications general of teacher");
+            }
+            console.log(data);
+            res.status(200).json(data);
+        })
+    },
+
+    // Lấy ra tất cả lớp mà GV dạy
+    getAllCoursesOfTeacher: (req, res) => {
+        const {teacher_id} = req.body;
+
+        const sql = `SELECT c.course_id, c.course_name FROM course_teachers as ct
+                    JOIN courses as c ON c.course_id = ct.course_id 
+                    WHERE teacher_id = ?;`;
+
+        connection.query(sql, [teacher_id], (err, data) => {
+            if(err){
+                console.error("Error query at getAllCoursesOfTeacher", err);
+                return res.status(500).send("Error executing query getting all courses of teacher");
+            }
+            console.log(data);
+            res.status(200).json(data);
+        })
+    },
+
+    // Lấy ra tất cả lớp học được chọn để gửi thông báo đến của GV (notifyTo của 1 thông báo cụ thể mà GV tạo)
+    
 }
 
 export default notiManageController;

@@ -6,12 +6,10 @@ const router = express.Router();
 
 router.get('/admin-accounts-teachers', accountController.getAllTeachersAccount);
 router.get('/admin-accounts-students', accountController.getAllStudentsAccount);
-router.delete("/admin-accounts/:userId", accountController.deleteAccount);
+router.delete("/admin-accounts/delete/:userId", accountController.deleteAccount);
 router.get("/admin-accounts/:userId", accountController.getAccountById);
 router.put("/admin-accounts/edit/:userId", accountController.updateAccountById);
 router.post("/admin-accounts/create", accountController.createAccount);
-
-
 
 
 export default router;

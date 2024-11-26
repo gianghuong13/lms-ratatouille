@@ -17,6 +17,11 @@ router.get('/admin-posted-noti-file/:id', notiController.getPostedNotiFile);
 router.put('/admin-update-noti-file/:id', notiController.updateNotiFile);
 
 router.post('/teacher-general-noti', notiController.getAllNotificationsGeneralOfTeacher);
+router.post('/teacher-courses-noti', notiController.getAllPostedNotificationByTeacher);
+router.post('/teacher-all-courses', notiController.getAllCoursesOfTeacher);
+
+router.post('/student-general-noti', notiController.getAllNotificationsGeneralOfStudent);
+router.post('/student-courses-noti', notiController.getAllNotificationsCourseOfStudent);
 
 
 export default router;
