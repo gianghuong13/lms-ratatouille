@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setCourseId } from "../redux/slices/courseSlice";
 
 const CoursesList = () => {
   const [courses, setCourses] = useState([]);
@@ -9,6 +10,7 @@ const CoursesList = () => {
   const [error, setError] = useState(null);
   
   const role = useSelector((state) => state.auth.role);
+  const dispatch = useDispatch();
 
   const fetchCourses = async () => {
     try {
@@ -29,6 +31,10 @@ const CoursesList = () => {
   useEffect(() => {
     fetchCourses();
   }, []);
+
+  const handleCourseClick = (courseId) => {
+    dispatch(setCourseId(courseId));
+  }
 
   if (loading) {
     return <div className="text-center mt-10 text-lg font-medium">Loading courses...</div>;
@@ -60,7 +66,11 @@ const CoursesList = () => {
               <tr key={`${course.course_id}-${index}`} className="hover:bg-gray-50">
                 <td className="py-3 border-b flex items-center gap-2">
                   <span className="w-3 h-3 rounded-sm" style={{backgroundColor: getColorByIndex(index),}}></span>
-                  <Link to={`${course.course_id}`} className="text-blue-600 hover:underline">
+                  <Link 
+                    to={`${course.course_id}`} 
+                    className="text-blue-600 hover:underline"
+                    onClick={() => handleCourseClick(course.course_id)} // Dispatch courseId when course is selected
+                  >
                     {course.course_name} ({course.term_id}_{course.course_id})
                   </Link>
                 </td>

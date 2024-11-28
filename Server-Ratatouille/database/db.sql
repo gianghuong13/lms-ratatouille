@@ -68,7 +68,7 @@ CREATE TABLE materials (
     module_id INT DEFAULT NULL,
     material_type ENUM('document', 'video', 'link', 'zip') NOT NULL,
     title NVARCHAR(255) NOT NULL,
-    s3_file_url VARCHAR(255), 
+    -- s3_file_url VARCHAR(255), 
     description TEXT,
     file_path VARCHAR(255),
     upload_date DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -81,12 +81,14 @@ CREATE TABLE materials (
 CREATE TABLE assignments (
     assignment_id INT PRIMARY KEY AUTO_INCREMENT,
     course_id VARCHAR(50) NOT NULL,
+    module_id INT DEFAULT NULL,
     creator_id VARCHAR(8),
     title NVARCHAR(255) NOT NULL,
     description TEXT,
     due_date DATETIME,
     upload_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     last_modified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (module_id) REFERENCES modules(module_id) ON DELETE SET NULL,
     FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE,
     FOREIGN KEY (creator_id) REFERENCES users(user_id) ON DELETE SET NULL
 );
