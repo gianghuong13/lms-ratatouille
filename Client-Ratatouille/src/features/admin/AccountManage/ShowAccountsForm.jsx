@@ -51,9 +51,9 @@ export default function ShowAccountForm() {
     const deleteAccount = async () => {
         if (!accountToDelete) return;
         try {
-            await axios.delete("/api/admin-accounts/" + accountToDelete.user_id);
-            fetchAccounts(); // Cập nhật lại danh sách sau khi xóa
-            setShowConfirm(false); // Đóng hộp xác nhận
+            await axios.delete("/api/admin-accounts/delete/" + accountToDelete.user_id);
+            fetchAccounts(); 
+            setShowConfirm(false); 
             setAccountToDelete(null); // Xóa trạng thái
         } catch (error) {
             console.log("Error deleting account", error);
