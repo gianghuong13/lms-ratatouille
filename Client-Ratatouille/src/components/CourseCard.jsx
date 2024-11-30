@@ -1,19 +1,26 @@
 import { Link } from "react-router-dom"
-import imgTest from "../assets/User_Screen/KPDL.png"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBullhorn } from "@fortawesome/free-solid-svg-icons";
+import { faBell } from "@fortawesome/free-regular-svg-icons";
 import { faComments } from "@fortawesome/free-regular-svg-icons";
 import { faFolder } from '@fortawesome/free-regular-svg-icons';
+import { faFileLines } from '@fortawesome/free-regular-svg-icons';
 import { useEffect, useState } from "react";
-import courseImg from "../assets/User_Screen/course.jpg"
-import coursetest from "../assets/User_Screen/course_1.gif"
-import axios from "axios";
-export default function CourseCard(){
 
+import img1 from "../assets/User_Screen/img1.jpg"
+import img2 from "../assets/User_Screen/img2.jpg"
+import img3 from "../assets/User_Screen/img3.jpg"
+import img4 from "../assets/User_Screen/img4.jpg"
+import img5 from "../assets/User_Screen/img5.jpg"
+import img6 from "../assets/User_Screen/img6.jpg"
+import img7 from "../assets/User_Screen/img7.jpg"
+import img8 from "../assets/User_Screen/img8.jpg"
+import axios from "axios";
+
+export default function CourseCard(){
     const accessToken = localStorage.getItem('accessToken');
     const [courseList, setCourseList] = useState([]);
-    const colors = ["#015DAF", "#FF5733", "#33FF57", "#FFC300", "#C70039"];
-
+    const colors = ["#5BB450", "#C70039", "#015DAF", "#E88504", "#FB9AAC", "#924ED1", "#FCA510", "#3DED97"];
+    const courseImg = [img1, img2, img3, img4, img5, img6, img7, img8];
     useEffect(() => {
         const fetchData = async () => {
             try{
@@ -36,30 +43,64 @@ export default function CourseCard(){
 
     return (
         courseList && courseList.length > 0 ? (
-            <ul className="flex flex-row gap-5 flex-wrap">
+            <ul className="flex flex-row gap-7 flex-wrap">
                 {
                     courseList.map((course, index) => 
                         <li key={course.course_id}>
                             <div
-                                className={`w-[250px] h-[250px] border-2 shadow-lg p-1 rounded-2xl hover:shadow-xl`}
+                                className={`w-[250px] h-[250px] border-2 shadow-xl p-[3px] rounded-3xl hover:shadow-2xl`}
                                 style={{ borderColor: colors[index % colors.length] }}
                             >
-                                <Link to={`/course/${course.course_id}`} >
-                                    <div><img className="rounded-t-2xl" src={coursetest} alt="" /></div>
-                                    <p className="m-0 mt-1 hover:underline" style={{ color: colors[index % colors.length] }}>
-                                        {course.course_name.length > 29 ? course.course_name.slice(0, 29) + "..." : course.course_name}
+                                <Link to={`courses/${course.course_id}`}>
+                                <div className="h-3/5">
+                                    <img
+                                    className="rounded-t-3xl h-full w-full object-cover"
+                                    src={courseImg[index % courseImg.length]}
+                                    alt=""
+                                    />
+                                </div>
+                                <div className="p-1">
+                                    <p
+                                    className="m-0 mt-1 hover:underline"
+                                    style={{ color: colors[index % colors.length] }}
+                                    >
+                                    {course.course_name.length > 28
+                                        ? course.course_name.slice(0, 28) + "..."
+                                        : course.course_name}
                                     </p>
                                     <p className="m-0 text-sm text-gray-600">{course.course_id}</p>
                                     <p className="m-0 text-xs text-gray-600">{course.term_name}</p>
+                                </div>
                                 </Link>
-                                <div className="mt-2 flex justify-around">
-                                    <Link to=""><FontAwesomeIcon icon={faBullhorn} className=" text-gray-700 hover:text-blue-500" /></Link>
-                                    <Link to=""><FontAwesomeIcon icon={faBullhorn} className=" text-gray-700 hover:text-blue-500"  /></Link>
-                                    <Link to=""><FontAwesomeIcon icon={faComments} className=" text-gray-700 hover:text-blue-500" /></Link>
-                                    <Link to=""><FontAwesomeIcon icon={faFolder} className=" text-gray-700 hover:text-blue-500" /></Link>
+                                <div className="mt-1 flex justify-around">
+                                <Link to={`notifications`}>
+                                    <FontAwesomeIcon
+                                    icon={faBell}
+                                    className=" text-gray-700 hover:text-blue-500"
+                                    />
+                                </Link>
+                                <Link to={`courses/${course.course_id}/assignments`}>
+                                    <FontAwesomeIcon
+                                    icon={faFileLines}
+                                    className=" text-gray-700 hover:text-blue-500"
+                                    />
+                                </Link>
+                                <Link to={`courses/${course.course_id}/discussions`}>
+                                    <FontAwesomeIcon
+                                    icon={faComments}
+                                    className=" text-gray-700 hover:text-blue-500"
+                                    />
+                                </Link>
+                                <Link to={`courses/${course.course_id}/files`}>
+                                    <FontAwesomeIcon
+                                    icon={faFolder}
+                                    className=" text-gray-700 hover:text-blue-500"
+                                    />
+                                </Link>
                                 </div>
                             </div>
-                        </li>
+                            </li>
+
                     )
                 }
                 
@@ -67,18 +108,3 @@ export default function CourseCard(){
         ) : (<p className="italic">No courses.</p>)
     );
 }
-{/* <div className="flex sm:flex-col md:flex-row gap-5 flex-wrap"> */}
-// </div>
-
-{/* <Link className="w-[250px] h-[250px] border-[#015DAF] border-2 shadow-lg p-1 rounded-2xl hover:shadow-xl">
-                <div><img className="rounded-t-2xl" src={coursetest} alt="" /></div>
-                    <p className="m-0 mt-1">Khai phá dữ liệu (2425I...</p>
-                    <p className="m-0 text-sm">2425INT2001_1</p>
-                    <p className="m-0 text-xs">Học kỳ 1 năm học 2024-2025</p>
-                    <div className="mt-2 flex justify-around">
-                        <Link><FontAwesomeIcon icon={faBullhorn} className="hover:text-blue-400" /></Link>
-                        <Link><FontAwesomeIcon icon={faBullhorn}  /></Link>
-                        <Link><FontAwesomeIcon icon={faComments}  /></Link>
-                        <Link><FontAwesomeIcon icon={faFolder}  /></Link>
-                    </div>
-            </Link> */}
