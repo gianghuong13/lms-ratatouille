@@ -21,7 +21,7 @@ const courseManageController = {
 
     getAllTeachers: (req, res) => {
         const query = `
-            SELECT user_id, username, full_name, email
+            SELECT user_id, full_name, email
             FROM users
             WHERE role = 'teacher'
         `;
@@ -36,7 +36,7 @@ const courseManageController = {
 
     getAllStudents: (req, res) => {
         const query = `
-            SELECT user_id, username, full_name, email
+            SELECT user_id, full_name, email
             FROM users
             WHERE role = 'student'
         `;
