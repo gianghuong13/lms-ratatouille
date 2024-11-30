@@ -14,4 +14,8 @@ router.delete('/courses/:course_id', courseManageController.deleteCourse);
 
 router.get('/users-courses/:user_id', courseManageController.getLoginedUsersCourses);
 
+router.post('/courses-in-term-teacher', courseManageController.getCoursesInTermOfTeacher);
+
+router.post('/courses-in-term-student', courseManageController.getCoursesInTermOfStudent);
+
 export default router;
