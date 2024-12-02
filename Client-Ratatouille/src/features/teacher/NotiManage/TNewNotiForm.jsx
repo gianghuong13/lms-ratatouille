@@ -32,14 +32,10 @@ export default function TNewNotiForm(){
             try{
                 const deCodeRes = await axios.post('/api/decode', {accessToken: accessToken});
                 teacher_id = deCodeRes.data.data.userId;
-                console.log("teacher_id", teacher_id)
                 setNoti({...noti, createdBy: teacher_id});
 
                 const allCoursesRes = await axios.post('/api/teacher-all-courses', {teacher_id: teacher_id});
                 setAllCourses(allCoursesRes.data);
-                console.log('all courses', allCourses);
-
-
             }catch(err){
                 console.log('Error fetching data:', err);
             }
@@ -50,7 +46,6 @@ export default function TNewNotiForm(){
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        console.log(noti);
         const res = await axios.post('/api/admin-create-new-noti', noti) // chèn các thông báo vào bảng notifications và trả về id cảu thông báo vừa tạo
         const noti_id = res.data.notification_id; // Lấy giá trị từ API
         
