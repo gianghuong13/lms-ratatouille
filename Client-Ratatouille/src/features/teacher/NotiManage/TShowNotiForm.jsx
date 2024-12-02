@@ -148,12 +148,9 @@ function Search({ titleData, isGeneral }) {
     const [isFocusOnSearch, setIsFocusOnSearch] = useState(false);
     const [suggestion, setSuggestion] = useState([]);
     const wrapperRef = useRef(null);
-    console.log("titleData_handle", titleData)
-
 
     function handleSearch(e) {
         const inputValue = e.target.value.toLowerCase();
-        console.log("titleData_handle", titleData)
         setSuggestion(
             titleData.filter((item) =>
                 item.title.toLowerCase().includes(inputValue)

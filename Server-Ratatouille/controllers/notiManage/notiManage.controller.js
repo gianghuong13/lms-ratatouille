@@ -182,6 +182,23 @@ const notiManageController = {
         })
     },
 
+    getDetailOfNotification: (req, res) => {
+        const notification_id = req.params.id;
+        const sql = `SELECT n.title, n.content, u.role, u.full_name, u.email, c.course_name, n.created_date, n.last_modified FROM notifications n
+                    LEFT JOIN users u ON n.creator_id = u.user_id
+                    LEFT JOIN notification_courses nc ON n.notification_id = nc.notification_id
+                    LEFT JOIN courses c ON c.course_id = nc.course_id
+                    WHERE n.notification_id = ?;`
+        connection.query(sql, [notification_id], (err, data) => {
+            if(err){
+                console.error("Error query at getDetailOfNotification:", err);
+                return res.status(500).send("Error executing query getting detail notification with id");
+            }
+            console.log(data);
+            return res.status(200).json(data);
+        })
+    },
+
     getSelectedCourses: (req, res) => {
         const notification_id = req.params.id;
         const sql = `SELECT nc.course_id, c.course_name FROM notification_courses nc

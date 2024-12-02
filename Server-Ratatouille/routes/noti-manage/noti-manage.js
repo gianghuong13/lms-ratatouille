@@ -15,6 +15,7 @@ router.get('/admin-all-title-notification', notiController.getAllTitleNotificati
 router.post('/admin-create-noti-file', notiController.createNotiFile);
 router.get('/admin-posted-noti-file/:id', notiController.getPostedNotiFile);
 router.put('/admin-update-noti-file/:id', notiController.updateNotiFile);
+router.get('/detail-noti/:id', notiController.getDetailOfNotification);
 
 router.post('/teacher-general-noti', notiController.getAllNotificationsGeneralOfTeacher);
 router.post('/teacher-courses-noti', notiController.getAllPostedNotificationByTeacher);
