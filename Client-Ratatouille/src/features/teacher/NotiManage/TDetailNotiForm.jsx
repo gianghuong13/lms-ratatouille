@@ -27,21 +27,17 @@ export default function TDetailNotiForm() {
                 // Fetch notification details
                 const notiRes = await axios.get(`/api/detail-noti/${id}`);
                 setNoti(notiRes.data[0]);
-                console.log("data", notiRes.data);
                 const courseNames = notiRes.data.map(item => item.course_name);
                 setNoti(prevNoti => ({
                     ...prevNoti,
                     course_name: courseNames
                 }));
-                console.log(courseNames);
                 const filesDB = await axios.get(`/api/admin-posted-noti-file/${id}`);
                 if (filesDB.data.length > 0) { // nếu có dữ liệu trả về từ notification_files, chứng tỏ thông báo đó đính kèm file 
                     const fileInfos = { files: filesDB.data };
                     const filesListRes = await axios.post('/api/object-urls', fileInfos); // lấy các urls ứng với các file trên S3 về 
                     setFilesList(filesListRes.data.results);
-                    console.log("file",filesList);
                 }
-                console.log("noti" + noti.course_name);
             } catch (err) {
                 console.error('Error fetching data:', err);
             }
