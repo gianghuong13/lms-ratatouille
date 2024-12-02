@@ -100,7 +100,6 @@ export default function CourseCard(){
                                 </div>
                             </div>
                             </li>
-
                     )
                 }
                 
