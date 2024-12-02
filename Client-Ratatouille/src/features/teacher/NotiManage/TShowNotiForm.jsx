@@ -5,6 +5,8 @@ import { convert } from 'html-to-text';
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRef } from "react";
+import Avatar from '@mui/joy/Avatar';
+
 export default function TShowNotiForm(){
     const accessToken = localStorage.getItem('accessToken');
     const [isGeneral, setIsGeneral] = useState(1);
@@ -12,12 +14,13 @@ export default function TShowNotiForm(){
     const [generalNotiList, setGeneralNotiList] = useState([]);
     const [courseNotiList, setCourseNotiList] = useState([]);
 
+    const [teacherName, setTeacherName] = useState();
     useEffect(()=>{
         const fetchData = async () => {
             try{
                 const deCodeRes = await axios.post('/api/decode', {accessToken: accessToken});
                 const teacher_id = deCodeRes.data.data.userId;
-
+                setTeacherName(deCodeRes.data.data.full_name);
                 const generalNotiListRes = await axios.post('/api/teacher-general-noti', {teacher_id: teacher_id});
                 setGeneralNotiList(generalNotiListRes.data);
 
@@ -30,6 +33,30 @@ export default function TShowNotiForm(){
         };
         fetchData();
     }, [])
+
+    const markAsRead = (id) => {
+        const readNotifications = JSON.parse(localStorage.getItem("readNotifications")) || [];
+        if (!readNotifications.includes(id)) {
+          readNotifications.push(id);
+          localStorage.setItem("readNotifications", JSON.stringify(readNotifications));
+        }
+      };
+
+    const isRead = (id) => {
+    const readNotifications = JSON.parse(localStorage.getItem("readNotifications")) || [];
+    return readNotifications.includes(id);
+    };
+
+    const getColorFromName = (name) => {
+        const hash = name.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+            color += letters[(hash >> (i * 4)) & 0xF];
+        }
+        return color;
+    };
+
     return (
         <>
             <div className="flex flex-col sm:flex-row justify-around mb-2 pt-2 pb-2 sticky top-0 z-50 bg-white">
@@ -98,11 +125,18 @@ export default function TShowNotiForm(){
                             {
                                 generalNotiList.map((noti, index)=>
                                     <li key={noti.notification_id}>
-                                        <Link className="flex flex-row mx-1 md:mx-3 xl:mx-10 py-1 px-2 border-t-[1px] border-[#D6CDCD] hover: hover:bg-[#f1f5fd]"
-                                            to={"/teacher/notifications/detail-notification/"+noti.notification_id}>
+                                        <Link className="flex flex-row mx-1 md:mx-3 xl:mx-10 py-1 px-2 border-t-[1px] border-[#D6CDCD] hover: hover:bg-[#f1f5fd] hover:shadow-lg"
+                                            to={"/teacher/notifications/detail-notification/"+noti.notification_id}
+                                            onClick={() => {markAsRead(noti.notification_id)}} 
+                                            style={{backgroundColor: isRead(noti.notification_id) ? "#F8F8F8" : "" }}   
+                                        >
                                         <div className="mr-2 my-1"><img className="object-fill w-full min-w-[30px] max-w-[40px] h-auto aspect-square" src={logo} alt="admin-logo" /></div>
                                         <div>
-                                            <h6 className="font-bold font-sans m-0">{noti.title}</h6>
+                                            <h6 className="font-bold font-sans m-0"
+                                                style={{fontWeight: isRead(noti.notification_id) ? "normal" : "bold" }}
+                                            >
+                                                {noti.title}
+                                            </h6>
                                             <p className="m-0">{(convert(noti.content, {wordwrap: 130})).length > 130 ? (convert(noti.content, {wordwrap: 130})).slice(0, 130) + " ..." : (convert(noti.content, {wordwrap: 130}))}</p>
                                             <p className="text-sm italic m-0">{noti.created_date}</p>
                                         </div>
@@ -118,10 +152,25 @@ export default function TShowNotiForm(){
                             {
                                 courseNotiList.map((noti, index)=>
                                     <li key={noti.notification_id}>
-                                        <Link className="flex flex-row mx-1 md:mx-3 xl:mx-10 py-1 px-2 border-t-[1px] border-[#D6CDCD] hover: hover:bg-[#f1f5fd]"
+                                        <Link className="flex flex-row mx-1 md:mx-3 xl:mx-10 py-1 px-2 border-t-[1px] border-[#D6CDCD] hover: hover:bg-[#f1f5fd]  hover:shadow-lg"
                                             to={"/teacher/notifications/update-notification/"+noti.notification_id}>
-                                        <div className="mr-2 my-1"><img className="object-fill w-full min-w-[30px] max-w-[40px] h-auto aspect-square" src={logo} alt="admin-logo" /></div>
-                                        {/* <div className="mr-2 my-1 flex items-center"><span className="border-2 border-black rounded-full w-12 h-12">YG</span></div> */}
+                                        {/* <div className="mr-2 my-1"><img className="object-fill w-full min-w-[30px] max-w-[40px] h-auto aspect-square" src={logo} alt="admin-logo" /></div> */}
+                                        <div className="mr-2 my-1">
+                                        <Avatar 
+                                            style={{
+                                                backgroundColor: getColorFromName(noti.full_name || ""), // Màu từ tên
+                                                color: '#ffffff'
+                                            }}
+                                        >
+                                            {teacherName
+                                                ? teacherName
+                                                    .split(" ")
+                                                    .map(word => word[0])
+                                                    .join("")
+                                                    .toUpperCase()
+                                                : ""}
+                                        </Avatar>
+                                        </div>
                                         <div>
                                             <h6 className="font-bold font-sans m-0">{noti.title}</h6>
                                             <p className="m-0">{(convert(noti.content, {wordwrap: 130})).length > 130 ? (convert(noti.content, {wordwrap: 130})).slice(0, 130) + " ..." : (convert(noti.content, {wordwrap: 130}))}</p>
@@ -148,12 +197,9 @@ function Search({ titleData, isGeneral }) {
     const [isFocusOnSearch, setIsFocusOnSearch] = useState(false);
     const [suggestion, setSuggestion] = useState([]);
     const wrapperRef = useRef(null);
-    console.log("titleData_handle", titleData)
-
 
     function handleSearch(e) {
         const inputValue = e.target.value.toLowerCase();
-        console.log("titleData_handle", titleData)
         setSuggestion(
             titleData.filter((item) =>
                 item.title.toLowerCase().includes(inputValue)

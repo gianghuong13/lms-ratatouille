@@ -21,7 +21,7 @@ const courseManageController = {
 
     getAllTeachers: (req, res) => {
         const query = `
-            SELECT user_id, username, full_name, email
+            SELECT user_id, full_name, email
             FROM users
             WHERE role = 'teacher'
         `;
@@ -36,7 +36,7 @@ const courseManageController = {
 
     getAllStudents: (req, res) => {
         const query = `
-            SELECT user_id, username, full_name, email
+            SELECT user_id, full_name, email
             FROM users
             WHERE role = 'student'
         `;
@@ -282,6 +282,60 @@ const courseManageController = {
         });
     },
     
+    // Lấy ra tất cả khóa trong 1 học kỳ của GV
+    getCoursesInTermOfTeacher: (req, res) => {
+        const date = new Date();
+        const month = date.getMonth();
+        let term_id;
+        if(month >= 1 && month <= 6){
+            term_id = (date.getFullYear() - 1).toString().slice(2, 4) +(date.getFullYear()).toString().slice(2, 4) + "II"
+        }else if(month === 7 || month === 8){
+            term_id = (date.getFullYear() - 1).toString().slice(2, 4) +(date.getFullYear()).toString().slice(2, 4) + "H"
+        }else{
+            term_id = (date.getFullYear()).toString().slice(2, 4) +(date.getFullYear() + 1).toString().slice(2, 4) + "I"
+        }
+        const { teacher_id } = req.body
+        const sql = `SELECT c.course_name, c.course_id, t.term_name FROM courses as c
+                    JOIN course_teachers as ct ON c.course_id = ct.course_id
+                    JOIN terms as t ON c.term_id = t.term_id
+                    WHERE ct.teacher_id = ? AND c.term_id = ?;`
+        
+        connection.query(sql, [teacher_id, term_id], (err, data) => {
+            if(err){
+                console.err("Error query at getCoursesInTermOfTeacher", err);
+                return res.status(500).send("Error executing query getCoursesInTermOfTeacher");
+            }
+            return res.status(200).json(data);
+        })
+        // check laị getyear là dạng số hay string sửa lại, sau đó chỉnh lại xét if else cộng thêm mà kỳ 
+    },
+    // Lấy ra tất cả khóa trong 1 học kỳ của GV
+    getCoursesInTermOfStudent: (req, res) => {
+        const date = new Date();
+        const month = date.getMonth();
+        let term_id;
+        if(month >= 1 && month <= 6){
+            term_id = (date.getFullYear() - 1).toString().slice(2, 4) +(date.getFullYear()).toString().slice(2, 4) + "II"
+        }else if(month === 7 || month === 8){
+            term_id = (date.getFullYear() - 1).toString().slice(2, 4) +(date.getFullYear()).toString().slice(2, 4) + "H"
+        }else{
+            term_id = (date.getFullYear()).toString().slice(2, 4) +(date.getFullYear() + 1).toString().slice(2, 4) + "I"
+        }
+        const { student_id } = req.body
+        const sql = `SELECT c.course_name, c.course_id, t.term_name FROM courses as c
+                    JOIN course_members as cm ON c.course_id = cm.course_id
+                    JOIN terms as t ON c.term_id = t.term_id
+                    WHERE cm.student_id = ? AND c.term_id = ?;`
+        
+        connection.query(sql, [student_id, term_id], (err, data) => {
+            if(err){
+                console.err("Error query at getCoursesInTermOfTeacher", err);
+                return res.status(500).send("Error executing query getCoursesInTermOfTeacher");
+            }
+            return res.status(200).json(data);
+        })
+        // check laị getyear là dạng số hay string sửa lại, sau đó chỉnh lại xét if else cộng thêm mà kỳ 
+    }
 };
 
 export default courseManageController;

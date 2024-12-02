@@ -76,7 +76,6 @@ const notiManageController = {
     },
     createNotiFile: async (req, res) => {
         const notiFile = req.body; 
-        console.log("notiFile", notiFile);
         const sql = `SELECT notification_id FROM notifications ORDER BY notification_id DESC LIMIT 1`;
         const sql2 = `INSERT INTO notification_files (notification_id, file_name, file_path) VALUES ?`;
         try{
@@ -96,11 +95,9 @@ const notiManageController = {
         }
     },
     updateNotiFile: async (req, res) => {
-        console.log("da chay vao day");
         const notification_id = req.params.id;
         const notiFile = req.body;
 
-        console.log("notifile",notiFile);
         const sql = `DELETE FROM notification_files WHERE notification_id = ?`;
         const sql2 = `INSERT INTO notification_files (notification_id, file_name, file_path) VALUES ?`;
 
@@ -126,7 +123,6 @@ const notiManageController = {
         if (!Array.isArray(notifyTo) || notifyTo.length === 0 || notifyTo.includes('all')) {
             is_global = 1;
         }
-        console.log(is_global);
         if (!title || !content || !createdBy) {
             return res.status(400).send("Title, content, creator are required.");
         }
@@ -158,7 +154,6 @@ const notiManageController = {
     
     getPostedNotiFile: (req, res) => { // lấy các file đính kèm thông báo đã đăng
         const notification_id = req.params.id;
-        console.log("id",notification_id);
         const sql = `SELECT file_name, file_path FROM notification_files WHERE notification_id = ?`;
         connection.query(sql, [notification_id], (err, data) => {
             if(err){
@@ -177,7 +172,22 @@ const notiManageController = {
                 console.error("Error query at getPostedNotifications:", err);
                 return res.status(500).send("Error executing query getting notification with id");
             }
-            console.log(data);
+            return res.status(200).json(data);
+        })
+    },
+
+    getDetailOfNotification: (req, res) => {
+        const notification_id = req.params.id;
+        const sql = `SELECT n.title, n.content, u.role, u.full_name, u.email, c.course_name, n.created_date, n.last_modified FROM notifications n
+                    LEFT JOIN users u ON n.creator_id = u.user_id
+                    LEFT JOIN notification_courses nc ON n.notification_id = nc.notification_id
+                    LEFT JOIN courses c ON c.course_id = nc.course_id
+                    WHERE n.notification_id = ?;`
+        connection.query(sql, [notification_id], (err, data) => {
+            if(err){
+                console.error("Error query at getDetailOfNotification:", err);
+                return res.status(500).send("Error executing query getting detail notification with id");
+            }
             return res.status(200).json(data);
         })
     },
@@ -191,7 +201,6 @@ const notiManageController = {
                 console.error("Error query at getSelectedCourses:", err);
                 return res.status(500).send("Error executing query getting selected courses with id");
             }
-            console.log(data);
             return res.status(200).json(data);
         })
     },
@@ -201,7 +210,7 @@ const notiManageController = {
         const sql = `DELETE FROM notifications WHERE notification_id = ?;`;
         connection.query(sql, [notification_id], (err, data) => {
             if(err){
-                console.log("Error query at deleteNotification", err);
+                console.error("Error query at deleteNotification", err);
                 return res.status(500).send("Error executing query deleting notification with id");
             }
             res.status(200).send("Delete notification succesfully")
@@ -216,10 +225,9 @@ const notiManageController = {
                         ORDER BY created_date DESC;`;
         connection.query(sql, [input], (err, data) => {
             if(err){
-                console.log("Error query at getAllTitleNotification", err);
+                console.error("Error query at getAllTitleNotification", err);
                 return res.status(500).send("Error executing query getting all title notification");
             }
-            // console.log(data);
             res.status(200).json(data);
         })
         
@@ -231,8 +239,6 @@ const notiManageController = {
     getAllNotificationsGeneralOfTeacher: (req, res) => {
         const {teacher_id} = req.body;
 
-        // const teacher_id = req.body.teacher_id;
-        console.log("teacher_id",req.body);
         const sql = `SELECT DISTINCT n.notification_id, n.title, n.content, n.created_date, u.role
                     FROM notifications n
                     LEFT JOIN notification_courses nc ON n.notification_id = nc.notification_id
@@ -244,10 +250,9 @@ const notiManageController = {
                     ORDER BY n.created_date DESC;`
         connection.query(sql, [teacher_id], (err, data) => {
             if(err){
-                console.log("Error query at getAllNotificationsGeneralOfTeacher", err);
+                console.error("Error query at getAllNotificationsGeneralOfTeacher", err);
                 return res.status(500).send("Error executing query getting all notifications general of teacher");
             }
-            console.log(data);
             res.status(200).json(data);
         })
     },
@@ -261,7 +266,6 @@ const notiManageController = {
                 console.error("Error query at getAllPostedNotificationByTeacher", err);
                 return res.status(500).send("Error executing query getting all posted notifications by teacher");
             }
-            console.log(data);
             res.status(200).json(data);
         })
     },
@@ -280,10 +284,9 @@ const notiManageController = {
                     ORDER BY n.created_date DESC;`
         connection.query(sql, [student_id], (err, data) => {
             if(err){
-                console.log("Error query at getAllNotificationsGeneralOfTeacher", err);
+                console.error("Error query at getAllNotificationsGeneralOfTeacher", err);
                 return res.status(500).send("Error executing query getting all notifications general of teacher");
             }
-            console.log(data);
             res.status(200).json(data);
         })
     },
@@ -291,7 +294,7 @@ const notiManageController = {
     // Lấy ra tất cả thông báo mà GV đã gửi tới lớp mà SV học 
     getAllNotificationsCourseOfStudent: (req, res) => {
         const {student_id} = req.body;
-        const sql = `SELECT DISTINCT n.notification_id, n.title, n.content, n.created_date, u.role
+        const sql = `SELECT DISTINCT n.notification_id, n.title, n.content, n.created_date, u.role, u.full_name
                     FROM notifications n
                     LEFT JOIN notification_courses nc ON n.notification_id = nc.notification_id
                     LEFT JOIN courses c ON nc.course_id = c.course_id
@@ -302,10 +305,9 @@ const notiManageController = {
                     ORDER BY n.created_date DESC;`
         connection.query(sql, [student_id], (err, data) => {
             if(err){
-                console.log("Error query at getAllNotificationsGeneralOfTeacher", err);
+                console.error("Error query at getAllNotificationsGeneralOfTeacher", err);
                 return res.status(500).send("Error executing query getting all notifications general of teacher");
             }
-            console.log(data);
             res.status(200).json(data);
         })
     },
@@ -323,7 +325,6 @@ const notiManageController = {
                 console.error("Error query at getAllCoursesOfTeacher", err);
                 return res.status(500).send("Error executing query getting all courses of teacher");
             }
-            console.log(data);
             res.status(200).json(data);
         })
     },
@@ -333,50 +334,3 @@ const notiManageController = {
 }
 
 export default notiManageController;
-
-// createNewNoti: (req, res) => {
-//     const {title, content, createdBy, notiFile, notifyTo} = req.body;
-
-//     let is_global = 0;
-//     (!Array.isArray(notifyTo) || notifyTo.length === 0) ? is_global = 1 : (is_global = notifyTo.some(element => element === 'all') ? 1 : 0);
-     
-//     if(!title || !content || !createdBy){
-//         return res.status(500).send("Title, content, creator is undefined.");
-//     }
-//     const sql = INSERT INTO notifications (title, content, creator_id, is_global) 
-//                     VALUES (?, ?, ?, ?);
-//     const sql2 = SELECT notification_id FROM notifications ORDER BY notification_id DESC LIMIT 1;
-//     const sql3 = INSERT INTO notification_courses (notification_id, course_id) VALUES ?;
-
-//     connection.query(sql, [title, content, createdBy, is_global], (err, data) => {
-//         console.log("Data to insert:", { title, content, createdBy, is_global });
-//         if(err){
-//             console.error("Error query at inserting data to notifications", err);
-//             return res.status(500).send("Error executing query insert data to notifications");
-//         }
-//         if(!is_global){
-//             connection.query(sql2, (err, data) => {
-//                 if(err){
-//                     console.error("Error query at taking last notification_id of notifications table", err);
-//                     return res.status(500).send("Error executing query at take last notification_id of notifications table");
-//                 }
-
-//                 const notification_id = data[0].notification_id;
-
-//                 const notifyToValue = notifyTo.filter(item => item !== 'all');
-//                 console.log(notifyToValue);
-//                 const valueInsert2NotiCourses = notifyToValue.map(to=>[notification_id, to]);
-
-//                 connection.query(sql3, [valueInsert2NotiCourses], (err, data) => {
-//                     if(err){
-//                         console.error("Error query at inserting data to notification_courses", err);
-//                         return res.status(500).send("Error executing query at inserting data to notification_courses")
-//                     }
-//                     return res.status(200).send("Create new notification successfully")
-//                 })
-//             })
-//         }
-        
-//     })
-// } 
-

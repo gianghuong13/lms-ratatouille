@@ -21,7 +21,7 @@ import UpdateNotification from './pages/Admin/NotiManage/UpdateNotification.jsx'
 
 import 'global';
 // Page chung cho Student và Teacher
-import Dashboard from './pages/Teacher/TeacherPage.jsx';
+import Dashboard from './pages/Teacher/DashboardPage.jsx';
 
 // Page Student
 import SNotifications from './pages/Student/NotiManage/SNotifications.jsx';
