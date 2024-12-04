@@ -91,8 +91,7 @@ const App = () => {
             <Route path='courses/:courseId/grades' element={<CourseGrades />} />
             <Route path='courses/:courseId/people' element={<CoursePeople />} />
             <Route path='courses/:courseId/files' element={<CourseFiles />} />
-
-            <Route path='courses/:courseId/files/:fileName' element={<FileDetail />} />
+            <Route path='courses/:courseId/files/:encodedKey' element={<FileDetail />} />
 
           </Route>
           <Route path="/student">

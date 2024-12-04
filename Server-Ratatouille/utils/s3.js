@@ -44,11 +44,12 @@ async function getObject(key) {
 
     // Lấy tên file từ key (phần cuối sau dấu '/')
     const fileName = key.split('/').pop();
-
+    const fileType = fileName.includes('.') ? fileName.split('.').pop().toLowerCase() : '';
     // Trả về cả URL và tên file
     return {
       signedUrl,
       fileName,
+      fileType,
     };
   } catch (error) {
     console.error("Error getting object URL:", error);
@@ -93,21 +94,28 @@ async function listObjects(folder) {
 
     const response = await s3Client.send(command);
 
-    // Lọc các object có size > 0 (không phải folder rỗng)
-    const files = response.Contents.filter(item => item.Size > 0).map(item => ({
-      key: item.Key,
-      name: item.Key.split('/').pop(),
-      size: item.Size,
-      lastModified: item.LastModified
-    }));
+    // Lọc và định dạng các file
+    const files = response.Contents.filter(item => item.Size > 0).map(item => {
+      const fileName = item.Key.split('/').pop(); // Lấy tên file
+      const extension = fileName.includes('.') ? fileName.split('.').pop().toLowerCase() : ''; // Lấy đuôi file
 
-    // Trả về danh sách các file nếu có
+      return {
+        key: item.Key,                  // Đường dẫn đầy đủ của file
+        name: fileName,                 // Tên file (không bao gồm đường dẫn)
+        type: extension,           // Đuôi file (ví dụ: pdf, png)
+        size: item.Size,                // Kích thước file
+        lastModified: item.LastModified // Ngày sửa đổi lần cuối
+      };
+    });
+
+    // Trả về danh sách file
     return files;
   } catch (error) {
     console.error("Error listing objects:", error);
     throw new Error("Unable to list objects from S3");
   }
 }
+
 
 
 async function copyObject(key, newKey) {
