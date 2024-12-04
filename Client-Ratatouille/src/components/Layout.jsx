@@ -22,7 +22,7 @@ const Layout = ({ children }) => {
         <div className='flex flex-1'>
             <Sidebar isOpen={isSidebarOpen} courseId={courseId} />
 
-            <div className='flex-1 p-4'>
+            <div className='flex-1 w-full px-10'>
                 {children}
             </div>
         </div>

@@ -1,33 +1,110 @@
 import React, { useEffect, useState } from 'react'
 import Layout from '../../../components/Layout'
 import ModuleTitle from '../../../components/ModuleTitle';
-import ModuleItem from '../../../components/ModuleItem';
 import axios from 'axios';
-import { useSelector } from 'react-redux';
+import { useParams, useNavigate } from 'react-router-dom';
+import AddModuleForm from '../../../features/teacher/ModuleManage/AddModuleForm';
+import AddButton from '../../../components/AddButton';
 
 const CourseHome = () => {
-    const courseId = useSelector((state) => state.course.courseId);
+    const courseId = useParams().courseId;
+    const navigate = useNavigate();
     const [modules, setModules] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [showForm, setShowForm] = useState(false);
+
+    // useEffect(() => {
+    //     const fetchModules = async () => {
+    //         if (!courseId) {
+    //             setError('Course ID not found');
+    //             return;
+    //         }
+
+    //         try {
+    //             setLoading(true);
+    //             const response = await axios.get(`/api/modules/${courseId}`);
+    //             if (response.status === 200 && response.data.length === 0) {
+    //                 setModules([]); 
+    //             } else if (response.status === 200 && response.data.length > 0) {
+    //                 setModules(response.data); 
+    //                 setError(null); 
+    //             } else {
+    //                 setError('Unexpected response from the server');
+    //             }
+    //         } catch (error) {
+    //             console.error('Error fetching modules:', error);
+    //             setError('Failed to fetch modules');
+    //         } finally {
+    //             setLoading(false);
+    //         }
+    //     };
+
+    //     fetchModules();
+    // }, [courseId]);
 
     useEffect(() => {
-        const fetchModules = async () => {
-            if (!courseId) return;
-
-            try {
-                const response = await axios.get(`/api/modules?course_id=${courseId}`);
-                const modules = response.data;
-                setModules(modules);
-            } catch (error) {
-                console.error('Error fetching modules:', error);
+        const fetchMaterials = async () => {
+          try {
+            setIsLoading(true);
+            const response = await axios.get(`/api/materials/${courseId}`);
+            if (response.status === 200 && response.data.length === 0) {
+                setModules([]);
+            } else if (response.status === 200 && response.data.length > 0) {
+                setModules(response.data);  // Set modules that contain materials
+            } else {
+                setError("Unexpected response from the server");
             }
+          } catch (error) {
+            setError("Error fetching materials. Please try again.");
+          } finally {
+            setIsLoading(false);
+          }
         };
+    
+        fetchMaterials();
+      }, [courseId]);
 
-        fetchModules();
-    }, [courseId]);
+    if (isLoading) {
+        return <div className="text-center mt-10 text-lg font-medium">Loading modules...</div>;
+    }
+    if (error) {
+        return <div className="text-center mt-10 text-red-500">{error}</div>;
+    }
 
-    const handleAddModule = () => {
-        const newModule = { id: modules.length + 1, name: `New Module ${modules.length + 1}`, items: [] };
-        setModules([...modules, newModule]);
+    const handleAddModuleButtonClick = () => {
+        setShowForm(true);
+    };
+
+    const handleCancelClick = () => {
+        setShowForm(false);
+    };
+    
+    const handleAddModule = async (moduleName, moduleDescription) => {
+        try {
+            const response = await axios.post('/api/modules/add', {
+                course_id: courseId,
+                module_name: moduleName,
+                description: moduleDescription
+            });
+            setModules(prevModules => [...prevModules, response.data.newModule]);
+            navigate(`/teacher/courses/${courseId}`);
+
+            setShowForm(false);
+
+        } catch (error) {
+            console.error('Error adding module:', error);
+            alert('Failed to add module. Please try again later.');
+        }
+    };
+
+    const deleteModule = async (moduleId) => {
+        try {
+            await axios.delete(`/api/modules/delete/${moduleId}`);
+            setModules(modules.filter(module => module.module_id !== moduleId));
+        } catch (error) {
+            setError('Failed to delete module');
+        }
     };
 
     const handleAddModuleItem = (moduleId) => {
@@ -41,40 +118,25 @@ const CourseHome = () => {
 
     return (
         <Layout>
-        {/* <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold">Course Modules</h1>
-            
-                <button
-                    className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
-                    onClick={handleAddModule}
-                >
-                    Add Module
-                </button>
-            
-            {modules.map((module) => (
-                <div key={module.id} className="mt-4">
-                    <ModuleItem
-                        module={module}
-                        
-                        onAddItem={() => handleAddModuleItem(module.id)}
-                    />
+            <div className='container mx-auto pr-20'>
+                <div className='float-right mb-5'>
+                    <AddButton onClick={handleAddModuleButtonClick} label="New Module" />
                 </div>
-            ))}
-        </div> */}
-        <div className="p-6 space-y-6">
-        <h1 className="text-3xl font-bold">Course Modules</h1>
-        {modules.length === 0 ? (
-            <p>No modules available for this course.</p>
-        ) : (
-            modules.map((module) => (
-            <ModuleTitle
-                key={module.module_id}
-                moduleName={module.module_name}
-                moduleId={module.module_id}
-            />
-            ))
-        )}
-        </div>
+
+                {showForm && (
+                    <AddModuleForm onSubmit={handleAddModule} onCancel={handleCancelClick} />
+                )}
+
+                {/* Modules List */}
+                <div className="module-materials mt-4">
+                    {isLoading ? ( <p>Loading materials...</p>) : error ? ( <p>{error}</p>) : (
+                        modules.length === 0 ? ( <p>No materials available for this course</p>) : (
+                            modules.map((module) => (
+                                <ModuleTitle key={module.module_id} moduleId={module.module_id} moduleName={module.module_name} materials={module.materials} courseId={courseId}/>
+                            ))
+                    ))}
+                </div>
+            </div>
         </Layout>
     );
 }

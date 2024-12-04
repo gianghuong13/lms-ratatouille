@@ -3,6 +3,7 @@ import materialManageController from '../../controllers/materialManage/materialM
 
 const router = express.Router();
 
-router.get('/materials', materialManageController.getMaterials);
+router.get('/materials/:course_id', materialManageController.getMaterialsByCourse);
+router.post('/materials/add', materialManageController.createMaterial);
 
 export default router;
