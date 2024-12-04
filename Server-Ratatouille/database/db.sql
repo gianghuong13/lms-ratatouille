@@ -229,3 +229,7 @@ INSERT INTO users (user_id, password, full_name, role, email) VALUES
 ('admin002',  '$2b$10$gBMKWuqjDfJJHiRLBgUwhOmh7GEVHfK8Jqp7yua4f1pLen/phKpLG', 'Nguyễn Thúy Quỳnh', 'admin', '22026559@vnu.edu.vn'),
 ('admin003',  '$2b$10$fv.d1sqVdcBwUiUPDRrlResZb39YmiZRtojURXfKl5jVn8H/MAYbS', 'Lê Thị Hà Phương', 'admin', '22026563@vnu.edu.vn'),
 ('admin004',  '$2b$10$Qb1MjNWHm3f9qaqYBo0AM.hX4mUK3F55KNh81daN9PweSGAgRQiZi', 'Nguyễn Hương Giang', 'admin', '22026566@vnu.edu.vn');
+
+INSERT INTO `educationsystem`.`terms` (`term_id`, `term_name`) VALUES ('2425H', 'Học kỳ hè năm học 2024-2025');
+INSERT INTO `educationsystem`.`terms` (`term_id`, `term_name`) VALUES ('2425I', 'Học kỳ I năm học 2024-2025');
+INSERT INTO `educationsystem`.`terms` (`term_id`, `term_name`) VALUES ('2425II', 'Học kỳ II năm học 2024-2025');
