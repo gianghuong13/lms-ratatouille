@@ -48,7 +48,8 @@ export default function CourseCard(){
                     courseList.map((course, index) => 
                         <li key={course.course_id}>
                             <div
-                                className={`w-[250px] h-[250px] border-2 shadow-xl p-[3px] rounded-3xl hover:shadow-2xl`}
+                                className={`w-[250px] h-[250px] border-2 shadow-[0_2px_4px_0_rgba(0,0,0,0.2),0_3px_10px_0_rgba(0,0,0,0.19)] p-[3px] rounded-3xl
+                                             hover:shadow-[0_4px_8px_0_rgba(0,0,0,0.2),0_6px_20px_0_rgba(0,0,0,0.19)]`}
                                 style={{ borderColor: colors[index % colors.length] }}
                             >
                                 <Link to={`courses/${course.course_id}`}>
