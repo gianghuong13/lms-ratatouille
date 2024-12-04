@@ -6,6 +6,8 @@ import AddButton from '../../../components/AddButton';
 import Navbar from '../../../components/Navbar';
 import { Link } from 'react-router-dom';
 import CourseTable from '../../../components/CourseTable';
+import WelcomCard from '../../../components/WelcomCard';
+import PageTitle from '../../../components/PageTitle';
 
 const CourseManagePage = () => {
   const [selectedTerm, setSelectedTerm] = useState('All');
@@ -57,35 +59,35 @@ const CourseManagePage = () => {
   }, []);
     
   return (
-    <>
-    {/* <div>
-      <Navbar/>
-    </div> */}
-    <div className="p-4 w-full">
-      <div className="container mx-auto">
-        <h1 className="text-3xl font-bold mb-4">Course Management</h1>
-        <div className='flex'>
-        <div className="flex items-center mb-4 space-x-8">
-          <div className=''>
-            <Searchbar
-              placeholder="Search course..."
-              onSearch={handleSearch}
-            />
+    <div className="bg-[#F5F8FB] flex-1">
+      <WelcomCard />
+      <PageTitle title="Courses Management" />
+      <div className="m-0 px-2 sm:mx-2 rounded-2xl shadow-lg h-[85vh] md:mx-3 xl:ml-5 xl:mr-10 bg-white overflow-y-auto">
+        <div className="p-4 w-full">
+          <div className="container mx-auto">
+            <div className='flex'>
+            <div className="flex items-center mb-4 space-x-8">
+              <div className=''>
+                <Searchbar
+                  placeholder="Search course..."
+                  onSearch={handleSearch}
+                />
+              </div>
+              <div className=''>
+                <Dropdown options={termOptions} onSelect={handleSelect} />
+              </div>
+            </div>
+              <div className='ml-auto'>
+                <Link to="/admin/courses/add">
+                  <AddButton label="New Course" />
+                </Link>
+              </div>
+              </div>
+            <CourseTable courses={searchResults} selectedTerm={selectedTerm} fetchCourses={fetchCourses}/>
           </div>
-          <div className=''>
-            <Dropdown options={termOptions} onSelect={handleSelect} />
-          </div>
-        </div>
-          <div className='ml-auto'>
-            <Link to="/admin/courses/add">
-              <AddButton label="New Course" />
-            </Link>
-          </div>
-          </div>
-        <CourseTable courses={searchResults} selectedTerm={selectedTerm} fetchCourses={fetchCourses}/>
+        </div>        
       </div>
     </div>
-    </>
   );
 };
 

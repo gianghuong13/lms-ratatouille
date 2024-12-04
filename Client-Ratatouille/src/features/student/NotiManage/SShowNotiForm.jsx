@@ -113,7 +113,8 @@ export default function SShowNotiForm(){
                             {
                                 generalNotiList.map((noti, index)=>
                                     <li key={noti.notification_id}>
-                                        <Link className="flex flex-row mx-1 md:mx-3 xl:mx-10 py-1 px-2 border-t-[1px] border-[#D6CDCD] hover: hover:bg-[#f1f5fd] hover:shadow-md"
+                                        <Link className="flex flex-row mx-1 md:mx-3 xl:mx-10 py-1 px-2 border-t-[1px] border-[#D6CDCD] hover: hover:bg-[#f1f5fd] 
+                                                        hover:shadow-[0_2px_4px_0_rgba(0,0,0,0.2),0_3px_10px_0_rgba(0,0,0,0.19)]"
                                             to={"/student/notifications/detail-notification/"+noti.notification_id}
                                             onClick={() => {markAsRead(noti.notification_id)}} 
                                             style={{backgroundColor: isRead(noti.notification_id) ? "#F8F8F8" : "" }}       
@@ -140,7 +141,8 @@ export default function SShowNotiForm(){
                             {
                                 courseNotiList.map((noti, index)=>
                                     <li key={noti.notification_id}>
-                                        <Link className="flex flex-row mx-1 md:mx-3 xl:mx-10 py-1 px-2 border-t-[1px] border-[#D6CDCD] hover: hover:bg-[#f1f5fd] hover:shadow-md"
+                                        <Link className="flex flex-row mx-1 md:mx-3 xl:mx-10 py-1 px-2 border-t-[1px] border-[#D6CDCD] hover: hover:bg-[#f1f5fd] 
+                                                        hover:shadow-[0_2px_4px_0_rgba(0,0,0,0.2),0_3px_10px_0_rgba(0,0,0,0.19)]"
                                             onClick={() => {markAsRead(noti.notification_id)}} 
                                             style={{backgroundColor: isRead(noti.notification_id) ? "#F8F8F8" : "" }}   
                                             to={"/student/notifications/detail-notification/"+noti.notification_id}

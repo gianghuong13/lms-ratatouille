@@ -1,8 +1,8 @@
 import connection from "../../database/dbConnect.js";
 
 const moduleManageController = {
-    getModules: (req, res) => {
-        const { course_id } = req.body;
+    getModulesByCourse: (req, res) => {
+        const { course_id } = req.params;
         if (!course_id) {
             return res.status(400).send('Missing required field: course_id');
         }
@@ -12,7 +12,7 @@ const moduleManageController = {
                 return res.status(500).json({ error: 'Database query error' });
             }
             if (result.length === 0) {
-                return res.status(404).json({ message: 'No modules found for this course' });
+                return res.status(200).json([]);
             }
             return res.status(200).json(result); // Send the results as JSON
         });
@@ -35,6 +35,32 @@ const moduleManageController = {
                 description,
             }
             return res.status(201).json({ message: 'Module added successfully', newModule });
+        });
+    },
+
+    deleteModule: (req, res) => {
+        const { module_id } = req.params;
+        if (!module_id) {
+            return res.status(400).send('Missing required field: module_id');
+        }
+        const deleteMaterialsQuery = `DELETE FROM materials WHERE module_id = ?`;
+
+        connection.query(deleteMaterialsQuery, [module_id], (err, result) => {
+            if (err) {
+                return res.status(500).json({ error: 'Database query error' });
+            }
+
+            const deleteModuleQuery = `DELETE FROM modules WHERE module_id = ?`;
+
+            connection.query(deleteModuleQuery, [module_id], (err, result) => {
+                if (err) {
+                    return res.status(500).json({ error: 'Database query error' });
+                }
+                if (result.affectedRows === 0) {
+                    return res.status(404).json({ message: 'Module not found' });
+                }
+                return res.status(200).json({ message: 'Module deleted successfully' });
+            });
         });
     }
 };

@@ -57,25 +57,22 @@ export default function TDetailNotiForm() {
     };
     
     return (
-        <div className="m-0 p-3 sm:mx-2 rounded-2xl shadow-lg h-[89vh] md:mx-3 xl:ml-5 xl:mr-10 bg-white overflow-y-auto">
-            <h2 className="text-xl font-semibold ml-12">{noti.title}</h2>
+        <div className="m-0 p-3 sm:mx-2 rounded-2xl shadow-lg h-[85vh] md:mx-3 xl:ml-5 xl:mr-10 bg-white overflow-y-auto">
             <div className="flex items-center">
-            <Avatar 
-                style={{
-                    backgroundColor: getColorFromName(noti.full_name || ""), // Màu từ tên
-                    color: '#ffffff'
-                }}
-            >
-                {noti.full_name
-                    ? noti.full_name
-                        .split(" ")
-                        .map(word => word[0])
-                        .join("")
-                        .toUpperCase()
-                    : ""}
-            </Avatar>
-
-
+                <Avatar 
+                    style={{
+                        backgroundColor: getColorFromName(noti.full_name || ""), // Màu từ tên
+                        color: '#ffffff'
+                    }}
+                >
+                    {noti.full_name
+                        ? noti.full_name
+                            .split(" ")
+                            .map(word => word[0])
+                            .join("")
+                            .toUpperCase()
+                        : ""}
+                </Avatar>
                 <div className="ml-3 align-middle">
                     <p className="m-0 font-semibold">{noti.full_name}
                         <span className="text-sm font-normal text-gray-500">{" <" + noti.email + ">"}</span>
@@ -93,6 +90,7 @@ export default function TDetailNotiForm() {
             <div className="ml-14 block md:hidden italic">
                     <p className="text-sm text-gray-500 m-0">{"Last modified: " + noti.last_modified}</p>
             </div>
+            <h2 className="text-xl font-bold ml-12 text-center m-2">{noti.title}</h2>
             <div className="prose max-w-none break-words whitespace-normal ml-12 mt-3" dangerouslySetInnerHTML={{ __html: noti.content }} />
             <div>
                 {filesList.length > 0 ? (

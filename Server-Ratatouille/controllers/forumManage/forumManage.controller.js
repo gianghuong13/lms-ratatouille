@@ -1,9 +1,12 @@
 import connection from '../../database/dbConnect.js'; // Assuming you have a database connection module
 
+// thiết kế show forum chỉ có các bài post đã đăng (thấy được title, 1 chút nội dung, ngày đăng)
+// thiết kế khi show chi tiết của 1 post: đầu tiên phải có tiêu đề lớn 
+                                    
 const forumManageController = {
     getAllPostsByCourseId: (req, res) => {
         const courseId = req.params.course_id;
-        const query = `SELECT * FROM posts WHERE course_id = ?`;
+        const query = `SELECT * FROM posts WHERE course_id = ?`; // sort lại theo thời gian
         connection.query(query, [courseId], (err, result) => {
             if (err) {
                 res.status(500).send('Internal server error');
