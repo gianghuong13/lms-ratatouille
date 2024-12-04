@@ -6,43 +6,23 @@ import triangleicon from "../assets/User_Screen/dropdown.svg";
 import dots from "../assets/User_Screen/EditDots.svg";
 import pluscircle from "../assets/User_Screen/PlusCircle.svg";
 
-const ModuleTitle = ({ courseId, moduleName, moduleId, onDelete }) => {
-
+const ModuleTitle = ({ moduleId, moduleName, materials, courseId }) => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
-  const [materials, setMaterials] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-
+ 
   const toggleDropdown = () => {
     setIsOpen((prevState) => !prevState);
   };
 
-  const handleDeleteModule = () => {
-    if (window.confirm("Are you sure you want to delete this module?")) {
-      onDelete(moduleId);
-    }
-  };
-
-  useEffect(() => {
-    const fetchMaterials = async () => {
-      try {
-        setIsLoading(true);
-        const response = await axios.get(`/api/materials?module=${moduleId}`);
-        setMaterials(response.data);
-      } catch (error) {
-        setError("Error fetching materials. Please try again later.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchMaterials();
-  }, [moduleId]);
+  // const handleDeleteModule = () => {
+  //   if (window.confirm("Are you sure you want to delete this module?")) {
+  //     onDelete(moduleId);
+  //   }
+  // };
 
   return (
-      <div className="flex justify-between bg-gray-300 shadow-lg rounded-lg p-4 mb-4 w-full">
-
+    <>
+      <div className="flex justify-between bg-gray-200 shadow rounded-lg p-4 mt-14 w-full">
           <div className="flex items-baseline cursor-pointer" onClick={toggleDropdown}>
             <div className="mr-4">
               <img src={triangleicon} alt="" className={`transform transition-transform duration-300 ${isOpen ? "rotate-0" : "-rotate-90"}`}/>
@@ -53,36 +33,29 @@ const ModuleTitle = ({ courseId, moduleName, moduleId, onDelete }) => {
           <div className="flex items-baseline space-x-2">
             <img src={dots} alt="editdots" onClick={() => navigate(``)} className="cursor-pointer"/>
             <img src={pluscircle} alt="addplus" onClick={() => navigate(`/teacher/courses/${courseId}/modules/${moduleId}/add-material`)} className="cursor-pointer"/>
-          </div>
+          </div>        
+      </div>
 
-        {/* Module Items (shown when the dropdown is open) */}
-        {isOpen && (
-          <div>
-          <h2>Materials for Module {moduleId}</h2>
+      
+      {isOpen && (
+        <div className="module-items p-2 bg-gray-100 rounded-lg">
           {materials.length === 0 ? (
-            <div>No materials found for this module.</div>
+            <p>No materials available</p>
           ) : (
-            <div>
-              {materials.map((material) => (
-                <div key={material.material_id}>
-                  <h3>{material.title}</h3>
-                  <p>Type: {material.material_type}</p>
-                  <div>
-                    {material.files.map((file, index) => (
-                      <div key={index}>
-                        <a href={file.file_path} target="_blank" rel="noopener noreferrer">
-                          {file.file_name}
-                        </a>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
+            materials.map((material) => (
+              <ModuleItem key={material.material_id} material={material} />
+            ))
           )}
         </div>
-        )}
-      </div>
+      )}
+
+      {/* <button
+        onClick={handleDeleteModule}
+        className="delete-module-btn p-2 bg-red-500 text-white rounded mt-4"
+      >
+        Delete Module
+      </button> */}
+    </>
   );
 };
 

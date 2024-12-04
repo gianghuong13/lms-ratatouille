@@ -42,7 +42,7 @@ const AddMaterialForm = ({ courseId, moduleId, uploaderId }) => {
 
       // Step 2: Send material information and file URLs to the backend
       const materialData = {
-        courseId,
+        // courseId,
         uploaderId,
         moduleId,
         title,

@@ -3,7 +3,7 @@ import moduleManageController from '../../controllers/moduleManage/moduleManage.
 
 const router = express.Router();
 
-router.get('/modules', moduleManageController.getModulesByCourse);
+router.get('/modules/:course_id', moduleManageController.getModulesByCourse);
 router.post('/modules/add', moduleManageController.addModule);
 router.delete('/modules/delete/:module_id', moduleManageController.deleteModule);
 

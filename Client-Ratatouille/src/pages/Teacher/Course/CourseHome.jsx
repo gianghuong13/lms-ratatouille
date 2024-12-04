@@ -1,47 +1,71 @@
 import React, { useEffect, useState } from 'react'
 import Layout from '../../../components/Layout'
 import ModuleTitle from '../../../components/ModuleTitle';
-import ModuleItem from '../../../components/ModuleItem';
 import axios from 'axios';
-import { useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 import AddModuleForm from '../../../features/teacher/ModuleManage/AddModuleForm';
 import AddButton from '../../../components/AddButton';
 
 const CourseHome = () => {
-    const { courseId } = useParams();
+    const courseId = useParams().courseId;
     const navigate = useNavigate();
     const [modules, setModules] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showForm, setShowForm] = useState(false);
 
+    // useEffect(() => {
+    //     const fetchModules = async () => {
+    //         if (!courseId) {
+    //             setError('Course ID not found');
+    //             return;
+    //         }
+
+    //         try {
+    //             setLoading(true);
+    //             const response = await axios.get(`/api/modules/${courseId}`);
+    //             if (response.status === 200 && response.data.length === 0) {
+    //                 setModules([]); 
+    //             } else if (response.status === 200 && response.data.length > 0) {
+    //                 setModules(response.data); 
+    //                 setError(null); 
+    //             } else {
+    //                 setError('Unexpected response from the server');
+    //             }
+    //         } catch (error) {
+    //             console.error('Error fetching modules:', error);
+    //             setError('Failed to fetch modules');
+    //         } finally {
+    //             setLoading(false);
+    //         }
+    //     };
+
+    //     fetchModules();
+    // }, [courseId]);
+
     useEffect(() => {
-        const fetchModules = async () => {
-            if (!courseId) {
-                setError('Course ID not found');
-                return;
+        const fetchMaterials = async () => {
+          try {
+            setIsLoading(true);
+            const response = await axios.get(`/api/materials/${courseId}`);
+            if (response.status === 200 && response.data.length === 0) {
+                setModules([]);
+            } else if (response.status === 200 && response.data.length > 0) {
+                setModules(response.data);  // Set modules that contain materials
+            } else {
+                setError("Unexpected response from the server");
             }
-
-            try {
-                setLoading(true);
-                const response = await axios.get(`/api/modules?course_id=${courseId}`);
-                if (response.data.length === 0) {
-                    setError('No modules found for this course');
-                }
-                setModules(response.data);
-            } catch (error) {
-                console.error('Error fetching modules:', error);
-                setError('Failed to fetch modules');
-            } finally {
-                setLoading(false); 
-            }
+          } catch (error) {
+            setError("Error fetching materials. Please try again.");
+          } finally {
+            setIsLoading(false);
+          }
         };
+    
+        fetchMaterials();
+      }, [courseId]);
 
-        fetchModules();
-    }, [courseId]);
-
-    if (loading) {
+    if (isLoading) {
         return <div className="text-center mt-10 text-lg font-medium">Loading modules...</div>;
     }
     if (error) {
@@ -64,7 +88,7 @@ const CourseHome = () => {
                 description: moduleDescription
             });
             setModules(prevModules => [...prevModules, response.data.newModule]);
-            navigate(`/teacher/courses/${courseId}/home`);
+            navigate(`/teacher/courses/${courseId}`);
 
             setShowForm(false);
 
@@ -104,37 +128,13 @@ const CourseHome = () => {
                 )}
 
                 {/* Modules List */}
-                <div className='mt-4'>
-                    {/* {modules.length > 0 ? (modules.map((module) => (
-                        <div key={module.module_id} className="bg-white shadow-lg rounded-lg p-4 mb-4">
-                            <div className="flex justify-between items-center cursor-pointer">
-                                <h3 className="text-xl font-semibold">{module.module_name}</h3>
-                                <span>▼</span>
-                            </div>
-                            <ul className="mt-3 space-y-2 pl-4">
-                                {module.items.map((item) => (
-                                    <li key={item} className="p-4 mb-4 border rounded-lg shadow-sm">
-                                        {item}
-                                    </li>
-                                ))}
-                                <button
-                                    className="bg-blue-500 text-white px-4 py-2 rounded"
-                                    onClick={() => handleAddModuleItem(module.module_id)}
-                                >
-                                    Add Item
-                                </button>
-                            </ul>
-                        </div>
-                    ))) : (<p>No modules available for this course</p>)} */}
-                    {modules.length > 0 ? (modules.map((module) => (
-                        <ModuleTitle 
-                            key={module.module_id} 
-                            moduleName={module.module_name} 
-                            moduleId={module.module_id} 
-                            courseId={courseId}
-                            onDelete={deleteModule}
-                        />
-                    ))) : (<p>No modules available for this course</p>)}
+                <div className="module-materials mt-4">
+                    {isLoading ? ( <p>Loading materials...</p>) : error ? ( <p>{error}</p>) : (
+                        modules.length === 0 ? ( <p>No materials available for this course</p>) : (
+                            modules.map((module) => (
+                                <ModuleTitle key={module.module_id} moduleId={module.module_id} moduleName={module.module_name} materials={module.materials} courseId={courseId}/>
+                            ))
+                    ))}
                 </div>
             </div>
         </Layout>

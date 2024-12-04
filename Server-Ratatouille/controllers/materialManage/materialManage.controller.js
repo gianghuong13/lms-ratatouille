@@ -2,15 +2,15 @@ import connection from "../../database/dbConnect.js";
 
 const materialManageController = {
     createMaterial: async (req, res) => {
-        const { courseId, uploaderId, moduleId, title, materialType, files } = req.body;
+        const { uploaderId, moduleId, title, materialType, files } = req.body;
     
-        if (!courseId || !uploaderId || !moduleId || !title || !materialType || !files || files.length === 0) {
+        if (!uploaderId || !moduleId || !title || !materialType || !files || files.length === 0) {
           return res.status(400).send('Missing required fields');
         }
     
         // Insert material info into the "materials" table
-        const materialQuery = `INSERT INTO materials (course_id, uploader_id, module_id, title, material_type) VALUES (?, ?, ?, ?, ?)`;
-        connection.query(materialQuery, [courseId, uploaderId, moduleId, title, materialType], async (err, result) => {
+        const materialQuery = `INSERT INTO materials (uploader_id, module_id, title, material_type) VALUES (?, ?, ?, ?)`;
+        connection.query(materialQuery, [uploaderId, moduleId, title, materialType], async (err, result) => {
           if (err) {
             console.error('Error inserting material into database:', err);
             return res.status(500).json({ error: 'Database query error' });
@@ -46,7 +46,7 @@ const materialManageController = {
 
   // Fetch materials of all modules in a course
   getMaterialsByCourse: async (req, res) => {
-    const course_id = req.params;
+    const course_id = req.params.course_id;
     if (!course_id) {
       return res.status(400).send('Missing required fields');
     }
@@ -67,14 +67,13 @@ const materialManageController = {
         WHERE m.course_id = ?;
     `;
 
-    console.log('Executing SQL query with courseId:', req.params.course_id);
     connection.query(query, [course_id], (err, results) => {
         if (err) {
             return res.status(500).json({ error: `Database query error: ${err.message} ` });
         }
 
         if (results.length === 0) {
-            return res.status(404).json({ message: 'No materials found for this course' });
+            return res.status(200).json([]);
         }
         
         const groupedMaterials = results.reduce((acc, row) => {
@@ -82,6 +81,7 @@ const materialManageController = {
 
             if (!acc[module_id]) {
                 acc[module_id] = {
+                    module_id,
                     module_name,
                     materials: [],
                 };

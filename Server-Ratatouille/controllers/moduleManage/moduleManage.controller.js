@@ -2,7 +2,7 @@ import connection from "../../database/dbConnect.js";
 
 const moduleManageController = {
     getModulesByCourse: (req, res) => {
-        const { course_id } = req.query;
+        const { course_id } = req.params;
         if (!course_id) {
             return res.status(400).send('Missing required field: course_id');
         }
@@ -12,7 +12,7 @@ const moduleManageController = {
                 return res.status(500).json({ error: 'Database query error' });
             }
             if (result.length === 0) {
-                return res.status(404).json({ message: 'No modules found for this course' });
+                return res.status(200).json([]);
             }
             return res.status(200).json(result); // Send the results as JSON
         });
