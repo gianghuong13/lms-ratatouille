@@ -60,21 +60,41 @@ CREATE TABLE modules (
     FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE
 );
 
--- Bảng materials
+-- -- Bảng materials
+-- CREATE TABLE materials (
+--     material_id INT PRIMARY KEY AUTO_INCREMENT,
+--     course_id VARCHAR(50) NOT NULL,
+--     uploader_id VARCHAR(8),
+--     module_id INT DEFAULT NULL,
+--     material_type ENUM('document', 'video', 'link', 'zip') NOT NULL,
+--     title NVARCHAR(255) NOT NULL,
+--     file_url VARCHAR(255), 
+--     description TEXT,
+--     upload_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+--     FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE,
+--     FOREIGN KEY (uploader_id) REFERENCES users(user_id) ON DELETE SET NULL,
+--     FOREIGN KEY (module_id) REFERENCES modules(module_id) ON DELETE SET NULL
+-- );
+
 CREATE TABLE materials (
     material_id INT PRIMARY KEY AUTO_INCREMENT,
-    course_id VARCHAR(50) NOT NULL,
+    -- course_id VARCHAR(50) NOT NULL,
     uploader_id VARCHAR(8),
     module_id INT DEFAULT NULL,
     material_type ENUM('document', 'video', 'link', 'zip') NOT NULL,
     title NVARCHAR(255) NOT NULL,
-    -- s3_file_url VARCHAR(255), 
-    description TEXT,
-    file_path VARCHAR(255),
-    upload_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE,
+    -- FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE,
     FOREIGN KEY (uploader_id) REFERENCES users(user_id) ON DELETE SET NULL,
     FOREIGN KEY (module_id) REFERENCES modules(module_id) ON DELETE SET NULL
+);
+
+CREATE TABLE materials_files (
+	file_id INT PRIMARY KEY auto_increment,
+    material_id INT NOT NULL,
+    file_name NVARCHAR(255) NOT NULL,
+    file_path NVARCHAR(255) NOT NULL,
+    upload_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (material_id) REFERENCES materials(material_id) ON DELETE CASCADE
 );
 
 -- Bảng assignments

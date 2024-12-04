@@ -37,6 +37,8 @@ import CourseGrades from './pages/Teacher/Course/CourseGrades.jsx';
 import CoursePeople from './pages/Teacher/Course/CoursePeople.jsx';
 import CourseFiles from './pages/Teacher/Course/CourseFiles.jsx';
 
+import AddMaterial from './pages/Teacher/Module/AddMaterial.jsx';
+
 import TCreateNotification from './pages/Teacher/NotiManage/TCreateNotification.jsx';
 import TNotifications from './pages/Teacher/NotiManage/TNotifications.jsx';
 import TUpdateNotification from './pages/Teacher/NotiManage/TUpdateNotification.jsx';
@@ -85,6 +87,8 @@ const App = () => {
             <Route path="notifications/detail-notification/:id" element={<TDetailNotification  />} />
 
             <Route path="courses/:courseId" element={<CourseHome />} />
+            <Route path='courses/:courseId/modules/:moduleId/add-material' element={<AddMaterial />} />
+            
             <Route path='courses/:courseId/assignments' element={<CourseAssignments />} />
             <Route path='courses/:courseId/discussions' element={<CourseDiscussions />} />
             <Route path='courses/:courseId/grades' element={<CourseGrades />} />
