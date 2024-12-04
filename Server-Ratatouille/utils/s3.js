@@ -33,12 +33,27 @@ async function putObject(signedUrl, data) {
   });
 }
 async function getObject(key) {
-  const command = new GetObjectCommand({
-    Bucket: bucketName,
-    Key: key,
-  });
-  const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
-  return signedUrl;
+  try {
+    // Tạo lệnh lấy URL
+    const command = new GetObjectCommand({
+      Bucket: bucketName,
+      Key: key,
+    });
+    // Tạo URL đã ký (signed URL)
+    const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
+
+    // Lấy tên file từ key (phần cuối sau dấu '/')
+    const fileName = key.split('/').pop();
+
+    // Trả về cả URL và tên file
+    return {
+      signedUrl,
+      fileName,
+    };
+  } catch (error) {
+    console.error("Error getting object URL:", error);
+    throw new Error("Unable to generate signed URL for object");
+  }
 }
 
 async function deleteObject(key) {
@@ -78,13 +93,22 @@ async function listObjects(folder) {
 
     const response = await s3Client.send(command);
 
+    // Lọc các object có size > 0 (không phải folder rỗng)
+    const files = response.Contents.filter(item => item.Size > 0).map(item => ({
+      key: item.Key,
+      name: item.Key.split('/').pop(),
+      size: item.Size,
+      lastModified: item.LastModified
+    }));
+
     // Trả về danh sách các file nếu có
-    return response.Contents ? response.Contents.map(item => item.Key) : [];
+    return files;
   } catch (error) {
     console.error("Error listing objects:", error);
     throw new Error("Unable to list objects from S3");
   }
 }
+
 
 async function copyObject(key, newKey) {
   if (typeof key !== 'string' || typeof newKey !== 'string') {

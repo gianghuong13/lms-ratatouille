@@ -336,6 +336,9 @@ const courseManageController = {
         })
         // check laị getyear là dạng số hay string sửa lại, sau đó chỉnh lại xét if else cộng thêm mà kỳ 
     }
+
+    // Lấy ra tất cả file trong 1 khóa học
+    
 };
 
 export default courseManageController;

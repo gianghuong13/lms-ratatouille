@@ -41,6 +41,7 @@ import TCreateNotification from './pages/Teacher/NotiManage/TCreateNotification.
 import TNotifications from './pages/Teacher/NotiManage/TNotifications.jsx';
 import TUpdateNotification from './pages/Teacher/NotiManage/TUpdateNotification.jsx';
 import TDetailNotification from './pages/Teacher/NotiManage/TDetailNotification.jsx';
+import FileDetail from './pages/Teacher/Course/FileDetail.jsx';
 
 
 const App = () => {
@@ -90,6 +91,8 @@ const App = () => {
             <Route path='courses/:courseId/grades' element={<CourseGrades />} />
             <Route path='courses/:courseId/people' element={<CoursePeople />} />
             <Route path='courses/:courseId/files' element={<CourseFiles />} />
+
+            <Route path='courses/:courseId/files/:fileName' element={<FileDetail />} />
 
           </Route>
           <Route path="/student">
