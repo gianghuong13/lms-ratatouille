@@ -1,8 +1,8 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import EditCourseForm from '../../../features/admin/CourseManage/EditCourseForm';
-import Navbar from '../../../components/Navbar';
-
+import PageTitle from '../../../components/PageTitle';
+import WelcomCard from '../../../components/WelcomCard';
 const EditCoursePage = () => {
     const { courseId } = useParams();
     console.log('Params courseId:', courseId);
@@ -14,11 +14,13 @@ const EditCoursePage = () => {
 
     return (
         <>
-          {/* <Navbar /> */}
-          <div className="container mx-auto p-4">
-              <h1 className="text-2xl mb-4">Edit Course</h1>
-              <EditCourseForm courseId={courseId} onSubmit={handleFormSubmit} />
-          </div>
+          <div className="bg-[#F5F8FB] flex-1"> 
+                <WelcomCard />
+                <PageTitle title="Courses Management" at="Edit course"/>
+                <div className="m-0 p-3 sm:mx-2 rounded-2xl shadow-lg h-[85vh] md:mx-3 xl:ml-5 xl:mr-10 bg-white overflow-y-auto">
+                    <EditCourseForm courseId={courseId} onSubmit={handleFormSubmit} />
+                </div>
+            </div>
         </>
     );
 };

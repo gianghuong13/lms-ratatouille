@@ -57,20 +57,20 @@ export default function SDetailNotiForm() {
         <div className="m-0 p-3 sm:mx-2 rounded-2xl shadow-lg h-[89vh] md:mx-3 xl:ml-5 xl:mr-10 bg-white overflow-y-auto">
             <h2 className="text-xl font-semibold ml-12">{noti.title}</h2>
             <div className="flex items-center">
-            <Avatar 
-                style={{
-                    backgroundColor: getColorFromName(noti.full_name || ""), // Màu từ tên
-                    color: '#ffffff'
-                }}
-            >
-                {noti.full_name
-                    ? noti.full_name
-                        .split(" ")
-                        .map(word => word[0])
-                        .join("")
-                        .toUpperCase()
-                    : ""}
-            </Avatar>
+                <Avatar 
+                    style={{
+                        backgroundColor: getColorFromName(noti.full_name || ""), // Màu từ tên
+                        color: '#ffffff'
+                    }}
+                >
+                    {noti.full_name
+                        ? noti.full_name
+                            .split(" ")
+                            .map(word => word[0])
+                            .join("")
+                            .toUpperCase()
+                        : ""}
+                </Avatar>
 
 
                 <div className="ml-3 align-middle">

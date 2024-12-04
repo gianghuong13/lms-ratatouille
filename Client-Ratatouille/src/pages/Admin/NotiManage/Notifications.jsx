@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { ReactSearchAutocomplete } from 'react-search-autocomplete'
+import WelcomCard from "../../../components/WelcomCard";
 
 export default function Notifications() {
     const [titleData, setTitleData] = useState([]);
@@ -22,10 +23,10 @@ export default function Notifications() {
     
     return (
         <>
-            {/* <Navbar /> */}
             <div className="bg-[#F5F8FB] flex-1"> 
-                <PageTitle title="Notification Management" />
-                <div className="m-0 px-2 sm:mx-2 rounded-2xl shadow-lg h-[89vh] md:mx-3 xl:ml-5 xl:mr-10 bg-white overflow-y-auto">
+                <WelcomCard />
+                <PageTitle title="Notifications Management" />
+                <div className="m-0 px-2 sm:mx-2 rounded-2xl shadow-lg h-[85vh] md:mx-3 xl:ml-5 xl:mr-10 bg-white overflow-y-auto">
                     <div className="mt-2 flex flex-col sm:flex-row sm:justify-around py-2 sticky top-0 z-50 bg-white">  
                         <Link
                             to="create-notification"
