@@ -131,7 +131,7 @@ const handleSubmit = async (e) => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-6 bg-gray-50 shadow-lg rounded-lg flex">
+    <div className="flex">
         <div className="w-1/4 bg-white p-4 shadow-md rounded-lg mr-6">
             
             <Searchbar placeholder="Search students or teachers..." onSearch={handleSearch} />
