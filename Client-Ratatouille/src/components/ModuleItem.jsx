@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const ModuleItem = ({ material }) => {
   const { title, material_type, files } = material;
-
+  console.log(title);
   const renderFiles = () => {
     // Check if files is an array and has elements
     if (Array.isArray(files) && files.length > 0) {

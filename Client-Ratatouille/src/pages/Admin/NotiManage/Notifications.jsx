@@ -18,7 +18,7 @@ export default function Notifications() {
             .then((res) => {
                 setTitleData(Array.isArray(res.data) ? res.data : []);
             })
-            .catch(err => console.log(err));
+            .catch(err => console.error(err));
     }, []);
     
     return (

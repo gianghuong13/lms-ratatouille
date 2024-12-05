@@ -132,15 +132,12 @@ async function copyObject(key, newKey) {
   try {
     // Sao chép object
     const copyResponse = await s3Client.send(copyCommand);
-    console.log(`Object copied from ${key} to ${newKey}:`, copyResponse);
-
     // Xóa object cũ
     const deleteCommand = new DeleteObjectCommand({
       Bucket: bucketName,
       Key: key,
     });
     const deleteResponse = await s3Client.send(deleteCommand);
-    console.log(`Object deleted from ${key}:`, deleteResponse);
 
     return {
       copyResponse,

@@ -29,9 +29,8 @@ export default function NewNotiForm(){
         .get('/api/admin-course_id-4-noti')
         .then((res)=>{
             setAllCourses(Array.isArray(res.data) ? res.data : []);
-            console.log(allCourses);
         })
-        .catch(err => console.log(err));
+        .catch(err => console.error(err));
     }, []);
     
     //Get all admins from server
@@ -41,7 +40,7 @@ export default function NewNotiForm(){
         .then((res)=>{
             setAllAdmins(Array.isArray(res.data) ? res.data : []);
         })
-        .catch(err => console.log(err));
+        .catch(err => console.error(err));
     }, []);
     const allAdminsOptions = allAdmins.map(
         admin => ({label: admin.user_id, value:admin.user_id})
@@ -49,8 +48,6 @@ export default function NewNotiForm(){
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        console.log(noti);
         const res = await axios.post('/api/admin-create-new-noti', noti) // chèn các thông báo vào bảng notifications và trả về id cảu thông báo vừa tạo
         const noti_id = res.data.notification_id; // Lấy giá trị từ API
         
@@ -71,10 +68,10 @@ export default function NewNotiForm(){
 
                 await axios.post('/api/admin-create-noti-file', notiFile) // chèn các thông tin vừa nhận vào bảng notification_files
                         .then((res) => navigate('/admin/notifications'))
-                        .catch((err) => console.log(err));
+                        .catch((err) => console.error(err));
                 
             }catch (err){
-                console.log("Error at upload or insert noti", err)
+                console.error("Error at upload or insert noti", err)
             }
         }else{
             navigate('/admin/notifications'); // Điều hướng sau khi nhận được noti_id

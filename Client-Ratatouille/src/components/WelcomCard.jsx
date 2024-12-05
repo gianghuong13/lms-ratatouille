@@ -11,9 +11,8 @@ export default function WelcomCard(){
                 const deCodeRes = await axios.post('/api/decode', {accessToken: accessToken});
                 setTeacherName(deCodeRes.data.data.full_name);
                 setRole(deCodeRes.data.data.role);
-                console.log(deCodeRes.data.data.full_name)
             }catch(err){
-                console.log('Error fetching data at WelcomCard', err)
+                console.error('Error fetching data at WelcomCard', err)
             }
         }
         fetchData();
