@@ -107,7 +107,7 @@ const CourseHome = () => {
                     {isLoading ? (<p>Loading materials...</p>) : error ? (<p>{error}</p>) : (
                         modules.length === 0 ? (<p>No materials available for this course</p>) : (
                             modules.map((module) => (
-                                <ModuleTitle key={module.module_id} moduleId={module.module_id} moduleName={module.module_name} materials={module.materials} courseId={courseId} />
+                                <ModuleTitle key={module.module_id} moduleId={module.module_id} moduleName={module.module_name} materials={module.materials} courseId={courseId} role={role} />
                             ))
                         ))}
                 </div>

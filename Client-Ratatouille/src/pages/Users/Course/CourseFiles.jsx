@@ -1,51 +1,58 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../../../components/Layout';
 import Searchbar from '../../../components/Searchbar';
 import axios from 'axios';
 
 const CourseFiles = () => {
   const { courseId } = useParams();
-  const navigate = useNavigate(); // Khởi tạo useNavigate
+  const navigate = useNavigate();
   const [files, setFiles] = useState([]);
+  const [filteredFiles, setFilteredFiles] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const role = localStorage.getItem('role'); // Lấy role từ localStorage
+  const role = localStorage.getItem('role');
 
+  // Fetch files from API
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Construct the prefix for the file path based on courseId
-        const prefix = 'materials/' + courseId + '/';
-        // Call the API using POST, passing the prefix in the body
+        const prefix = `materials/${courseId}/`;
         const response = await axios.post('/api/list-files', { prefix });
-        // Update the files state with the data returned from the API
         setFiles(response.data.files);
-        // Set loading to false since the data has been successfully fetched
+        setFilteredFiles(response.data.files); // Initially, filteredFiles is the same as files
         setLoading(false);
       } catch (err) {
         setError('Không có file nào được tìm thấy.');
         setLoading(false);
       }
     };
-
     fetchData();
   }, [courseId]);
 
 
-  // Hàm xử lý khi người dùng nhấn vào file
+  // Handle file row click
   const handleRowClick = (fileKey) => {
     const encodedKey = btoa(fileKey); // Encode fileKey using Base64
-    // Navigate to the FileDetails page with the encoded key and courseId
     navigate(`/${role}/courses/${courseId}/files/${encodedKey}`);
   };
-  
 
   return (
     <Layout>
       <div className="p-6">
         <h1 className="text-lg font-bold text-gray-700 mb-4">Files for Course {courseId}</h1>
-        <Searchbar />
+        {/* Searchbar Component */}
+        <Searchbar
+          placeholder="Search files by name..."
+          onSearch={(value) => {
+            setSearchTerm(value); // Cập nhật từ khóa
+            const filtered = files.filter((file) =>
+              file.name.toLowerCase().includes(value.toLowerCase())
+            );
+            setFilteredFiles(filtered); // Cập nhật danh sách đã lọc
+          }}
+        />
         {loading ? (
           <p className="text-gray-500 text-sm mt-4">Loading files...</p>
         ) : error ? (
@@ -62,17 +69,19 @@ const CourseFiles = () => {
                 </tr>
               </thead>
               <tbody className="text-gray-700 text-sm">
-                {files.length > 0 ? (
-                  files.map((file, index) => (
+                {filteredFiles.length > 0 ? (
+                  filteredFiles.map((file, index) => (
                     <tr
                       key={index}
                       className="hover:bg-gray-50 cursor-pointer"
-                      onClick={() => handleRowClick(file.key)} // Gửi toàn bộ thông tin file
+                      onClick={() => handleRowClick(file.key)}
                     >
                       <td className="py-2 px-4">{file.name}</td>
                       <td className="py-2 px-4">{file.type.toUpperCase()}</td>
                       <td className="py-2 px-4">{(file.size / (1024 * 1024)).toFixed(2)} MB</td>
-                      <td className="py-2 px-4">{new Date(file.lastModified).toLocaleString()}</td>
+                      <td className="py-2 px-4">
+                        {new Date(file.lastModified).toLocaleString()}
+                      </td>
                     </tr>
                   ))
                 ) : (
@@ -85,7 +94,6 @@ const CourseFiles = () => {
               </tbody>
             </table>
           </div>
-
         )}
       </div>
     </Layout>
