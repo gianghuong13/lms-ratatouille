@@ -67,7 +67,7 @@ const CourseManagePage = () => {
         <div className='flex'>
         <div className="flex items-center mb-4 space-x-8">
           <div className=''>
-            <Searchbar
+            <Searchbar className="w-[100px]"
               placeholder="Search course..."
               onSearch={handleSearch}
             />

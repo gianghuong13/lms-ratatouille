@@ -17,5 +17,10 @@ router.get('/users-courses/:user_id', courseManageController.getLoginedUsersCour
 router.post('/courses-in-term-teacher', courseManageController.getCoursesInTermOfTeacher);
 
 router.post('/courses-in-term-student', courseManageController.getCoursesInTermOfStudent);
+router.get('/courses/get-member-by-id-course/:course_id', courseManageController.getAllMembersOfCourseById);
+router.get('/courses/get-teacher-by-id-course/:course_id', courseManageController.getTeachersOfCourseById);
+router.get('/courses/get-student-by-id-course/:course_id', courseManageController.getStudentsOfCourseById);
+router.delete('/courses/delete-member/:course_id/:user_id', courseManageController.deleteMemberFromCourse);
+router.post('/courses/add-member/:course_id', courseManageController.addMemberToCourse);
 
 export default router;
