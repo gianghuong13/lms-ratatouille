@@ -40,7 +40,7 @@ const CourseManagePage = () => {
       setCourses(response.data);
       setSearchResults(response.data);
     } catch (error) {
-      console.log("Error fetching course", error);
+      console.error("Error fetching course", error);
     }
   }
 
@@ -49,7 +49,7 @@ const CourseManagePage = () => {
       const response = await axios.get('/api/terms');
       setTerms(response.data);
     } catch (error) {
-      console.log("Error fetching terms", error);
+      console.error("Error fetching terms", error);
     }
   }
 

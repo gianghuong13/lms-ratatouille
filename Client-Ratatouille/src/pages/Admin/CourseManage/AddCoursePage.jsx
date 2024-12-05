@@ -8,7 +8,6 @@ const AddCoursePage = () => {
     const navigate = useNavigate();
 
     const handleFormSubmit = (data) => {
-        console.log(data);
         // Add course to database
         // Redirect to course manage page
         navigate('/admin/courses');

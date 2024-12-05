@@ -33,12 +33,28 @@ async function putObject(signedUrl, data) {
   });
 }
 async function getObject(key) {
-  const command = new GetObjectCommand({
-    Bucket: bucketName,
-    Key: key,
-  });
-  const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
-  return signedUrl;
+  try {
+    // Tạo lệnh lấy URL
+    const command = new GetObjectCommand({
+      Bucket: bucketName,
+      Key: key,
+    });
+    // Tạo URL đã ký (signed URL)
+    const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
+
+    // Lấy tên file từ key (phần cuối sau dấu '/')
+    const fileName = key.split('/').pop();
+    const fileType = fileName.includes('.') ? fileName.split('.').pop().toLowerCase() : '';
+    // Trả về cả URL và tên file
+    return {
+      signedUrl,
+      fileName,
+      fileType,
+    };
+  } catch (error) {
+    console.error("Error getting object URL:", error);
+    throw new Error("Unable to generate signed URL for object");
+  }
 }
 
 async function deleteObject(key) {
@@ -78,13 +94,29 @@ async function listObjects(folder) {
 
     const response = await s3Client.send(command);
 
-    // Trả về danh sách các file nếu có
-    return response.Contents ? response.Contents.map(item => item.Key) : [];
+    // Lọc và định dạng các file
+    const files = response.Contents.filter(item => item.Size > 0).map(item => {
+      const fileName = item.Key.split('/').pop(); // Lấy tên file
+      const extension = fileName.includes('.') ? fileName.split('.').pop().toLowerCase() : ''; // Lấy đuôi file
+
+      return {
+        key: item.Key,                  // Đường dẫn đầy đủ của file
+        name: fileName,                 // Tên file (không bao gồm đường dẫn)
+        type: extension,           // Đuôi file (ví dụ: pdf, png)
+        size: item.Size,                // Kích thước file
+        lastModified: item.LastModified // Ngày sửa đổi lần cuối
+      };
+    });
+
+    // Trả về danh sách file
+    return files;
   } catch (error) {
     console.error("Error listing objects:", error);
     throw new Error("Unable to list objects from S3");
   }
 }
+
+
 
 async function copyObject(key, newKey) {
   if (typeof key !== 'string' || typeof newKey !== 'string') {
@@ -100,15 +132,12 @@ async function copyObject(key, newKey) {
   try {
     // Sao chép object
     const copyResponse = await s3Client.send(copyCommand);
-    console.log(`Object copied from ${key} to ${newKey}:`, copyResponse);
-
     // Xóa object cũ
     const deleteCommand = new DeleteObjectCommand({
       Bucket: bucketName,
       Key: key,
     });
     const deleteResponse = await s3Client.send(deleteCommand);
-    console.log(`Object deleted from ${key}:`, deleteResponse);
 
     return {
       copyResponse,

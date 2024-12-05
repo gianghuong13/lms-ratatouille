@@ -25,7 +25,7 @@ const Sidebar = ({ isOpen, courseId }) => {
 
   return (
     <div
-      className={`transition-all duration-300 ease-in-out bg-white ${isOpen ? 'w-50 p-4' : 'w-0 p-0'} h-full`}
+      className={`transition-all duration-300 ease-in-out bg-white ${isOpen ? 'w-50 p-4' : 'w-0 p-0'} h-full border-r border-gray-300`}
     >
       <ul className="space-y-4">
         {links.map((link) => (

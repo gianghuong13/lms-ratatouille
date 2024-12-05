@@ -10,7 +10,7 @@ const AddMaterialForm = ({ courseId, moduleId, uploaderId }) => {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+  
   // Handle file selection
   const handleFileChange = (event) => {
     setFiles(event.target.files);
@@ -25,7 +25,7 @@ const AddMaterialForm = ({ courseId, moduleId, uploaderId }) => {
     try {
       // Step 1: Upload the files to S3
       const formData = new FormData();
-      formData.append("folder", "materials"); // Set folder name if needed
+      formData.append("folder", "materials/"+courseId+"/"+moduleId); // Set folder name if needed
 
       // Append files to formData
       for (let i = 0; i < files.length; i++) {
