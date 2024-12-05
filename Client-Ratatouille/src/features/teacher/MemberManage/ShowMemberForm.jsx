@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react"; 
+import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import ConfirmCard from "../../../components/ConfirmCard";
 import AddMemberForm from "./AddMemberForm";
@@ -8,19 +8,20 @@ import axios from "axios";
 
 
 export default function ShowPeopleForm() {
-    const {courseId} = useParams();
+    const { courseId } = useParams();
     const [selectedRole, setSelectedRole] = useState("All");
     const [members, setMembers] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [showConfirm, setShowConfirm] = useState(false);
     const [memberToDelete, setMemberToDelete] = useState(null);
- const [showAddMemberForm, setShowAddMemberForm] = useState(false);
+    const [showAddMemberForm, setShowAddMemberForm] = useState(false);
     const [totalMembers, setTotalMembers] = useState(0);
     const [totalTeachers, setTotalTeachers] = useState(0);
     const [totalStudents, setTotalStudents] = useState(0);
     const userId = localStorage.getItem("userId");
+    const role = localStorage.getItem("role");
     const fetchMembers = async (role) => {
-       try {
+        try {
             const response = await axios.get(`/api/courses/get-member-by-id-course/${courseId}`);
 
             const responseTeacher = await axios.get(`/api/courses/get-teacher-by-id-course/${courseId}`);
@@ -39,25 +40,25 @@ export default function ShowPeopleForm() {
                 setMembers(Array.isArray(responseStudent.data) ? responseStudent.data : []);
             }
 
-       } catch (error) {
+        } catch (error) {
             console.error("Error fetching members", error);
-       }
+        }
     }
 
     useEffect(() => {
         fetchMembers(selectedRole);
-    }, [courseId, selectedRole]); 
+    }, [courseId, selectedRole]);
 
 
-    const handleRoleChange = (e) => { 
+    const handleRoleChange = (e) => {
         setSelectedRole(e.target.value);
-     }
+    }
 
-     const handleSearchChange = (e) => {
+    const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
-     }
-    
-     const filteredMembers = members.filter((member) => {
+    }
+
+    const filteredMembers = members.filter((member) => {
         return (
             member.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             member.course_name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -74,9 +75,9 @@ export default function ShowPeopleForm() {
         try {
             await axios.delete(`/api/courses/delete-member/${courseId}/${memberToDelete.id}`, {
                 data: { role: memberToDelete.role },
-            });            
-            fetchMembers(selectedRole); 
-            setShowConfirm(false); 
+            });
+            fetchMembers(selectedRole);
+            setShowConfirm(false);
             setMemberToDelete(null);
         } catch (error) {
             console.log("Error deleting account", error);
@@ -86,7 +87,7 @@ export default function ShowPeopleForm() {
         fetchMembers(selectedRole);
     }
 
-   return (
+    return (
         <>
             <div className="ml-5">
                 <h5
@@ -99,86 +100,89 @@ export default function ShowPeopleForm() {
             </div>
             <div className="flex items-center">
                 <div className="my-5 ml-5 w-full max-w-xs min-w-[50px]">
-                    <div className="relative">            
-                        <input type="text" class="peer w-full pl-3 pr-10 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-500 rounded-md transition duration-300 ease focus:outline-none focus:border-gray-900 hover:border-slate-600 shadow-sm focus:shadow" 
-                            value={searchTerm} 
+                    <div className="relative">
+                        <input type="text" class="peer w-full pl-3 pr-10 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-500 rounded-md transition duration-300 ease focus:outline-none focus:border-gray-900 hover:border-slate-600 shadow-sm focus:shadow"
+                            value={searchTerm}
                             onChange={handleSearchChange}
                         />
                         <label className="absolute cursor-text bg-white px-1 left-2.5 top-2.5 text-slate-400 text-sm transition-all transform origin-left peer-focus:-top-2 peer-focus:left-2.5 peer-focus:text-xs peer-focus:text-slate-400 peer-focus:scale-90">
                             Search people...
                         </label>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="absolute w-5 h-5 top-2.5 right-2.5 text-slate-600">
-                        <   path d="M4.5 6.375a4.125 4.125 0 1 1 8.25 0 4.125 4.125 0 0 1-8.25 0ZM14.25 8.625a3.375 3.375 0 1 1 6.75 0 3.375 3.375 0 0 1-6.75 0ZM1.5 19.125a7.125 7.125 0 0 1 14.25 0v.003l-.001.119a.75.75 0 0 1-.363.63 13.067 13.067 0 0 1-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 0 1-.364-.63l-.001-.122ZM17.25 19.128l-.001.144a2.25 2.25 0 0 1-.233.96 10.088 10.088 0 0 0 5.06-1.01.75.75 0 0 0 .42-.643 4.875 4.875 0 0 0-6.957-4.611 8.586 8.586 0 0 1 1.71 5.157v.003Z"></path>
+                            <   path d="M4.5 6.375a4.125 4.125 0 1 1 8.25 0 4.125 4.125 0 0 1-8.25 0ZM14.25 8.625a3.375 3.375 0 1 1 6.75 0 3.375 3.375 0 0 1-6.75 0ZM1.5 19.125a7.125 7.125 0 0 1 14.25 0v.003l-.001.119a.75.75 0 0 1-.363.63 13.067 13.067 0 0 1-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 0 1-.364-.63l-.001-.122ZM17.25 19.128l-.001.144a2.25 2.25 0 0 1-.233.96 10.088 10.088 0 0 0 5.06-1.01.75.75 0 0 0 .42-.643 4.875 4.875 0 0 0-6.957-4.611 8.586 8.586 0 0 1 1.71 5.157v.003Z"></path>
                         </svg>
                     </div>
                 </div>
 
-                
+
                 <form className="max-w-sm mx-5">
-                <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 white:bg-gray-500 dark:border-gray-500 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    value={selectedRole}
-                    onChange={handleRoleChange}
-                >
-                    <option value="All">All Roles ({totalMembers})</option>
-                    <option value="Teacher">Teacher ({totalTeachers})</option>
-                    <option value="Student">Student ({totalStudents})</option>
-                </select>
+                    <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 white:bg-gray-500 dark:border-gray-500 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        value={selectedRole}
+                        onChange={handleRoleChange}
+                    >
+                        <option value="All">All Roles ({totalMembers})</option>
+                        <option value="Teacher">Teacher ({totalTeachers})</option>
+                        <option value="Student">Student ({totalStudents})</option>
+                    </select>
                 </form>
 
-                <div>
-                    <button
-                        className="flex max-w-[150px] min-w-[130px] select-none items-center gap-3 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:outline-none  py-2 px-4 text-center align-middle font-sans text-sm font-bold  text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg  focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                        type="button"
-                        onClick={() => setShowAddMemberForm(true)}
+                {role === 'teacher' && (
+                    <div>
+                        <button
+                            className="flex max-w-[150px] min-w-[130px] select-none items-center gap-3 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:outline-none  py-2 px-4 text-center align-middle font-sans text-sm font-bold  text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg  focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                            type="button"
+                            onClick={() => setShowAddMemberForm(true)}
                         >
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
-                            stroke-width="2" class="w-4 h-4">
-                            <path
-                                d="M6.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM3.25 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM19.75 7.5a.75.75 0 00-1.5 0v2.25H16a.75.75 0 000 1.5h2.25v2.25a.75.75 0 001.5 0v-2.25H22a.75.75 0 000-1.5h-2.25V7.5z">
-                            </path>
-                        </svg>
-                        Add Member
-                    </button>                
-                </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
+                                stroke-width="2" class="w-4 h-4">
+                                <path
+                                    d="M6.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM3.25 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM19.75 7.5a.75.75 0 00-1.5 0v2.25H16a.75.75 0 000 1.5h2.25v2.25a.75.75 0 001.5 0v-2.25H22a.75.75 0 000-1.5h-2.25V7.5z">
+                                </path>
+                            </svg>
+                            Add Member
+                        </button>
+                    </div>
+                )}
+
             </div>
 
             {showAddMemberForm && (
-                <AddMemberForm 
-                    courseId={courseId} 
-                    onClose={() => setShowAddMemberForm(false)} 
+                <AddMemberForm
+                    courseId={courseId}
+                    onClose={() => setShowAddMemberForm(false)}
                     onMemberAdded={handleMemberAdded}
                 />
             )}
             <div className="relative flex flex-col text-gray-700 bg-white shadow-md rounded-lg bg-clip-border mx-5 mb-5">
                 <table className=" text-left table-auto min-w-max items-center">
-                <thead>
-                    <tr>
-                    <th className="px-4 pt-5 min-w-[95px] border-b border-slate-300 bg-slate-200">
-                        <p className="block text-sm font-bold leading-none text-slate-500">
-                        User ID
-                        </p>
-                    </th>
-                    <th className="px-4 pt-5 min-w-[170px] max-w-[350px] border-b border-slate-300 bg-slate-200">
-                        <p className="block text-sm font-bold leading-none text-slate-500">
-                        Full Name
-                        </p>
-                    </th>
-                    <th className="px-4 pt-5 w-[350px] border-b border-slate-300 bg-slate-200">
-                        <p className="block text-sm font-bold leading-none text-slate-500">
-                        Section
-                        </p>
-                    </th>
-                    <th className="px-4 pt-5 w-[150px] border-b border-slate-300 bg-slate-200">
-                        <p className="block text-sm font-bold leading-none text-slate-500">
-                        Role
-                        </p>
-                    </th>
-                   
-                    <th className="px-4 pt-5 w-[100px] border-b border-slate-300 bg-slate-200">
-                    </th>
-                    </tr>
-                </thead>
-                <tbody>
+                    <thead>
+                        <tr>
+                            <th className="px-4 pt-5 min-w-[95px] border-b border-slate-300 bg-slate-200">
+                                <p className="block text-sm font-bold leading-none text-slate-500">
+                                    User ID
+                                </p>
+                            </th>
+                            <th className="px-4 pt-5 min-w-[170px] max-w-[350px] border-b border-slate-300 bg-slate-200">
+                                <p className="block text-sm font-bold leading-none text-slate-500">
+                                    Full Name
+                                </p>
+                            </th>
+                            <th className="px-4 pt-5 w-[350px] border-b border-slate-300 bg-slate-200">
+                                <p className="block text-sm font-bold leading-none text-slate-500">
+                                    Section
+                                </p>
+                            </th>
+                            <th className="px-4 pt-5 w-[150px] border-b border-slate-300 bg-slate-200">
+                                <p className="block text-sm font-bold leading-none text-slate-500">
+                                    Role
+                                </p>
+                            </th>
+
+                            <th className="px-4 pt-5 w-[100px] border-b border-slate-300 bg-slate-200">
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
                         {filteredMembers.length === 0 ? (
                             <tr>
                                 <td colSpan="5" className="text-center py-4 text-gray-500">
@@ -200,18 +204,25 @@ export default function ShowPeopleForm() {
                                     <td className="px-4 pt-6">
                                         <p className="block text-sm text-slate-800">{member.role}</p>
                                     </td>
-                                    <td className="px-4 pt-6">
-                                        <div className="block text-center">
-                                        {member.id !== userId ? (<button className="mb-5 px-2 p-1 rounded bg-red-500 text-white hover:bg-red-700" 
-                                         onClick={() => confirmDelete(member)}>Delete</button>) : null}
-                                        </div>
-                                    </td>
+
+
+
+                                    {
+                                        role === 'teacher' && (
+                                            <td className="px-4 pt-6">
+                                                <div className="block text-center">
+                                                    {member.id !== userId ? (<button className="mb-5 px-2 p-1 rounded bg-red-500 text-white hover:bg-red-700"
+                                                        onClick={() => confirmDelete(member)}>Delete</button>) : null}
+                                                </div>
+                                            </td>
+                                        )
+                                    }
                                 </tr>
                             ))
                         )}
                     </tbody>
                 </table>
-            </div> 
+            </div>
 
             {showConfirm && (
                 <ConfirmCard
@@ -219,8 +230,7 @@ export default function ShowPeopleForm() {
                     onConfirm={deleteMember}
                     onCancel={() => setShowConfirm(false)}
                 />
-            )}   
-        </>      
+            )}
+        </>
     );
 }
-   
