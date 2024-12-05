@@ -35,6 +35,7 @@ export default function SDetailNotiForm() {
                     const fileInfos = { files: filesDB.data };
                     const filesListRes = await axios.post('/api/object-urls', fileInfos); // lấy các urls ứng với các file trên S3 về 
                     setFilesList(filesListRes.data.results);
+                    console.log(filesListRes.data.results)
                 }
             } catch (err) {
                 console.error('Error fetching data:', err);
@@ -98,7 +99,7 @@ export default function SDetailNotiForm() {
                         <ul className="ml-2">
                         {filesList.map((file) => (
                             <li key={file.file_name}>
-                            <Link to={file.url} className="underline italic text-[#015DAF]">
+                            <Link to={file.url.signedUrl} className="underline italic text-[#015DAF]">
                                 {file.file_name}
                             </Link>
                             </li>
