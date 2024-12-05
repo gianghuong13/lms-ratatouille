@@ -60,7 +60,7 @@ export default function ShowPeopleForm() {
      const filteredMembers = members.filter((member) => {
         return (
             member.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            member.course_name.toLowerCase().includes(searchTerm.toLowerCase())
+            member.id.toLowerCase().includes(searchTerm.toLowerCase())
         );
     });
 
