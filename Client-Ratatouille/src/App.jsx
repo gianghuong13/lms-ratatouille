@@ -26,7 +26,7 @@ import Dashboard from './pages/Users/DashboardPage.jsx';
 // Page User
 import SNotifications from './pages/Users/NotiManage/SNotifications.jsx';
 import SDetailNotification from './pages/Users/NotiManage/SDetailNotification.jsx';
-import CoursesList from './pages/CoursesList.jsx';
+import CoursesList from './pages/Users/CoursesList.jsx';
 import CourseHome from './pages/Users/Course/CourseHome.jsx';
 import CourseAssignments from './pages/Users/Course/CourseAssignments.jsx';
 import CourseDiscussions from './pages/Users/Course/CourseDiscussions.jsx';
