@@ -5,6 +5,8 @@ import { convert } from 'html-to-text';
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRef } from "react";
+import Avatar from '@mui/joy/Avatar';
+
 export default function SShowNotiForm(){
     const accessToken = localStorage.getItem('accessToken');
     const [isGeneral, setIsGeneral] = useState(1);
@@ -30,6 +32,30 @@ export default function SShowNotiForm(){
         };
         fetchData();
     }, [])
+
+    const markAsRead = (id) => {
+        const readNotifications = JSON.parse(localStorage.getItem("readNotifications")) || [];
+        if (!readNotifications.includes(id)) {
+          readNotifications.push(id);
+          localStorage.setItem("readNotifications", JSON.stringify(readNotifications));
+        }
+      };
+
+    const isRead = (id) => {
+    const readNotifications = JSON.parse(localStorage.getItem("readNotifications")) || [];
+    return readNotifications.includes(id);
+    };
+
+    const getColorFromName = (name) => {
+        const hash = name.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+            color += letters[(hash >> (i * 4)) & 0xF];
+        }
+        return color;
+    };
+
     return (
         <>
             <div className="relative">
@@ -87,11 +113,19 @@ export default function SShowNotiForm(){
                             {
                                 generalNotiList.map((noti, index)=>
                                     <li key={noti.notification_id}>
-                                        <Link className="flex flex-row mx-1 md:mx-3 xl:mx-10 py-1 px-2 border-t-[1px] border-[#D6CDCD] hover: hover:bg-[#f1f5fd]"
-                                            to={"/student/notifications/detail-notification/"+noti.notification_id}>
+                                        <Link className="flex flex-row mx-1 md:mx-3 xl:mx-10 py-1 px-2 border-t-[1px] border-[#D6CDCD] hover: hover:bg-[#f1f5fd] 
+                                                        hover:shadow-[0_2px_4px_0_rgba(0,0,0,0.2),0_3px_10px_0_rgba(0,0,0,0.19)]"
+                                            to={"/student/notifications/detail-notification/"+noti.notification_id}
+                                            onClick={() => {markAsRead(noti.notification_id)}} 
+                                            style={{backgroundColor: isRead(noti.notification_id) ? "#F8F8F8" : "" }}       
+                                        >
                                         <div className="mr-2 my-1"><img className="object-fill w-full min-w-[30px] max-w-[40px] h-auto aspect-square" src={logo} alt="admin-logo" /></div>
                                         <div>
-                                            <h6 className="font-bold font-sans m-0">{noti.title}</h6>
+                                            <h6 className="font-bold font-sans m-0"
+                                                style={{fontWeight: isRead(noti.notification_id) ? "normal" : "bold" }}
+                                            >
+                                                {noti.title}
+                                            </h6>
                                             <p className="m-0">{(convert(noti.content, {wordwrap: 130})).length > 130 ? (convert(noti.content, {wordwrap: 130})).slice(0, 130) + " ..." : (convert(noti.content, {wordwrap: 130}))}</p>
                                             <p className="text-sm italic m-0">{noti.created_date}</p>
                                         </div>
@@ -107,12 +141,35 @@ export default function SShowNotiForm(){
                             {
                                 courseNotiList.map((noti, index)=>
                                     <li key={noti.notification_id}>
-                                        <Link className="flex flex-row mx-1 md:mx-3 xl:mx-10 py-1 px-2 border-t-[1px] border-[#D6CDCD] hover: hover:bg-[#f1f5fd]"
-                                            to={"/student/notifications/detail-notification/"+noti.notification_id}>
-                                        <div className="mr-2 my-1"><img className="object-fill w-full min-w-[30px] max-w-[40px] h-auto aspect-square" src={logo} alt="admin-logo" /></div>
-                                        {/* <div className="mr-2 my-1 flex items-center"><span className="border-2 border-black rounded-full w-12 h-12">YG</span></div> */}
+                                        <Link className="flex flex-row mx-1 md:mx-3 xl:mx-10 py-1 px-2 border-t-[1px] border-[#D6CDCD] hover: hover:bg-[#f1f5fd] 
+                                                        hover:shadow-[0_2px_4px_0_rgba(0,0,0,0.2),0_3px_10px_0_rgba(0,0,0,0.19)]"
+                                            onClick={() => {markAsRead(noti.notification_id)}} 
+                                            style={{backgroundColor: isRead(noti.notification_id) ? "#F8F8F8" : "" }}   
+                                            to={"/student/notifications/detail-notification/"+noti.notification_id}
+                                        >
+                                        {/* <div className="mr-2 my-1"><img className="object-fill w-full min-w-[30px] max-w-[40px] h-auto aspect-square" src={logo} alt="admin-logo" /></div> */}
+                                        <div className="mr-2 my-1">
+                                        <Avatar 
+                                            style={{
+                                                backgroundColor: getColorFromName(noti.full_name || ""), // Màu từ tên
+                                                color: '#ffffff'
+                                            }}
+                                        >
+                                            {noti.full_name
+                                                ? noti.full_name
+                                                    .split(" ")
+                                                    .map(word => word[0])
+                                                    .join("")
+                                                    .toUpperCase()
+                                                : ""}
+                                        </Avatar>
+                                        </div>
                                         <div>
-                                            <h6 className="font-bold font-sans m-0">{noti.title}</h6>
+                                            <h6 className="font-bold font-sans m-0"
+                                                style={{fontWeight: isRead(noti.notification_id) ? "normal" : "bold" }}
+                                            >
+                                                {noti.title}
+                                            </h6>
                                             <p className="m-0">{(convert(noti.content, {wordwrap: 130})).length > 130 ? (convert(noti.content, {wordwrap: 130})).slice(0, 130) + " ..." : (convert(noti.content, {wordwrap: 130}))}</p>
                                             <p className="text-sm italic m-0">{noti.created_date}</p>
                                         </div>
@@ -141,12 +198,9 @@ function Search({ titleData, isGeneral }) {
     const [isFocusOnSearch, setIsFocusOnSearch] = useState(false);
     const [suggestion, setSuggestion] = useState([]);
     const wrapperRef = useRef(null);
-    console.log("titleData_handle", titleData)
-
 
     function handleSearch(e) {
         const inputValue = e.target.value.toLowerCase();
-        console.log("titleData_handle", titleData)
         setSuggestion(
             titleData.filter((item) =>
                 item.title.toLowerCase().includes(inputValue)
@@ -181,26 +235,24 @@ function Search({ titleData, isGeneral }) {
                 onFocus={() => setIsFocusOnSearch(true)}
             />
             {
-                
-                        Array.isArray(suggestion) &&
-                        suggestion.length > 0 &&
-                        isFocusOnSearch && (
-                            <div
-                                className="absolute left-0 right-0 bg-white shadow-lg border border-gray-200 z-10 overflow-y-auto"
-                                style={{ maxHeight: "300px" }}
+                Array.isArray(suggestion) &&
+                suggestion.length > 0 &&
+                isFocusOnSearch && (
+                    <div
+                        className="absolute left-0 right-0 bg-white shadow-lg border border-gray-200 z-10 overflow-y-auto"
+                        style={{ maxHeight: "300px" }}
+                    >
+                        {suggestion.map((sug) => (
+                            <Link
+                                key={sug.notification_id}
+                                className="block px-4 py-2 hover:bg-gray-100"
+                                to={`/student/notifications/detail-notification/${sug.notification_id}`}
                             >
-                                {suggestion.map((sug) => (
-                                    <Link
-                                        key={sug.notification_id}
-                                        className="block px-4 py-2 hover:bg-gray-100"
-                                        to={`/student/notifications/detail-notification/${sug.notification_id}`}
-                                    >
-                                        {sug.title}
-                                    </Link>
-                                ))}
-                            </div>
-                        )
-                
+                                {sug.title}
+                            </Link>
+                        ))}
+                    </div>
+                )  
             }
             
         </div>

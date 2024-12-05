@@ -8,9 +8,6 @@ const fileManageController = {
       const files = req.files; // Get an array of files from the request
       const folder = req.body.folder || "upload"; // Default folder if not specified
 
-      console.log("folder",folder);
-      console.log("files", files)
-
       if (!files || files.length === 0) {
         return res.status(400).json({
           message: "No files were uploaded",
@@ -29,7 +26,6 @@ const fileManageController = {
           return { fileName: file.originalname, key }; // Store uploaded file information
         })
       );
-      console.log("results",results);
       res.status(200).json({
         message: "Files uploaded successfully",
         uploadedFiles: results, // List of uploaded files
@@ -67,7 +63,6 @@ const fileManageController = {
   getObjectUrls: async (req, res) => {
     try {
       const { files } = req.body; // Nhận mảng files từ body request
-      console.log("files", files)
       if (!Array.isArray(files) || files.length === 0) {
         return res.status(400).json({ message: "Files must be a non-empty array" });
       }
@@ -98,7 +93,6 @@ const fileManageController = {
           }
         })
       );
-      console.log(results);
       res.status(200).json({ results });
     } catch (error) {
       console.error("Error in getObjectUrls:", error);
@@ -115,16 +109,16 @@ const fileManageController = {
   // List all files in a folder
   getFiles: async (req, res) => {
     try {
-      const {prefix} = req.body;
-      console.log("prefix",prefix);
+      const prefix = req.body.prefix;
       const response = await s3.listObjects(prefix);
 
       if (!response || response.length === 0) {
         return res.status(404).json({ message: "No files found with the provided prefix" });
 
       }
+      res.status(200).json({ files: response });
 
-      res.status(200).json({ files });
+      // res.status(200).json({ files });
     } catch (error) {
       console.error("Error listing files:", error);
       res.status(500).json({ message: "Internal Server Error" });
@@ -138,8 +132,6 @@ const fileManageController = {
   deleteFiles: async (req, res) => {
     try {
         const { keys } = req.body; // Mảng các keys cần xóa
-
-        console.log("keys", keys);
         // Kiểm tra đầu vào
         if (!Array.isArray(keys) || keys.length === 0) {
             return res.status(400).json({ message: "No file keys provided" });

@@ -27,21 +27,17 @@ export default function TDetailNotiForm() {
                 // Fetch notification details
                 const notiRes = await axios.get(`/api/detail-noti/${id}`);
                 setNoti(notiRes.data[0]);
-                console.log("data", notiRes.data);
                 const courseNames = notiRes.data.map(item => item.course_name);
                 setNoti(prevNoti => ({
                     ...prevNoti,
                     course_name: courseNames
                 }));
-                console.log(courseNames);
                 const filesDB = await axios.get(`/api/admin-posted-noti-file/${id}`);
                 if (filesDB.data.length > 0) { // nếu có dữ liệu trả về từ notification_files, chứng tỏ thông báo đó đính kèm file 
                     const fileInfos = { files: filesDB.data };
                     const filesListRes = await axios.post('/api/object-urls', fileInfos); // lấy các urls ứng với các file trên S3 về 
                     setFilesList(filesListRes.data.results);
-                    console.log("file",filesList);
                 }
-                console.log("noti" + noti.course_name);
             } catch (err) {
                 console.error('Error fetching data:', err);
             }
@@ -61,25 +57,22 @@ export default function TDetailNotiForm() {
     };
     
     return (
-        <div className="m-0 p-3 sm:mx-2 rounded-2xl shadow-lg h-[89vh] md:mx-3 xl:ml-5 xl:mr-10 bg-white overflow-y-auto">
-            <h2 className="text-xl font-semibold ml-12">{noti.title}</h2>
+        <div className="m-0 p-3 sm:mx-2 rounded-2xl shadow-lg h-[85vh] md:mx-3 xl:ml-5 xl:mr-10 bg-white overflow-y-auto">
             <div className="flex items-center">
-            <Avatar 
-                style={{
-                    backgroundColor: getColorFromName(noti.full_name || ""), // Màu từ tên
-                    color: '#ffffff'
-                }}
-            >
-                {noti.full_name
-                    ? noti.full_name
-                        .split(" ")
-                        .map(word => word[0])
-                        .join("")
-                        .toUpperCase()
-                    : ""}
-            </Avatar>
-
-
+                <Avatar 
+                    style={{
+                        backgroundColor: getColorFromName(noti.full_name || ""), // Màu từ tên
+                        color: '#ffffff'
+                    }}
+                >
+                    {noti.full_name
+                        ? noti.full_name
+                            .split(" ")
+                            .map(word => word[0])
+                            .join("")
+                            .toUpperCase()
+                        : ""}
+                </Avatar>
                 <div className="ml-3 align-middle">
                     <p className="m-0 font-semibold">{noti.full_name}
                         <span className="text-sm font-normal text-gray-500">{" <" + noti.email + ">"}</span>
@@ -97,6 +90,7 @@ export default function TDetailNotiForm() {
             <div className="ml-14 block md:hidden italic">
                     <p className="text-sm text-gray-500 m-0">{"Last modified: " + noti.last_modified}</p>
             </div>
+            <h2 className="text-xl font-bold ml-12 text-center m-2">{noti.title}</h2>
             <div className="prose max-w-none break-words whitespace-normal ml-12 mt-3" dangerouslySetInnerHTML={{ __html: noti.content }} />
             <div>
                 {filesList.length > 0 ? (
@@ -105,7 +99,7 @@ export default function TDetailNotiForm() {
                         <ul className="ml-2">
                         {filesList.map((file) => (
                             <li key={file.file_name}>
-                            <Link to={file.url} className="underline italic text-[#015DAF]">
+                            <Link to={file.url.signedUrl} className="underline italic text-[#015DAF]">
                                 {file.file_name}
                             </Link>
                             </li>

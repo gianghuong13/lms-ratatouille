@@ -234,7 +234,7 @@ export default function UpdateNotiForm() {
                           <ul className="ml-2">
                             {filesList.map((file) => (
                               <li key={file.file_name}>
-                                <Link to={file.url} className="underline italic text-[#015DAF]">
+                                <Link to={file.url.signedUrl} className="underline italic text-[#015DAF]">
                                   {file.file_name}
                                 </Link>
                               </li>

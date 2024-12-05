@@ -17,9 +17,8 @@ const MainContent = () => {
   };
 
   return (
-    <div className="flex-grow bg-[#f5f8fb] px-8 py-6">
-      <header className="text-2xl font-bold text-black mb-6">Me</header>
-      <div className="bg-white rounded-xl shadow-lg p-6 flex flex-col items-start space-y-6">
+    <div className="flex-grow">
+      <div className=" p-6 flex flex-col items-start space-y-6">
         <div className="flex items-center space-x-4 cursor-pointer" onClick={Logout}>
           <img className="w-7 h-7" alt="Log out icon" src={boxArrowRight} />
           <span className="text-black">Log out</span>
@@ -36,7 +35,6 @@ const MainContent = () => {
 
 const ChangePasswordForm = () => {
   const confirm_change = async (e) => {
-    console.log("Change password");
     const decodeResponse = await fetch('/api/decode', {
       method: 'POST',
       headers: {

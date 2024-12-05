@@ -49,7 +49,7 @@ const authController = {
         
             return successResponse(res, StatusCodes.OK, "Decode successfully", decodedAccessToken);
         } catch (error) {
-            console.log("Error from decode: ", error);
+            console.error("Error from decode: ", error);
             return errorResponse(res, StatusCodes.UNAUTHORIZED, "Unauthorized! Vui lòng đăng nhập lại");
         }
     },

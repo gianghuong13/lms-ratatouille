@@ -60,21 +60,41 @@ CREATE TABLE modules (
     FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE
 );
 
--- Bảng materials
+-- -- Bảng materials
+-- CREATE TABLE materials (
+--     material_id INT PRIMARY KEY AUTO_INCREMENT,
+--     course_id VARCHAR(50) NOT NULL,
+--     uploader_id VARCHAR(8),
+--     module_id INT DEFAULT NULL,
+--     material_type ENUM('document', 'video', 'link', 'zip') NOT NULL,
+--     title NVARCHAR(255) NOT NULL,
+--     file_url VARCHAR(255), 
+--     description TEXT,
+--     upload_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+--     FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE,
+--     FOREIGN KEY (uploader_id) REFERENCES users(user_id) ON DELETE SET NULL,
+--     FOREIGN KEY (module_id) REFERENCES modules(module_id) ON DELETE SET NULL
+-- );
+
 CREATE TABLE materials (
     material_id INT PRIMARY KEY AUTO_INCREMENT,
-    course_id VARCHAR(50) NOT NULL,
+    -- course_id VARCHAR(50) NOT NULL,
     uploader_id VARCHAR(8),
     module_id INT DEFAULT NULL,
     material_type ENUM('document', 'video', 'link', 'zip') NOT NULL,
     title NVARCHAR(255) NOT NULL,
-    -- s3_file_url VARCHAR(255), 
-    description TEXT,
-    file_path VARCHAR(255),
-    upload_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE,
+    -- FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE,
     FOREIGN KEY (uploader_id) REFERENCES users(user_id) ON DELETE SET NULL,
     FOREIGN KEY (module_id) REFERENCES modules(module_id) ON DELETE SET NULL
+);
+
+CREATE TABLE materials_files (
+	file_id INT PRIMARY KEY auto_increment,
+    material_id INT NOT NULL,
+    file_name NVARCHAR(255) NOT NULL,
+    file_path NVARCHAR(255) NOT NULL,
+    upload_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (material_id) REFERENCES materials(material_id) ON DELETE CASCADE
 );
 
 -- Bảng assignments
@@ -209,3 +229,7 @@ INSERT INTO users (user_id, password, full_name, role, email) VALUES
 ('admin002',  '$2b$10$gBMKWuqjDfJJHiRLBgUwhOmh7GEVHfK8Jqp7yua4f1pLen/phKpLG', 'Nguyễn Thúy Quỳnh', 'admin', '22026559@vnu.edu.vn'),
 ('admin003',  '$2b$10$fv.d1sqVdcBwUiUPDRrlResZb39YmiZRtojURXfKl5jVn8H/MAYbS', 'Lê Thị Hà Phương', 'admin', '22026563@vnu.edu.vn'),
 ('admin004',  '$2b$10$Qb1MjNWHm3f9qaqYBo0AM.hX4mUK3F55KNh81daN9PweSGAgRQiZi', 'Nguyễn Hương Giang', 'admin', '22026566@vnu.edu.vn');
+
+INSERT INTO `educationsystem`.`terms` (`term_id`, `term_name`) VALUES ('2425H', 'Học kỳ hè năm học 2024-2025');
+INSERT INTO `educationsystem`.`terms` (`term_id`, `term_name`) VALUES ('2425I', 'Học kỳ I năm học 2024-2025');
+INSERT INTO `educationsystem`.`terms` (`term_id`, `term_name`) VALUES ('2425II', 'Học kỳ II năm học 2024-2025');
