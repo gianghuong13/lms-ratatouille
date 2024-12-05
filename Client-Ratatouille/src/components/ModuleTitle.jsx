@@ -6,7 +6,7 @@ import triangleicon from "../assets/User_Screen/dropdown.svg";
 import dots from "../assets/User_Screen/EditDots.svg";
 import pluscircle from "../assets/User_Screen/PlusCircle.svg";
 
-const ModuleTitle = ({ moduleId, moduleName, materials, courseId }) => {
+const ModuleTitle = ({ moduleId, moduleName, materials, courseId, role }) => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
  
@@ -31,8 +31,14 @@ const ModuleTitle = ({ moduleId, moduleName, materials, courseId }) => {
           </div>
 
           <div className="flex items-baseline space-x-2">
-            <img src={dots} alt="editdots" onClick={() => navigate(``)} className="cursor-pointer"/>
-            <img src={pluscircle} alt="addplus" onClick={() => navigate(`/teacher/courses/${courseId}/modules/${moduleId}/add-material`)} className="cursor-pointer"/>
+            
+            {role === 'teacher' && (
+                    <>
+                      <img src={dots} alt="editdots" onClick={() => navigate(``)} className="cursor-pointer"/>
+                      <img src={pluscircle} alt="addplus" onClick={() => navigate(`/teacher/courses/${courseId}/modules/${moduleId}/add-material`)} className="cursor-pointer"/>
+                    </>
+            )}
+            
           </div>        
       </div>
 
