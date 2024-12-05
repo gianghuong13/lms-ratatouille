@@ -35,7 +35,6 @@ const MainContent = () => {
 
 const ChangePasswordForm = () => {
   const confirm_change = async (e) => {
-    console.log("Change password");
     const decodeResponse = await fetch('/api/decode', {
       method: 'POST',
       headers: {

@@ -21,29 +21,24 @@ import UpdateNotification from './pages/Admin/NotiManage/UpdateNotification.jsx'
 
 import 'global';
 // Page chung cho Student và Teacher
-import Dashboard from './pages/Teacher/DashboardPage.jsx';
+import Dashboard from './pages/Users/DashboardPage.jsx';
 
-// Page Student
-import SNotifications from './pages/Student/NotiManage/SNotifications.jsx';
-import SDetailNotification from './pages/Student/NotiManage/SDetailNotification.jsx';
-
-// Page Teacher
-// import AllCoursesList from './pages/Teacher/AllCourses.jsx';
+// Page User
+import SNotifications from './pages/Users/NotiManage/SNotifications.jsx';
+import SDetailNotification from './pages/Users/NotiManage/SDetailNotification.jsx';
 import CoursesList from './pages/CoursesList.jsx';
-import CourseHome from './pages/Teacher/Course/CourseHome.jsx';
-import CourseAssignments from './pages/Teacher/Course/CourseAssignments.jsx';
-import CourseDiscussions from './pages/Teacher/Course/CourseDiscussions.jsx';
-import CourseGrades from './pages/Teacher/Course/CourseGrades.jsx';
-import CoursePeople from './pages/Teacher/Course/CoursePeople.jsx';
-import CourseFiles from './pages/Teacher/Course/CourseFiles.jsx';
-
-import AddMaterial from './pages/Teacher/Module/AddMaterial.jsx';
-
-import TCreateNotification from './pages/Teacher/NotiManage/TCreateNotification.jsx';
-import TNotifications from './pages/Teacher/NotiManage/TNotifications.jsx';
-import TUpdateNotification from './pages/Teacher/NotiManage/TUpdateNotification.jsx';
-import TDetailNotification from './pages/Teacher/NotiManage/TDetailNotification.jsx';
-import FileDetail from './pages/Teacher/Course/FileDetail.jsx';
+import CourseHome from './pages/Users/Course/CourseHome.jsx';
+import CourseAssignments from './pages/Users/Course/CourseAssignments.jsx';
+import CourseDiscussions from './pages/Users/Course/CourseDiscussions.jsx';
+import CourseGrades from './pages/Users/Course/CourseGrades.jsx';
+import CoursePeople from './pages/Users/Course/CoursePeople.jsx';
+import CourseFiles from './pages/Users/Course/CourseFiles.jsx';
+import AddMaterial from './pages/Users/Module/AddMaterial.jsx';
+import TCreateNotification from './pages/Users/NotiManage/TCreateNotification.jsx';
+import TNotifications from './pages/Users/NotiManage/TNotifications.jsx';
+import TUpdateNotification from './pages/Users/NotiManage/TUpdateNotification.jsx';
+import TDetailNotification from './pages/Users/NotiManage/TDetailNotification.jsx';
+import FileDetail from './pages/Users/Course/FileDetail.jsx';
 
 
 const App = () => {
@@ -103,9 +98,15 @@ const App = () => {
             <Route path="" element={<Dashboard />} />
             <Route path="account" element={<MePage />} />
             <Route path="courses" element={<CoursesList />} />
-
+            <Route path='courses/:courseId' element={<CourseHome />} />
             <Route path="notifications" element={<SNotifications />} />
             <Route path="notifications/detail-notification/:id" element={<SDetailNotification />} />
+            <Route path='courses/:courseId/assignments' element={<CourseAssignments />} />
+            <Route path='courses/:courseId/discussions' element={<CourseDiscussions />} />
+            <Route path='courses/:courseId/grades' element={<CourseGrades />} />
+            <Route path='courses/:courseId/people' element={<CoursePeople />} />
+            <Route path='courses/:courseId/files' element={<CourseFiles />} />
+            <Route path='courses/:courseId/files/:encodedKey' element={<FileDetail />} />
           </Route>
         </Route>
         <Route element={<UnauthorizedRoutes />}>

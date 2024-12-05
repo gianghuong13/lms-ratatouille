@@ -12,7 +12,7 @@ export default function NotiLists(){
         .then((res)=>{
             setNotifications(Array.isArray(res.data) ? res.data : []);
         })
-        .catch(err => console.log(err));
+        .catch(err => console.error(err));
     }, [])
 
     return(

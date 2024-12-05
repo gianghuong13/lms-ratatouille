@@ -21,7 +21,7 @@ export default function ShowAccountForm() {
             const teacherResponse = await axios.get("/api/admin-accounts-teachers");
             setTeachersAccount(Array.isArray(teacherResponse.data) ? teacherResponse.data : []);
         } catch (error) {
-            console.log("Error fetching accounts", error);
+            console.error("Error fetching accounts", error);
         }
     };
 
@@ -56,7 +56,7 @@ export default function ShowAccountForm() {
             setShowConfirm(false); 
             setAccountToDelete(null); // Xóa trạng thái
         } catch (error) {
-            console.log("Error deleting account", error);
+            console.error("Error deleting account", error);
         }
     };
 

@@ -5,7 +5,6 @@ import PageTitle from '../../../components/PageTitle';
 import WelcomCard from '../../../components/WelcomCard';
 const EditCoursePage = () => {
     const { courseId } = useParams();
-    console.log('Params courseId:', courseId);
     const navigate = useNavigate();
 
     const handleFormSubmit = () => {

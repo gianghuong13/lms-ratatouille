@@ -19,7 +19,6 @@ const authMiddleware = async (req, res, next) => {
     req.jwtDecoded = decodedAccessToken;
     next();
   } catch (error) {
-    console.log("Error from authMiddleware: ", error);
     // Trường hợp token hết hạn: Trả về mã GONE - 410 cho FE để gọi API refresh token
     if (error?.message?.includes("jwt expired")) {
       return errorResponse(
