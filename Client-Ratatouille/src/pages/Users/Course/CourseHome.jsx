@@ -89,6 +89,7 @@ const CourseHome = () => {
 
 
     return (
+        <div className="px-2 sm:mx-2 rounded-2xl shadow-lg h-[89vh] md:mx-3 xl:ml-5 xl:mr-10 bg-white overflow-y-scroll w-full">
         <Layout>
             <div className='container mx-auto pr-20'>
                 {role === 'teacher' && (
@@ -103,7 +104,7 @@ const CourseHome = () => {
                 )}
 
                 {/* Modules List */}
-                <div className="module-materials mt-4">
+                <div className="module-materials mt-4 w-full">
                     {isLoading ? (<p>Loading materials...</p>) : error ? (<p>{error}</p>) : (
                         modules.length === 0 ? (<p>No materials available for this course</p>) : (
                             modules.map((module) => (
@@ -113,6 +114,7 @@ const CourseHome = () => {
                 </div>
             </div>
         </Layout>
+        </div>
     );
 }
 
