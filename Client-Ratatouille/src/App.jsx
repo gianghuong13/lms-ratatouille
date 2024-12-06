@@ -39,7 +39,7 @@ import TNotifications from './pages/Users/NotiManage/TNotifications.jsx';
 import TUpdateNotification from './pages/Users/NotiManage/TUpdateNotification.jsx';
 import TDetailNotification from './pages/Users/NotiManage/TDetailNotification.jsx';
 import FileDetail from './pages/Users/Course/FileDetail.jsx';
-
+import Calendar from './pages/Users/Calendar.jsx';
 
 const App = () => {
   const role = useSelector((state) => state.auth.role);
@@ -91,7 +91,7 @@ const App = () => {
             <Route path='courses/:courseId/people' element={<CoursePeople />} />
             <Route path='courses/:courseId/files' element={<CourseFiles />} />
             <Route path='courses/:courseId/files/:encodedKey' element={<FileDetail />} />
-
+            <Route path='calendar' element={<Calendar />} />
           </Route>
           <Route path="/student">
             <Route index element={<Dashboard />} />
