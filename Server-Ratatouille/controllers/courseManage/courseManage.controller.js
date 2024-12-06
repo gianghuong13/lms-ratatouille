@@ -3,12 +3,18 @@ import connection from "../../database/dbConnect.js";
 const courseManageController = {
     getAllCourses: (req, res) => {
         const query = `
-            SELECT c.course_id, c.course_name, c.classroom, t.term_name, u.full_name AS teacher,
+            SELECT 
+                c.course_id, 
+                c.course_name, 
+                c.classroom, 
+                t.term_name, 
+                GROUP_CONCAT(u.full_name SEPARATOR ', ') AS teachers,
                 (SELECT COUNT(*) FROM course_members WHERE course_id = c.course_id) AS total_students
             FROM courses c
             LEFT JOIN terms t ON c.term_id = t.term_id
             LEFT JOIN course_teachers ct ON c.course_id = ct.course_id
             LEFT JOIN users u ON ct.teacher_id = u.user_id
+            GROUP BY c.course_id
         `;
         connection.query(query, (err, results) => {
             if (err) {
@@ -21,7 +27,7 @@ const courseManageController = {
 
     getAllTeachers: (req, res) => {
         const query = `
-            SELECT user_id, full_name, email
+            SELECT user_id, full_name, email, role
             FROM users
             WHERE role = 'teacher'
         `;
@@ -36,7 +42,7 @@ const courseManageController = {
 
     getAllStudents: (req, res) => {
         const query = `
-            SELECT user_id, full_name, email
+            SELECT user_id, full_name, email, role
             FROM users
             WHERE role = 'student'
         `;
@@ -143,14 +149,14 @@ const courseManageController = {
                 WHERE c.course_id = ?
             `;
             const teacherQuery = `
-                SELECT u.user_id, u.full_name
+                SELECT u.user_id, u.full_name, u.role
                 FROM course_teachers ct
                 JOIN users u ON ct.teacher_id = u.user_id
                 WHERE ct.course_id = ?
             `;
 
             const studentQuery = `
-                SELECT u.user_id, u.full_name
+                SELECT u.user_id, u.full_name, u.role
                 FROM course_members cm
                 JOIN users u ON cm.student_id = u.user_id
                 WHERE cm.course_id = ?

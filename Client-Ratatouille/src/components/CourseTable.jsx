@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
-const CourseTable = ({ courses, selectedTerm }) => {
+const CourseTable = ({ courses, selectedTerm, fetchCourses }) => {
 
     const filteredCourses = selectedTerm === 'All' ? courses : courses.filter(course => course.term_name === selectedTerm);
 
@@ -55,7 +55,7 @@ const CourseTable = ({ courses, selectedTerm }) => {
                             Course Name {sortConfig.key === 'course_name'}
                         </th>
                         <th className="px-2 py-2 border w-[200px] cursor-pointer" onClick={() => requestSort('teacher')}>
-                            Teacher {sortConfig.key === 'teacher'}
+                            Teachers {sortConfig.key === 'teacher'}
                         </th>
                         <th className="px-2 py-2 border w-[230px] cursor-pointer" onClick={() => requestSort('term_name')}>
                             Term {sortConfig.key === 'term_name'}
@@ -73,7 +73,7 @@ const CourseTable = ({ courses, selectedTerm }) => {
                     <tr key={course.course_id}>
                         <td className="px-2 py-2 border w-[130px]">{course.course_id}</td>
                         <td className="px-2 py-2 border w-[300px]">{course.course_name}</td>
-                        <td className="px-2 py-2 border w-[200px]">{course.teacher}</td>
+                        <td className="px-2 py-2 border w-[200px]">{course.teachers}</td>
                         <td className="px-2 py-2 border w-[230px]">{course.term_name}</td>
                         <td className="px-2 py-2 border">{course.total_students}</td>
                         <td className="px-2 py-2 border">{course.classroom}</td>

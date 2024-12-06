@@ -60,6 +60,17 @@ const CourseManagePage = () => {
         fetchTerms();
     }, []);
 
+    const deleteCourse = async (courseId) => {
+        try {
+            const response = await axios.delete(`/api/courses/${courseId}`);
+            fetchCourses();
+            alert('Course deleted successfully');
+        } catch (error) {
+            console.error('Error deleting course:', error);
+            alert('Failed to delete course');
+        }
+    };
+
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
     };
@@ -107,7 +118,7 @@ const CourseManagePage = () => {
                           </div>
                         </div>
 
-                        <CourseTable courses={currentCourses} selectedTerm={selectedTerm} />
+                        <CourseTable courses={currentCourses} selectedTerm={selectedTerm} fetchCourses={fetchCourses}/>
 
                         <Pagination 
                             totalItems={filteredCourses.length}

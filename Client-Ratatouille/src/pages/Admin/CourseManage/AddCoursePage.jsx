@@ -23,13 +23,6 @@ const AddCoursePage = () => {
 
                 </div>
             </div>
-            {/* <div>
-            <div className="add-class-container">
-                <div className="">
-                    <AddCourseForm onSubmit={handleFormSubmit} />
-                </div>
-            </div> */}
-            {/* </div> */}
         </>
         
     )
