@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import Searchbar from '../../../components/Searchbar';
 import Dropdown from '../../../components/Dropdown';
@@ -9,6 +9,7 @@ import WelcomCard from '../../../components/WelcomCard';
 import PageTitle from '../../../components/PageTitle';
 import Pagination from '../../../components/Pagination';
 import ItemsPerPageSelector from '../../../components/ItemsPerPageSelector';
+import ConfirmCard from '../../../components/ConfirmCard';
 
 const CourseManagePage = () => {
     const [selectedTerm, setSelectedTerm] = useState('All');
@@ -17,6 +18,13 @@ const CourseManagePage = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
+    const [sortConfig, setSortConfig] = useState({ key: '', direction: 'asc' });
+    const [showConfirm, setShowConfirm] = useState(false);
+    const [courseIdToDelete, setCourseIdToDelete] = useState(null);
+
+    const filteredCourses = selectedTerm === 'All' ? searchResults : searchResults.filter(course => course.term_name === selectedTerm);
+
+    const termOptions = ['All', ...terms.map(term => term.term_name)];
 
     const handleSelect = (value) => {
         setSelectedTerm(value);
@@ -35,6 +43,30 @@ const CourseManagePage = () => {
         }
         setCurrentPage(1);
     }
+
+    const sortedCourses = useMemo(() => {
+        let sortableCourses = [...filteredCourses];
+        if (sortConfig.key) {
+            sortableCourses.sort((a, b) => {
+                if (a[sortConfig.key] < b[sortConfig.key]) {
+                    return sortConfig.direction === 'asc' ? -1 : 1;
+                }
+                if (a[sortConfig.key] > b[sortConfig.key]) {
+                    return sortConfig.direction === 'asc' ? 1 : -1;
+                }
+                return 0;
+            });
+        }
+        return sortableCourses;
+    }, [filteredCourses, sortConfig]);
+
+    const handleSort = (key) => {
+        let direction = 'asc';
+        if (sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc';
+        }
+        setSortConfig({ key, direction });
+    };
 
     const fetchCourses = async () => {
         try {
@@ -60,16 +92,29 @@ const CourseManagePage = () => {
         fetchTerms();
     }, []);
 
-    const deleteCourse = async (courseId) => {
+    const handleDelete = (courseId) => {
+        setCourseIdToDelete(courseId);
+        setShowConfirm(true);
+    }
+
+    const deleteCourse = async () => {
         try {
-            const response = await axios.delete(`/api/courses/${courseId}`);
+            const response = await axios.delete(`/api/courses/${courseIdToDelete}`);
             fetchCourses();
             alert('Course deleted successfully');
         } catch (error) {
             console.error('Error deleting course:', error);
             alert('Failed to delete course');
+        } finally {
+            setShowConfirm(false);
+            setCourseIdToDelete(null);
         }
     };
+
+    const cancelDelete = () => {
+        setShowConfirm(false);
+        setCourseIdToDelete(null);
+    }
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
@@ -80,13 +125,9 @@ const CourseManagePage = () => {
         setCurrentPage(1);
     }
 
-    const filteredCourses = selectedTerm === 'All' ? searchResults : searchResults.filter(course => course.term_name === selectedTerm);
-
-    const termOptions = ['All', ...terms.map(term => term.term_name)];
-
     const indexOfLastCourse = currentPage * itemsPerPage;
     const indexOfFirstCourse = indexOfLastCourse - itemsPerPage;
-    const currentCourses = filteredCourses.slice(indexOfFirstCourse, indexOfLastCourse);
+    const currentCourses = sortedCourses.slice(indexOfFirstCourse, indexOfLastCourse);
 
     return (
         <div className="bg-[#F5F8FB] flex-1">
@@ -118,7 +159,14 @@ const CourseManagePage = () => {
                           </div>
                         </div>
 
-                        <CourseTable courses={currentCourses} selectedTerm={selectedTerm} fetchCourses={fetchCourses}/>
+                        <CourseTable 
+                            courses={currentCourses} 
+                            selectedTerm={selectedTerm} 
+                            fetchCourses={fetchCourses} 
+                            sortConfig={sortConfig} 
+                            onSort={handleSort}
+                            onDelete={handleDelete}
+                        />
 
                         <Pagination 
                             totalItems={filteredCourses.length}
@@ -129,6 +177,15 @@ const CourseManagePage = () => {
                     </div>
                 </div>        
             </div>
+            {showConfirm && (
+                <ConfirmCard 
+                    message={`Are you sure to delete this course "${courseIdToDelete}"?`}
+                    onConfirm={deleteCourse}
+                    onCancel={cancelDelete}
+                />
+            )
+
+            }
         </div>
     );
 };
