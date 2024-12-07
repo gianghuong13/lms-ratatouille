@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'; // Giúp điều hướng nếu bạn s
 import sidebarIcon from '../assets/User_Screen/menu.svg';
 const Header = ({ courseId, breadcrumbItems, onHamburgerClick }) => {
   return (
-    <header className="flex items-center justify-between p-4 bg-white">
+    <header className="flex items-center justify-between p-2 bg-white">
         <button onClick={onHamburgerClick} className="text-blue-500">
             <img src={sidebarIcon} alt="sidebar" />
         </button>

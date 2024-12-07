@@ -32,7 +32,10 @@ import SDetailNotification from './pages/Student/NotiManage/SDetailNotification.
 import CoursesList from './pages/CoursesList.jsx';
 import CourseHome from './pages/Teacher/Course/CourseHome.jsx';
 import CourseAssignments from './pages/Teacher/Course/CourseAssignments.jsx';
-import CourseDiscussions from './pages/Teacher/Course/CourseDiscussions.jsx';
+import CourseDiscussions from './pages/Teacher/Course/Discussion/CourseDiscussions.jsx';
+import NewDiscussion from './pages/Teacher/Course/Discussion/NewDiscussion.jsx';
+import UpdateDiscussion from './pages/Teacher/Course/Discussion/UpdateDiscussion.jsx';
+import DetailDiscussion from './pages/Teacher/Course/Discussion/DetailDiscussion.jsx';
 import CourseGrades from './pages/Teacher/Course/CourseGrades.jsx';
 import CoursePeople from './pages/Teacher/Course/CoursePeople.jsx';
 import CourseFiles from './pages/Teacher/Course/CourseFiles.jsx';
@@ -92,6 +95,9 @@ const App = () => {
             
             <Route path='courses/:courseId/assignments' element={<CourseAssignments />} />
             <Route path='courses/:courseId/discussions' element={<CourseDiscussions />} />
+            <Route path='courses/:courseId/discussions/create-discussion' element={<NewDiscussion />} />
+            <Route path='courses/:courseId/discussions/update-post/:postId' element={<UpdateDiscussion />} />
+            <Route path='courses/:courseId/discussions/detail-post/:postId' element={<DetailDiscussion />} />
             <Route path='courses/:courseId/grades' element={<CourseGrades />} />
             <Route path='courses/:courseId/people' element={<CoursePeople />} />
             <Route path='courses/:courseId/files' element={<CourseFiles />} />
@@ -103,6 +109,12 @@ const App = () => {
             <Route path="" element={<Dashboard />} />
             <Route path="account" element={<MePage />} />
             <Route path="courses" element={<CoursesList />} />
+
+            <Route path="courses/:courseId" element={<CourseHome />} />
+            <Route path='courses/:courseId/discussions' element={<CourseDiscussions />} />
+            <Route path='courses/:courseId/discussions/create-discussion' element={<NewDiscussion />} />
+            <Route path='courses/:courseId/discussions/update-post/:postId' element={<UpdateDiscussion />} />
+            <Route path='courses/:courseId/discussions/detail-post/:postId' element={<DetailDiscussion />} />
 
             <Route path="notifications" element={<SNotifications />} />
             <Route path="notifications/detail-notification/:id" element={<SDetailNotification />} />
