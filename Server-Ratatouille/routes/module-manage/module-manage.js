@@ -6,5 +6,6 @@ const router = express.Router();
 router.get('/modules/:course_id', moduleManageController.getModulesByCourse);
 router.post('/modules/add', moduleManageController.addModule);
 router.delete('/modules/delete/:module_id', moduleManageController.deleteModule);
+router.put('/modules/edit/:module_id', moduleManageController.editModule);
 
 export default router;
