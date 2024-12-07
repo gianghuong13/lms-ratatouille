@@ -3,12 +3,18 @@ import connection from "../../database/dbConnect.js";
 const courseManageController = {
     getAllCourses: (req, res) => {
         const query = `
-            SELECT c.course_id, c.course_name, c.classroom, t.term_name, u.full_name AS teacher,
+            SELECT 
+                c.course_id, 
+                c.course_name, 
+                c.classroom, 
+                t.term_name, 
+                GROUP_CONCAT(u.full_name SEPARATOR ', ') AS teachers,
                 (SELECT COUNT(*) FROM course_members WHERE course_id = c.course_id) AS total_students
             FROM courses c
             LEFT JOIN terms t ON c.term_id = t.term_id
             LEFT JOIN course_teachers ct ON c.course_id = ct.course_id
             LEFT JOIN users u ON ct.teacher_id = u.user_id
+            GROUP BY c.course_id
         `;
         connection.query(query, (err, results) => {
             if (err) {
@@ -21,7 +27,7 @@ const courseManageController = {
 
     getAllTeachers: (req, res) => {
         const query = `
-            SELECT user_id, full_name, email
+            SELECT user_id, full_name, email, role
             FROM users
             WHERE role = 'teacher'
         `;
@@ -36,7 +42,7 @@ const courseManageController = {
 
     getAllStudents: (req, res) => {
         const query = `
-            SELECT user_id, full_name, email
+            SELECT user_id, full_name, email, role
             FROM users
             WHERE role = 'student'
         `;
@@ -143,14 +149,14 @@ const courseManageController = {
                 WHERE c.course_id = ?
             `;
             const teacherQuery = `
-                SELECT u.user_id, u.full_name
+                SELECT u.user_id, u.full_name, u.role
                 FROM course_teachers ct
                 JOIN users u ON ct.teacher_id = u.user_id
                 WHERE ct.course_id = ?
             `;
 
             const studentQuery = `
-                SELECT u.user_id, u.full_name
+                SELECT u.user_id, u.full_name, u.role
                 FROM course_members cm
                 JOIN users u ON cm.student_id = u.user_id
                 WHERE cm.course_id = ?
@@ -335,10 +341,188 @@ const courseManageController = {
             return res.status(200).json(data);
         })
         // check laị getyear là dạng số hay string sửa lại, sau đó chỉnh lại xét if else cộng thêm mà kỳ 
-    }
+    },
 
-    // Lấy ra tất cả file trong 1 khóa học
+    getAllMembersOfCourseById: (req, res) => {
+        const {course_id} = req.params;
+        const query = `SELECT 
+        c.student_id AS id, 
+        c.course_id, 
+        u.full_name, 
+        u.role, 
+        co.course_name
+    FROM course_members c
+    JOIN courses co ON c.course_id = co.course_id
+    JOIN users u ON u.user_id = c.student_id
+    WHERE c.course_id = ?
     
+    UNION ALL
+    
+    SELECT 
+        c.teacher_id AS id, 
+        c.course_id, 
+        u.full_name, 
+        u.role, 
+        co.course_name
+    FROM course_teachers c
+    JOIN courses co ON c.course_id = co.course_id
+    JOIN users u ON u.user_id = c.teacher_id
+    WHERE c.course_id = ?
+    ORDER BY full_name;`;
+    
+    connection.query(query, [course_id, course_id], (err, results) => {
+        if (err) {
+            console.log('Error fetching user courses:', err);
+            return res.status(500).send('Error fetching user courses');
+        }
+        res.status(200).json(results);
+    });
+    },
+
+    getTeachersOfCourseById: (req, res) => {
+        const {course_id} = req.params;
+        const query = `
+        SELECT 
+        c.teacher_id AS id, 
+        c.course_id, 
+        u.full_name, 
+        u.role, 
+        co.course_name
+    FROM course_teachers c
+    JOIN courses co ON c.course_id = co.course_id
+    JOIN users u ON u.user_id = c.teacher_id
+    WHERE c.course_id = ?
+    ORDER BY full_name;`;
+    
+    connection.query(query, [course_id], (err, results) => {
+        if (err) {
+            console.log('Error fetching user courses:', err);
+            return res.status(500).send('Error fetching user courses');
+        }
+        res.status(200).json(results);
+    });
+    },
+
+    getStudentsOfCourseById: (req, res) => {
+        const {course_id} = req.params;
+        const query = `
+        SELECT 
+        c.student_id AS id, 
+        c.course_id, 
+        u.full_name, 
+        u.role, 
+        co.course_name
+    FROM course_members c
+    JOIN courses co ON c.course_id = co.course_id
+    JOIN users u ON u.user_id = c.student_id
+    WHERE c.course_id = ?
+    ORDER BY full_name;`;
+    
+    connection.query(query, [course_id], (err, results) => {
+        if (err) {
+           console.log('Error fetching user courses:', err);
+            return res.status(500).send('Error fetching user courses');
+        }
+        res.status(200).json(results);
+    });
+    },
+
+    deleteMemberFromCourse: (req, res) => {
+        const { course_id, user_id } = req.params; 
+        const { role } = req.body; 
+
+        let query = '';
+        if (role === 'student') {
+            query = `DELETE FROM course_members WHERE course_id = ? AND student_id = ?`;
+        } else if (role === 'teacher') {
+            query = `DELETE FROM course_teachers WHERE course_id = ? AND teacher_id = ?`;
+        } else {
+            return res.status(400).send('Invalid role. Role must be either "student" or "teacher".');
+        }
+
+        connection.query(query, [course_id, user_id], (err, results) => {
+            if (err) {
+                console.log('Error deleting member:', err);
+                return res.status(500).send('Error deleting member');
+            }
+            if (results.affectedRows === 0) {
+                return res.status(404).send('No member found to delete');
+            }
+            res.status(200).send('Member successfully deleted');
+        });
+    },
+
+    addMemberToCourse: (req, res) => {
+        const { course_id } = req.params;
+        const { email } = req.body;
+    
+        try {
+            // Lấy user_id từ email trong bảng users
+            const getUserQuery = `SELECT user_id, role FROM users WHERE email = ?`;
+            connection.promise().query(getUserQuery, [email])
+                .then(([userResults]) => {
+                    if (userResults.length === 0) {
+                        return res.status(404).send('User not found');
+                    }
+    
+                    const user = userResults[0];
+    
+                    // Kiểm tra xem người dùng đã tồn tại trong khóa học chưa
+                    let checkCourseQuery = '';
+                    let checkParams = [];
+                    if (user.role === 'student') {
+                        checkCourseQuery = `SELECT * FROM course_members WHERE course_id = ? AND student_id = ?`;
+                        checkParams = [course_id, user.user_id];
+                    } else if (user.role === 'teacher') {
+                        checkCourseQuery = `SELECT * FROM course_teachers WHERE course_id = ? AND teacher_id = ?`;
+                        checkParams = [course_id, user.user_id];
+                    } else {
+                        return res.status(400).send('Invalid user role');
+                    }
+    
+                    // Kiểm tra xem người dùng đã có trong khóa học chưa
+                    connection.promise().query(checkCourseQuery, checkParams)
+                        .then(([checkResults]) => {
+                            if (checkResults.length > 0) {
+                                return res.status(400).send(`Member is already a member of the course`);
+                            }
+    
+                            // Nếu chưa có, thêm người dùng vào bảng tương ứng
+                            let addQuery = '';
+                            if (user.role === 'student') {
+                                addQuery = `INSERT INTO course_members (course_id, student_id) VALUES (?, ?)`;
+                            } else if (user.role === 'teacher') {
+                                addQuery = `INSERT INTO course_teachers (course_id, teacher_id) VALUES (?, ?)`;
+                            }
+    
+                            connection.promise().query(addQuery, [course_id, user.user_id])
+                                .then(() => {
+                                    return res.status(200).send(`${user.role.charAt(0).toUpperCase() + user.role.slice(1)} added to course`);
+                                })
+                                .catch(err => {
+                                    console.error('Error adding member to course:', err);
+                                    res.status(500).send('Failed to add member to course');
+                                });
+                        })
+                        .catch(err => {
+                            console.error('Error checking course membership:', err);
+                            res.status(500).send('Failed to check if member exists in course');
+                        });
+                })
+                .catch(err => {
+                    console.error('Error adding member to course:', err);
+                    res.status(500).send('Failed to add member to course');
+                });
+        } catch (err) {
+            console.error('Error adding member to course:', err);
+            res.status(500).send('Failed to add member to course');
+        }
+    }
+    
+    
+
+
+
 };
 
 export default courseManageController;

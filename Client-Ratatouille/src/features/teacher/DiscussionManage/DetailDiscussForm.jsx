@@ -124,7 +124,7 @@ export default function DetailDiscussForm(){
     return (
         <div className="flex flex-col max-h-dvh bg-[#F5F8FB] p-2 rounded-xl">
             {/* Khối chứa thông tin bài post */}
-            <div className="p-2 rounded-xl bg-white overflow-y-auto min-h-[18vh] max-h-[18vh]" style={{ flex: '0 0 25%' }}>
+            <div className="p-2 rounded-xl bg-white overflow-y-auto min-h-[19vh] max-h-[19vh]" style={{ flex: '0 0 25%' }}>
                 <div className="flex items-center">
                     <div className="flex items-center">
                         <Avatar 
@@ -171,7 +171,7 @@ export default function DetailDiscussForm(){
             </div>
 
             {/* Khối chứa các comment và ô input gửi comment */}
-            <div className="bg-white flex flex-col rounded-xl mt-2 p-2 h-[52vh]">
+            <div className="bg-white flex flex-col rounded-xl mt-2 p-2 h-[55vh]">
                 <div ref={commentsRef} className="flex-1 overflow-y-auto mb-3 p-2">
                     {allComments.length > 0 ? 
                         allComments.map(comment => (

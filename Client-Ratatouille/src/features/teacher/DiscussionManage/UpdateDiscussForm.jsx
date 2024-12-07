@@ -1,6 +1,5 @@
 import { Editor } from '@tinymce/tinymce-react';
 import { useEffect, useState } from 'react';
-import Select from 'react-dropdown-select';
 import axios from 'axios';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 

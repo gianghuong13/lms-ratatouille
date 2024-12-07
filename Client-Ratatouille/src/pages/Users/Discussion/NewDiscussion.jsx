@@ -1,8 +1,8 @@
 import React from 'react'
-import Layout from '../../../../components/Layout'
-import WelcomCard from '../../../../components/WelcomCard';
-import PageTitle from '../../../../components/PageTitle';
-import NewDiscussForm from '../../../../features/teacher/CourseManage/NewDiscussForm';
+import WelcomCard from '../../../components/WelcomCard';
+import PageTitle from '../../../components/PageTitle';
+import Layout from '../../../components/Layout'; 
+import NewDiscussForm from './../../../features/teacher/DiscussionManage/NewDiscussForm'
 
 const NewDiscussion = () => {
   return (

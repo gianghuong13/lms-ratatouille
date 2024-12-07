@@ -61,6 +61,7 @@ const LoginForm = () => {
         const decodeData = await decodeResponse.json();
         const role = decodeData.data.role;
         const userId = decodeData.data.userId;
+        const full_name  = decodeData.data.full_name;
 
         // Lưu role vào localStorage
         localStorage.setItem('role', role);
@@ -68,6 +69,8 @@ const LoginForm = () => {
 
         //Lưu userId vào localStorage
         localStorage.setItem('userId', userId);
+
+        localStorage.setItem('full_name', full_name);
 
         // Điều hướng dựa trên role
         navigate(`/${role}`);

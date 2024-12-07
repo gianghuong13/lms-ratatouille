@@ -63,7 +63,6 @@ const fileManageController = {
   getObjectUrls: async (req, res) => {
     try {
       const { files } = req.body; // Nhận mảng files từ body request
-      console.log("files", files)
       if (!Array.isArray(files) || files.length === 0) {
         return res.status(400).json({ message: "Files must be a non-empty array" });
       }

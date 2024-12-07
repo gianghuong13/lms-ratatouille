@@ -5,6 +5,9 @@ import ToggleSwitch from "../../../components/ToggleSwitch";
 import Searchbar from "../../../components/Searchbar";
 import AddButton from "../../../components/AddButton";
 import ConfirmCard from "../../../components/ConfirmCard"; // Import ConfirmCard
+import Pagination from "../../../components/Pagination";
+import ItemsPerPageSelector from "../../../components/ItemsPerPageSelector";
+import sort from "../../../assets/User_Screen/Sort.svg";
 
 export default function ShowAccountForm() {
     const [studentsAccount, setStudentsAccount] = useState([]);
@@ -13,6 +16,9 @@ export default function ShowAccountForm() {
     const [searchQuery, setSearchQuery] = useState("");
     const [showConfirm, setShowConfirm] = useState(false); // Hiển thị ConfirmCard
     const [accountToDelete, setAccountToDelete] = useState(null); // Lưu tài khoản cần xóa
+    const [sortConfig, setSortConfig] = useState({ key: "user_id", direction: "asc" });
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [currentPage, setCurrentPage] = useState(1);
 
     const fetchAccounts = async () => {
         try {
@@ -21,7 +27,7 @@ export default function ShowAccountForm() {
             const teacherResponse = await axios.get("/api/admin-accounts-teachers");
             setTeachersAccount(Array.isArray(teacherResponse.data) ? teacherResponse.data : []);
         } catch (error) {
-            console.log("Error fetching accounts", error);
+            console.error("Error fetching accounts", error);
         }
     };
 
@@ -41,7 +47,13 @@ export default function ShowAccountForm() {
 
     const handleSearch = (query) => {
         setSearchQuery(query);
+        setCurrentPage(1);
     };
+
+    const handleSelect = () => {
+        setSelected(selected === "Student" ? "Teacher" : "Student");
+        setCurrentPage(1);
+    }
 
     const confirmDelete = (account) => {
         setAccountToDelete(account);
@@ -56,33 +68,73 @@ export default function ShowAccountForm() {
             setShowConfirm(false); 
             setAccountToDelete(null); // Xóa trạng thái
         } catch (error) {
-            console.log("Error deleting account", error);
+            console.error("Error deleting account", error);
         }
     };
 
+    const sortedAccounts = [...filteredAccounts].sort((a, b) => {
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+            return sortConfig.direction === 'asc' ? -1 : 1;
+        }
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+            return sortConfig.direction === 'asc' ? 1 : -1;
+        }
+        return 0;
+    });
+
+    const handleSort = (key) => {
+        let direction = 'asc';
+        if (sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc';
+        }
+        setSortConfig({ key, direction });
+    };
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    }
+
+    const handleItemsPerPageChange = (value) => {
+        setItemsPerPage(value);
+        setCurrentPage(1);
+    }
+
+    const indexOfLastAccount = currentPage * itemsPerPage;
+    const indexOfFirstAccount = indexOfLastAccount - itemsPerPage;
+    const currentAccounts = sortedAccounts.slice(indexOfFirstAccount, indexOfLastAccount);
+
     return (
         <>
-            <div className="flex justify-between items-center mt-5 mx-5">
-                <ToggleSwitch selected={selected} setSelected={setSelected} />
+        <div className="p-4">
+            <div className="flex justify-between items-center mx-5">
+                <ItemsPerPageSelector itemsPerPage={itemsPerPage} onItemsPerPageChange={handleItemsPerPageChange} />
+                <ToggleSwitch selected={selected} setSelected={handleSelect} />
                 <Searchbar onSearch={handleSearch} value={searchQuery} />
                 <Link to="/admin/accounts/create">
                     <AddButton label="New Account" />
                 </Link>
             </div>
 
-            <table className="mt-8 ml-5 mb-5 border-collapse">
+            <table className="mt-5 ml-5 mb-2 border-collapse">
                 <thead>
                     <tr className="bg-blue-200">
-                        <th className="py-3 w-[100px] border-[1px] border-gray-300">ID</th>
-                        <th className="py-3 w-[400px] border-[1px] border-gray-300">Name</th>
+                        <th onClick={() => handleSort('user_id')} className="py-3 w-[100px] border-[1px] border-gray-300 cursor-pointer">
+                            <div className="flex justify-center items-center">
+                                ID {sortConfig.key === 'user_id'}
+                                <div className="ml-1">
+                                    <img src={sort} alt="sort" />
+                                </div>
+                            </div>
+                        </th>
+                        <th className="py-3 w-[400px] border-[1px] border-gray-300 cursor-pointer">Name</th>
                         <th className="py-3 w-[300px] border-[1px] border-gray-300">Email</th>
                         <th className="py-3 w-[200px] border-[1px] border-gray-300">Phone Number</th>
                         <th className="py-1 w-[200px] border-[1px] border-gray-300">Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {filteredAccounts.map((account, index) => (
-                        <tr key={index}>
+                    {currentAccounts.map(account => (
+                        <tr key={account.user_id}>
                             <td className="py-3 w-[100px] border-[1px] border-gray-300 pl-2">{account.user_id}</td>
                             <td className="py-3 w-[400px] border-[1px] border-gray-300 pl-2">{account.full_name}</td>
                             <td className="py-3 w-[300px] border-[1px] border-gray-300 pl-2">{account.email}</td>
@@ -97,14 +149,22 @@ export default function ShowAccountForm() {
                     ))}
                 </tbody>
             </table>
-
-            {showConfirm && (
-                <ConfirmCard
-                    message={`Are you sure you want to delete the account "${accountToDelete?.full_name}"?`}
-                    onConfirm={deleteAccount}
-                    onCancel={() => setShowConfirm(false)}
+            <div className="ml-5">
+                <Pagination 
+                    totalItems={filteredAccounts.length}
+                    itemsPerPage={itemsPerPage}
+                    currentPage={currentPage}
+                    onPageChange={handlePageChange}
                 />
-            )}
+            </div>
+        </div>
+        {showConfirm && (
+            <ConfirmCard
+                message={`Are you sure you want to delete the account "${accountToDelete?.full_name}"?`}
+                onConfirm={deleteAccount}
+                onCancel={() => setShowConfirm(false)}
+            />
+        )}
         </>
     );
 }

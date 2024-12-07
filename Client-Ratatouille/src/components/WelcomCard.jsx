@@ -5,6 +5,7 @@ export default function WelcomCard(){
     const accessToken = localStorage.getItem('accessToken');
     const [teacherName, setTeacherName] = useState();
     const [role, setRole] = useState();
+
     useEffect(() => {
         const fetchData = async () => {
             try{
@@ -12,11 +13,14 @@ export default function WelcomCard(){
                 setTeacherName(deCodeRes.data.data.full_name);
                 setRole(deCodeRes.data.data.role);
             }catch(err){
-                console.log('Error fetching data at WelcomCard', err)
+                console.error('Error fetching data at WelcomCard', err)
             }
         }
         fetchData();
     }, []);
+
+    // const teacherName = localStorage.getItem('full_name');
+    // const role = localStorage.getItem('role');
 
     const getColorFromName = (name) => {
         const hash = name.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
@@ -46,15 +50,19 @@ export default function WelcomCard(){
         "If today is better than yesterday, you’ve already improved!"
       ];
       
-      function getRandomQuote() {
+    const getRandomQuote = () => {
         const randomIndex = Math.floor(Math.random() * motivationalQuotes.length);
         return motivationalQuotes[randomIndex];
-      }
+    };
+
+    const [quote] = useState(getRandomQuote());
+
+
     return(
         <div className="bg-white flex justify-between pl-3 py-1 pr-5 flex-1">
             <div>
                 <p className="m-0 font-bold">Hello {teacherName}</p>
-                <p className="m-0 text-gray-400">{getRandomQuote()}</p>
+                <p className="m-0 text-gray-400">{quote}</p>
             </div>
             <div className="flex h-min items-center">
                 <Avatar 

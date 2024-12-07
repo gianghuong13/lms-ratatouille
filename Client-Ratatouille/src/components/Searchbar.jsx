@@ -10,17 +10,17 @@ const Searchbar = ({ placeholder = 'Search ...', onSearch }) => {
   };
 
   return (
-    <div className="flex items-center border outline-none bg-blue-200 rounded-2xl p-1 w-[500px]">
-      <input
-        type="text"
-        className="flex-grow p-1 outline-none bg-blue-200 text-sm"
-        placeholder={placeholder}
-        onChange={handleSearch}
-      />
-      <div className="flex items-center justify-center bg-white rounded-2xl h-8 w-8">
-        <FontAwesomeIcon icon={faSearch} className="text-[#015daf] text-lg" />
-      </div>
+    <div className="relative w-full min-w-[100px] max-w-[300px]">
+    <input
+      type="text"
+      className="border px-4 py-2.5 bg-blue-100 rounded-full outline-[#015DAF] w-full focus:outline focus:outline-2 focus:outline-[#D2DEF0] focus:border-[#015DAF] hover:border-[#015DAF] pl-10 "
+      placeholder={placeholder}
+      onChange={handleSearch}
+    />
+    <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+      <FontAwesomeIcon icon={faSearch} className="text-[#015daf] text-lg" />
     </div>
+  </div>
   );
 };
 

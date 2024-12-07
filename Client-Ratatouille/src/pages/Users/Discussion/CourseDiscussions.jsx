@@ -1,9 +1,8 @@
 import React from 'react'
-import Layout from '../../../../components/Layout'
-import WelcomCard from '../../../../components/WelcomCard';
-import PageTitle from '../../../../components/PageTitle';
-import ShowDiscussForm from '../../../../features/teacher/CourseManage/ShowDiscussForm';
-
+import Layout from '../../../components/Layout'
+import WelcomCard from '../../../components/WelcomCard';
+import PageTitle from '../../../components/PageTitle';
+import ShowDiscussForm from './../../../features/teacher/DiscussionManage/ShowDiscussForm'
 const CourseDiscussions = () => {
   return (
     <div className="bg-[#F5F8FB] flex-1"> 

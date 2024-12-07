@@ -8,7 +8,6 @@ const AddCoursePage = () => {
     const navigate = useNavigate();
 
     const handleFormSubmit = (data) => {
-        console.log(data);
         // Add course to database
         // Redirect to course manage page
         navigate('/admin/courses');
@@ -24,13 +23,6 @@ const AddCoursePage = () => {
 
                 </div>
             </div>
-            {/* <div>
-            <div className="add-class-container">
-                <div className="">
-                    <AddCourseForm onSubmit={handleFormSubmit} />
-                </div>
-            </div> */}
-            {/* </div> */}
         </>
         
     )
