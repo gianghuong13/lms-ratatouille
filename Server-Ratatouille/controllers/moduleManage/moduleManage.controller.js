@@ -56,13 +56,31 @@ const moduleManageController = {
                 if (err) {
                     return res.status(500).json({ error: 'Database query error' });
                 }
-                if (result.affectedRows === 0) {
-                    return res.status(404).json({ message: 'Module not found' });
-                }
+                // if (result.affectedRows === 0) {
+                //     return res.status(404).json({ message: 'Module not found' });
+                // }
                 return res.status(200).json({ message: 'Module deleted successfully' });
             });
         });
-    }
+    },
+    
+    editModule: (req, res) => {
+        const { module_id } = req.params;
+        const { module_name, description } = req.body;
+        if (!module_name || !description) {
+            return res.status(400).send('Missing required fields: module_id, module_name, description');
+        }
+        const query = `UPDATE modules SET module_name = ?, description = ? WHERE module_id = ?`;
+        connection.query(query, [module_name, description, module_id], (err, result) => {
+            if (err) {
+                return res.status(500).json({ error: 'Database query error' });
+            }
+            if (result.affectedRows === 0) {
+                return res.status(404).json({ message: 'Module not found' });
+            }
+            return res.status(200).json({ message: 'Module updated successfully' });
+        });
+    },
 };
 
 export default moduleManageController

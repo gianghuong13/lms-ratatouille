@@ -44,8 +44,9 @@ const materialManageController = {
         });
     },
 
-  // Fetch materials of all modules in a course
-  getMaterialsByCourse: async (req, res) => {
+  // Fetch materials of all modules in a course: file json gồm các đối tượng module, mỗi module chứa module_id, module_name, descriptioon,
+  // mảng materials, mỗi material chứa material_id, title, material_type, mảng files gồm các file: file_id, file_name, file_path
+  getMaterialsByCourse: async (req, res) => { 
     const course_id = req.params.course_id;
     if (!course_id) {
       return res.status(400).send('Missing required fields');
@@ -55,6 +56,7 @@ const materialManageController = {
             m.module_id,
             m.course_id,
             m.module_name,
+            m.description,
             mat.material_id,
             mat.title,
             mat.material_type,
@@ -77,12 +79,13 @@ const materialManageController = {
         }
         
         const groupedMaterials = results.reduce((acc, row) => {
-            const { module_id, module_name, material_id, title, material_type, file_id, file_name, file_path } = row;
+            const { module_id, module_name, description, material_id, title, material_type, file_id, file_name, file_path } = row;
 
             if (!acc[module_id]) {
                 acc[module_id] = {
                     module_id,
                     module_name,
+                    description,
                     materials: [],
                 };
             }
