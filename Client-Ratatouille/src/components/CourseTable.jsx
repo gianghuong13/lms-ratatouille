@@ -1,64 +1,57 @@
 import axios from 'axios';
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import sort from "../assets/User_Screen/Sort.svg"; 
 
-const CourseTable = ({ courses, selectedTerm, fetchCourses }) => {
+const CourseTable = ({ courses, fetchCourses, sortConfig, onSort, onDelete }) => {
 
-    const filteredCourses = selectedTerm === 'All' ? courses : courses.filter(course => course.term_name === selectedTerm);
-
-    const [sortConfig, setSortConfig] = useState({ key: '', direction: 'asc' });
-
-    const sortedCourses = useMemo(() => {
-        let sortableCourses = [...filteredCourses];
-        if (sortConfig.key) {
-            sortableCourses.sort((a, b) => {
-                if (a[sortConfig.key] < b[sortConfig.key]) {
-                    return sortConfig.direction === 'asc' ? -1 : 1;
-                }
-                if (a[sortConfig.key] > b[sortConfig.key]) {
-                    return sortConfig.direction === 'asc' ? 1 : -1;
-                }
-                return 0;
-            });
-        }
-        return sortableCourses;
-    }, [filteredCourses, sortConfig]);
-
-    const deleteCourse = async (courseId) => {
-        try {
-            const response = await axios.delete(`/api/courses/${courseId}`);
-            fetchCourses();
-            alert('Course deleted successfully');
-        } catch (error) {
-            console.error('Error deleting course:', error);
-            alert('Failed to delete course');
-        }
-    };
-
+    // const filteredCourses = selectedTerm === 'All' ? courses : courses.filter(course => course.term_name === selectedTerm);
     const requestSort = (key) => {
-        let direction = 'asc';
-        if (sortConfig.key === key && sortConfig.direction === 'asc') {
-            direction = 'desc';
-        }
-        setSortConfig({ key, direction });
+        onSort(key);
     };
+
+    // const deleteCourse = async (courseId) => {
+    //     try {
+    //         const response = await axios.delete(`/api/courses/${courseId}`);
+    //         fetchCourses();
+    //         alert('Course deleted successfully');
+    //     } catch (error) {
+    //         console.error('Error deleting course:', error);
+    //         alert('Failed to delete course');
+    //     }
+    // };
 
     return (
         <div className="table-container overflow-x-auto">
             <table className="w-full bg-white border border-gray-300 mt-2 ml-2 mb-5 border-collapse">
                 <thead className=''>
                     <tr className="bg-blue-200">
-                        <th className="px-2 py-2 border w-[130px] cursor-pointer" onClick={() => requestSort('course_id')}>
+                        <th className="px-2 py-2 border w-[100px] cursor-pointer" onClick={() => requestSort('course_id')}>
+                            <div className="flex justify-center items-center">
                             ID {sortConfig.key === 'course_id'}
+                                <div className="ml-1">
+                                    <img src={sort} alt="sort" />
+                                </div>
+                            </div>
                         </th>
                         <th className="px-2 py-2 border w-[280px] cursor-pointer" onClick={() => requestSort('course_name')}>
-                            Course Name {sortConfig.key === 'course_name'}
+                            <div className="flex justify-center items-center">
+                                Course Name {sortConfig.key === 'course_name'}
+                                <div className="ml-1">
+                                    <img src={sort} alt="sort" />
+                                </div>
+                            </div>
                         </th>
-                        <th className="px-2 py-2 border w-[200px] cursor-pointer" onClick={() => requestSort('teacher')}>
-                            Teachers {sortConfig.key === 'teacher'}
+                        <th className="px-2 py-2 border w-[200px] cursor-pointer">
+                            Teachers
                         </th>
                         <th className="px-2 py-2 border w-[230px] cursor-pointer" onClick={() => requestSort('term_name')}>
+                            <div className="flex justify-center items-center">
                             Term {sortConfig.key === 'term_name'}
+                                <div className="ml-1">
+                                    <img src={sort} alt="sort" />
+                                </div>
+                            </div>
                         </th>
                         <th className="px-2 py-2 border text-sm cursor-pointer" onClick={() => requestSort('total_students')}>
                             No. Students{sortConfig.key === 'total_students'}
@@ -68,10 +61,10 @@ const CourseTable = ({ courses, selectedTerm, fetchCourses }) => {
                     </tr>
                 </thead>
                 <tbody>
-                {sortedCourses
+                {courses
                     .map(course => (
                     <tr key={course.course_id}>
-                        <td className="px-2 py-2 border w-[130px]">{course.course_id}</td>
+                        <td className="px-2 py-2 border w-[100px]">{course.course_id}</td>
                         <td className="px-2 py-2 border w-[300px]">{course.course_name}</td>
                         <td className="px-2 py-2 border w-[200px]">{course.teachers}</td>
                         <td className="px-2 py-2 border w-[230px]">{course.term_name}</td>
@@ -82,7 +75,7 @@ const CourseTable = ({ courses, selectedTerm, fetchCourses }) => {
                                 Edit
                             </Link>
                             <button 
-                                onClick={() => deleteCourse(course.course_id)}
+                                onClick={() => onDelete(course.course_id)}
                                 className="px-2 py-1 rounded bg-red-500 text-white hover:bg-red-700"
                             >
                                 Delete

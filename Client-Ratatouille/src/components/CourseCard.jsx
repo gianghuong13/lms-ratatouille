@@ -17,16 +17,19 @@ import img8 from "../assets/User_Screen/img8.jpg"
 import axios from "axios";
 
 export default function CourseCard(){
-    const accessToken = localStorage.getItem('accessToken');
+    // const accessToken = localStorage.getItem('accessToken');
     const [courseList, setCourseList] = useState([]);
     const colors = ["#5BB450", "#C70039", "#015DAF", "#E88504", "#FB9AAC", "#924ED1", "#FCA510", "#3DED97"];
     const courseImg = [img1, img2, img3, img4, img5, img6, img7, img8];
     useEffect(() => {
         const fetchData = async () => {
             try{
-                const deCodeRes = await axios.post('/api/decode', {accessToken: accessToken})
-                const userId = deCodeRes.data.data.userId;
-                const role = deCodeRes.data.data.role;
+                // const deCodeRes = await axios.post('/api/decode', {accessToken: accessToken})
+                // const userId = deCodeRes.data.data.userId;
+                // const role = deCodeRes.data.data.role;
+
+                const role = localStorage.getItem('role');
+                const userId = localStorage.getItem('userId');
                 let couresInTermRes;
                 if(role === "teacher"){
                     couresInTermRes = await axios.post('/api/courses-in-term-teacher', {teacher_id: userId})

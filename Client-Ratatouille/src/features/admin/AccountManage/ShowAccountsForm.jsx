@@ -7,6 +7,7 @@ import AddButton from "../../../components/AddButton";
 import ConfirmCard from "../../../components/ConfirmCard"; // Import ConfirmCard
 import Pagination from "../../../components/Pagination";
 import ItemsPerPageSelector from "../../../components/ItemsPerPageSelector";
+import sort from "../../../assets/User_Screen/Sort.svg";
 
 export default function ShowAccountForm() {
     const [studentsAccount, setStudentsAccount] = useState([]);
@@ -117,7 +118,14 @@ export default function ShowAccountForm() {
             <table className="mt-5 ml-5 mb-2 border-collapse">
                 <thead>
                     <tr className="bg-blue-200">
-                        <th onClick={() => handleSort('user_id')} className="py-3 w-[100px] border-[1px] border-gray-300 cursor-pointer">ID</th>
+                        <th onClick={() => handleSort('user_id')} className="py-3 w-[100px] border-[1px] border-gray-300 cursor-pointer">
+                            <div className="flex justify-center items-center">
+                                ID {sortConfig.key === 'user_id'}
+                                <div className="ml-1">
+                                    <img src={sort} alt="sort" />
+                                </div>
+                            </div>
+                        </th>
                         <th className="py-3 w-[400px] border-[1px] border-gray-300 cursor-pointer">Name</th>
                         <th className="py-3 w-[300px] border-[1px] border-gray-300">Email</th>
                         <th className="py-3 w-[200px] border-[1px] border-gray-300">Phone Number</th>

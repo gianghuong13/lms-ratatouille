@@ -3,11 +3,14 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { setCourseId } from "../../redux/slices/courseSlice";
+import WelcomCard from "../../components/WelcomCard";
+import sort from "../../assets/User_Screen/Sort.svg";
 
 const CoursesList = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   
   const role = useSelector((state) => state.auth.role);
   const dispatch = useDispatch();
@@ -36,6 +39,24 @@ const CoursesList = () => {
     dispatch(setCourseId(courseId));
   }
 
+  const sortedCourses = [...courses].sort((a, b) => {
+    if (a[sortConfig.key] < b[sortConfig.key]) {
+      return sortConfig.direction === "asc" ? -1 : 1;
+    }
+    if (a[sortConfig.key] > b[sortConfig.key]) {
+      return sortConfig.direction === "asc" ? 1 : -1;
+    }
+    return 0;
+  });
+
+  const handleSort = (key) => {
+    let direction = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+  };
+
   if (loading) {
     return <div className="text-center mt-10 text-lg font-medium">Loading courses...</div>;
   }
@@ -49,37 +70,56 @@ const CoursesList = () => {
   }
 
   return (
-    <div className="w-full bg-white p-5">
-      <h2 className="text-xl font-bold text-black mb-4">All Courses</h2>
+    <div className="bg-[#F5F8FB] flex-1">
+      <WelcomCard />
+      <div className="px-2 sm:mx-2 rounded-2xl shadow-lg h-[89vh] md:mx-3 xl:ml-5 xl:mr-10 bg-white overflow-y-scroll w-full">
+        <div className="w-full bg-white p-5">
+          <h2 className="text-xl font-bold text-black mb-4">All Courses</h2>
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-left text-sm">
-          <thead className="text-gray-500 border-b">
-            <tr>
-              <th className="py-3">Course</th>
-              <th className="py-3">Term</th>
-              <th className="py-3">Enrolled as</th>
-            </tr>
-          </thead>
-          <tbody>
-            {courses.map((course, index) => (
-              <tr key={`${course.course_id}-${index}`} className="hover:bg-gray-50">
-                <td className="py-3 border-b flex items-center gap-2">
-                  <span className="w-3 h-3 rounded-sm" style={{backgroundColor: getColorByIndex(index),}}></span>
-                  <Link 
-                    to={`${course.course_id}`} 
-                    className="text-blue-600 hover:underline"
-                    onClick={() => handleCourseClick(course.course_id)} // Dispatch courseId when course is selected
-                  >
-                    {course.course_name} ({course.term_id}_{course.course_id})
-                  </Link>
-                </td>
-                <td className="py-3 border-b">{course.term_name}</td>
-                <td className="py-3 border-b">{course.enrolled_as}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+          <div className="overflow-y-auto">
+            <table className="w-full text-left text-sm">
+              <thead className="text-gray-500 border-b">
+                <tr>
+                  <th className="py-3 cursor-pointer" onClick={() => handleSort("course_name")}>
+                    <div className="flex items-center">
+                      Course {sortConfig.key === 'course_name'}
+                      <div className="ml-1">
+                        <img src={sort} alt="sort" />
+                      </div>
+                    </div>
+                  </th>
+                  <th className="py-3 cursor-pointer" onClick={() => handleSort("term_name")}>
+                    <div className="flex items-center">
+                      Term {sortConfig.key === 'term_name'}
+                      <div className="ml-1">
+                        <img src={sort} alt="sort" />
+                      </div>
+                    </div>
+                  </th>
+                  <th className="py-3">Enrolled as</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sortedCourses.map((course, index) => (
+                  <tr key={`${course.course_id}-${index}`} className="hover:bg-gray-50">
+                    <td className="py-3 border-b flex items-center gap-2">
+                      <span className="w-3 h-3 rounded-sm" style={{backgroundColor: getColorByIndex(index),}}></span>
+                      <Link 
+                        to={`${course.course_id}`} 
+                        className="text-blue-600 hover:underline"
+                        onClick={() => handleCourseClick(course.course_id)} // Dispatch courseId when course is selected
+                      >
+                        {course.course_name} ({course.term_id}_{course.course_id})
+                      </Link>
+                    </td>
+                    <td className="py-3 border-b">{course.term_name}</td>
+                    <td className="py-3 border-b">{course.enrolled_as}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   );
