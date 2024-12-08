@@ -29,7 +29,7 @@ import SDetailNotification from './pages/Users/NotiManage/SDetailNotification.js
 import CoursesList from './pages/Users/CoursesList.jsx';
 import CourseHome from './pages/Users/Course/CourseHome.jsx';
 import CourseAssignments from './pages/Users/Course/CourseAssignments.jsx';
-import CourseDiscussions from './pages/Users/Course/CourseDiscussions.jsx';
+// import CourseDiscussions from './pages/Users/Course/CourseDiscussions.jsx';
 import CourseGrades from './pages/Users/Course/CourseGrades.jsx';
 import CoursePeople from './pages/Users/Course/CoursePeople.jsx';
 import CourseFiles from './pages/Users/Course/CourseFiles.jsx';
@@ -41,6 +41,10 @@ import TDetailNotification from './pages/Users/NotiManage/TDetailNotification.js
 import FileDetail from './pages/Users/Course/FileDetail.jsx';
 import Calendar from './pages/Users/Calendar.jsx';
 
+import CourseDiscussions from './pages/Users/Discussion/CourseDiscussions.jsx'
+import NewDiscussion from './pages/Users/Discussion/NewDiscussion.jsx'
+import DetailDiscussion from './pages/Users/Discussion/DetailDiscussion.jsx'
+import UpdateDiscussion from './pages/Users/Discussion/UpdateDiscussion.jsx'
 const App = () => {
   const role = useSelector((state) => state.auth.role);
   const location = useLocation(); // Hook để lấy đường dẫn hiện tại
@@ -86,12 +90,17 @@ const App = () => {
             <Route path='courses/:courseId/modules/:moduleId/add-material' element={<AddMaterial />} />
             
             <Route path='courses/:courseId/assignments' element={<CourseAssignments />} />
-            <Route path='courses/:courseId/discussions' element={<CourseDiscussions />} />
             <Route path='courses/:courseId/grades' element={<CourseGrades />} />
             <Route path='courses/:courseId/people' element={<CoursePeople />} />
             <Route path='courses/:courseId/files' element={<CourseFiles />} />
             <Route path='courses/:courseId/files/:encodedKey' element={<FileDetail />} />
             <Route path='calendar' element={<Calendar />} />
+
+            <Route path='courses/:courseId/discussions' element={<CourseDiscussions />} />
+            <Route path='courses/:courseId/discussions/create-discussion' element={<NewDiscussion />} />
+            <Route path='courses/:courseId/discussions/update-post/:postId' element={<UpdateDiscussion />} />
+            <Route path='courses/:courseId/discussions/detail-post/:postId' element={<DetailDiscussion />} />
+
           </Route>
           <Route path="/student">
             <Route index element={<Dashboard />} />
@@ -102,11 +111,15 @@ const App = () => {
             <Route path="notifications" element={<SNotifications />} />
             <Route path="notifications/detail-notification/:id" element={<SDetailNotification />} />
             <Route path='courses/:courseId/assignments' element={<CourseAssignments />} />
-            <Route path='courses/:courseId/discussions' element={<CourseDiscussions />} />
             <Route path='courses/:courseId/grades' element={<CourseGrades />} />
             <Route path='courses/:courseId/people' element={<CoursePeople />} />
             <Route path='courses/:courseId/files' element={<CourseFiles />} />
             <Route path='courses/:courseId/files/:encodedKey' element={<FileDetail />} />
+
+            <Route path='courses/:courseId/discussions' element={<CourseDiscussions />} />
+            <Route path='courses/:courseId/discussions/create-discussion' element={<NewDiscussion />} />
+            <Route path='courses/:courseId/discussions/update-post/:postId' element={<UpdateDiscussion />} />
+            <Route path='courses/:courseId/discussions/detail-post/:postId' element={<DetailDiscussion />} />
           </Route>
         </Route>
         <Route element={<UnauthorizedRoutes />}>

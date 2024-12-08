@@ -2,25 +2,25 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Avatar from "@mui/joy/Avatar";
 export default function WelcomCard(){
-    // const accessToken = localStorage.getItem('accessToken');
-    // const [teacherName, setTeacherName] = useState();
-    // const [role, setRole] = useState();
+    const accessToken = localStorage.getItem('accessToken');
+    const [teacherName, setTeacherName] = useState();
+    const [role, setRole] = useState();
 
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         try{
-    //             const deCodeRes = await axios.post('/api/decode', {accessToken: accessToken});
-    //             setTeacherName(deCodeRes.data.data.full_name);
-    //             setRole(deCodeRes.data.data.role);
-    //         }catch(err){
-    //             console.error('Error fetching data at WelcomCard', err)
-    //         }
-    //     }
-    //     fetchData();
-    // }, []);
+    useEffect(() => {
+        const fetchData = async () => {
+            try{
+                const deCodeRes = await axios.post('/api/decode', {accessToken: accessToken});
+                setTeacherName(deCodeRes.data.data.full_name);
+                setRole(deCodeRes.data.data.role);
+            }catch(err){
+                console.error('Error fetching data at WelcomCard', err)
+            }
+        }
+        fetchData();
+    }, []);
 
-    const teacherName = localStorage.getItem('full_name');
-    const role = localStorage.getItem('role');
+    // const teacherName = localStorage.getItem('full_name');
+    // const role = localStorage.getItem('role');
 
     const getColorFromName = (name) => {
         const hash = name.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);

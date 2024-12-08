@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { setCourseId } from "../../redux/slices/courseSlice";
 import WelcomCard from "../../components/WelcomCard";
 import sort from "../../assets/User_Screen/Sort.svg";
+import PageTitle from "../../components/PageTitle";
 
 const CoursesList = () => {
   const [courses, setCourses] = useState([]);
@@ -72,10 +73,10 @@ const CoursesList = () => {
   return (
     <div className="bg-[#F5F8FB] flex-1">
       <WelcomCard />
-      <div className="px-2 sm:mx-2 rounded-2xl shadow-lg h-[89vh] md:mx-3 xl:ml-5 xl:mr-10 bg-white overflow-y-scroll w-full">
+      <PageTitle title="Courses"/>
+      <div className="px-2 sm:mx-2 rounded-2xl shadow-lg h-[85vh] md:mx-3 xl:ml-5 xl:mr-10 bg-white overflow-y-auto">
         <div className="w-full bg-white p-5">
-          <h2 className="text-xl font-bold text-black mb-4">All Courses</h2>
-
+          <h3 className="m-0 font-semibold text-lg">All courses</h3>
           <div className="overflow-y-auto">
             <table className="w-full text-left text-sm">
               <thead className="text-gray-500 border-b">
