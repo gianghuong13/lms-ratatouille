@@ -25,15 +25,15 @@ const Sidebar = ({ isOpen, courseId }) => {
 
   return (
     <div
-      className='h-full sticky top-0 bg-white p-4'
+      className='h-full sticky top-0 bg-white '
     >
       <ul className="space-y-4">
         {links.map((link) => (
           <li key={link.name}>
             <Link
               to={link.to}
-              className={`block p-2 hover:underline text-blue-800 ${isOpen ? 'visible' : 'invisible'} ${
-                isActiveLink(link.to) ? 'font-bold' : ''
+              className={`block p-1 hover:underline text-[#0569A3] ${isOpen ? 'visible px-4' : 'invisible'} ${
+                isActiveLink(link.to) ? 'underline border-l-2' : ''
               }`}
             >
               {link.name}
