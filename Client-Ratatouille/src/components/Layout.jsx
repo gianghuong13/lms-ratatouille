@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
-import WelcomCard from './WelcomCard';
 
 const Layout = ({ children }) => {
     const { courseId } = useParams(); // Lấy courseId từ URL
@@ -35,6 +34,7 @@ const Layout = ({ children }) => {
                         {children}
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
