@@ -56,7 +56,7 @@ export default function NewDiscussForm(){
     }
 
     return (
-        <div className="h-full border p-2 rounded-xl">
+        <div className="h-full">
             <form onSubmit={handleSubmit}>
                 <label className='flex items-center mb-2'>
                 Discussion Tittle:

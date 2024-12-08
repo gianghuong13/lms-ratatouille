@@ -2,25 +2,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Avatar from "@mui/joy/Avatar";
 export default function WelcomCard(){
-    const accessToken = localStorage.getItem('accessToken');
-    const [teacherName, setTeacherName] = useState();
-    const [role, setRole] = useState();
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try{
-                const deCodeRes = await axios.post('/api/decode', {accessToken: accessToken});
-                setTeacherName(deCodeRes.data.data.full_name);
-                setRole(deCodeRes.data.data.role);
-            }catch(err){
-                console.error('Error fetching data at WelcomCard', err)
-            }
-        }
-        fetchData();
-    }, []);
-
-    // const teacherName = localStorage.getItem('full_name');
-    // const role = localStorage.getItem('role');
+    const myName = localStorage.getItem('full_name');
+    const role = localStorage.getItem('role');
 
     const getColorFromName = (name) => {
         const hash = name.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
@@ -61,18 +44,18 @@ export default function WelcomCard(){
     return(
         <div className="bg-white flex justify-between pl-3 py-1 pr-5 flex-1">
             <div>
-                <p className="m-0 font-bold">Hello {teacherName}</p>
+                <p className="m-0 font-bold">Hello {myName}</p>
                 <p className="m-0 text-gray-400">{quote}</p>
             </div>
             <div className="flex h-min items-center">
                 <Avatar 
                     style={{
-                        backgroundColor: getColorFromName(teacherName || ""), // Màu từ tên
+                        backgroundColor: getColorFromName(myName || ""), // Màu từ tên
                         color: '#ffffff'
                     }}
                 >
-                    {teacherName
-                        ? teacherName
+                    {myName
+                        ? myName
                             .split(" ")
                             .map(word => word[0])
                             .join("")
