@@ -222,7 +222,7 @@ const forumManageController = {
                     c1.creator_id AS creator_id,
                     u1.full_name AS creator_full_name,
                     c1.content AS content,
-                    c1.reply_to_comment AS reply_to_comment_id,
+                    c1.root_of_cmt AS root_of_cmt_id,
                     c1.created_date AS created_date,
                     c1.last_modified AS last_modified,
                     c2.comment_id AS replied_comment_id,
@@ -232,7 +232,7 @@ const forumManageController = {
                     c2.created_date AS replied_created_date,
                     c2.last_modified AS replied_last_modified
                 FROM comments c1
-                LEFT JOIN comments c2 ON c1.reply_to_comment = c2.comment_id
+                LEFT JOIN comments c2 ON c1.root_of_cmt = c2.comment_id
                 LEFT JOIN users u1 ON c1.creator_id = u1.user_id
                 LEFT JOIN users u2 ON c2.creator_id = u2.user_id
                 WHERE c1.post_id = ?;`
@@ -263,10 +263,10 @@ const forumManageController = {
   },
 
   createComment: (req, res) => {
-    const {post_id, creator_id, content, reply_to_comment} = req.body;
-    const sql = `INSERT INTO comments (post_id, creator_id, content, reply_to_comment) VALUES (?, ?, ?, ?)`;
+    const {post_id, creator_id, content, root_of_cmt} = req.body;
+    const sql = `INSERT INTO comments (post_id, creator_id, content, root_of_cmt) VALUES (?, ?, ?, ?)`;
 
-    connection.query(sql, [post_id, creator_id, content, reply_to_comment], (err, data) => {
+    connection.query(sql, [post_id, creator_id, content, root_of_cmt], (err, data) => {
         if(err){
             console.error("Error excuting createComment", err);
             return res.status(500).send("Error in createComment");
