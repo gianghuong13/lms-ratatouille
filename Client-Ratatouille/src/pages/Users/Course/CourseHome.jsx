@@ -17,7 +17,7 @@ const CourseHome = () => {
     const [showForm, setShowForm] = useState(false);
 
     useEffect(() => {
-        const fetchMaterials = async () => {
+        const fetchModulesWithGroupedMaterials = async () => {
             try {
                 setIsLoading(true);
                 const response = await axios.get(`/api/materials/${courseId}`);
@@ -35,7 +35,7 @@ const CourseHome = () => {
             }
         };
 
-        fetchMaterials();
+        fetchModulesWithGroupedMaterials();
     }, [courseId]);
 
     if (isLoading) {
@@ -72,22 +72,32 @@ const CourseHome = () => {
     };
 
     const deleteModule = async (moduleId) => {
-        try {
-            await axios.delete(`/api/modules/delete/${moduleId}`);
-            setModules(modules.filter(module => module.module_id !== moduleId));
-        } catch (error) {
-            setError('Failed to delete module');
+        if (window.confirm("Are you sure you want to delete this module?")) {
+            try {
+                await axios.delete(`/api/modules/delete/${moduleId}`);
+                setModules(prevModules => prevModules.filter(module => module.module_id !== moduleId));
+                alert('Module deleted successfully');
+            } catch (error) {
+                console.error('Error deleting module:', error);
+                alert('Failed to delete module. Please try again later.');
+            }
         }
     };
 
-    const handleAddModuleItem = (moduleId) => {
-        const newItem = prompt('Enter new module item:');
-        setModules(modules.map(module =>
-            module.id === moduleId ? { ...module, items: [...module.items, newItem] } : module
-        ));
-    };
-
-
+    // const handleEditModule = async (moduleId, moduleName, moduleDescription) => {
+    //     try {
+    //         const response = await axios.put(`/api/modules/edit/${moduleId}`, {
+    //             module_name: moduleName,
+    //             description: moduleDescription,
+    //         });
+    //         if (response.status === 200) {
+    //             setShowForm(false);
+    //         }
+    //     } catch (error) {
+    //         console.error('Error editing module:', error);
+    //         setError('Failed to edit module');
+    //     }
+    // };
 
     return (
         <div className="bg-[#F5F8FB] flex-1"> 
@@ -95,10 +105,10 @@ const CourseHome = () => {
         <PageTitle title="Courses" />
         <div className="m-0 px-2 sm:mx-2 rounded-2xl shadow-lg h-[85vh] md:mx-3 xl:ml-5 xl:mr-10 bg-white overflow-y-auto">
         <Layout>
-            <div className='container mx-auto pr-20'>
+            <div className='container mx-auto pr-20 p-4'>
                 {role === 'teacher' && (
                     <div className='float-right mb-5'>
-                        <AddButton onClick={handleAddModuleButtonClick} label="New Module" />
+                        <AddButton onClick={handleAddModuleButtonClick} label="Module" />
                     </div>
                 )}
 
@@ -108,11 +118,21 @@ const CourseHome = () => {
                 )}
 
                 {/* Modules List */}
-                <div className="module-materials mt-4 w-full">
+                <div className="module-materials mt-4 w-full px-10 pt-5 pb-10">
                     {isLoading ? (<p>Loading materials...</p>) : error ? (<p>{error}</p>) : (
                         modules.length === 0 ? (<p>No materials available for this course</p>) : (
                             modules.map((module) => (
-                                <ModuleTitle key={module.module_id} moduleId={module.module_id} moduleName={module.module_name} materials={module.materials} courseId={courseId} role={role} />
+                                <ModuleTitle 
+                                    key={module.module_id} 
+                                    moduleId={module.module_id} 
+                                    moduleName={module.module_name} 
+                                    moduleDescription={module.description}
+                                    materials={module.materials} 
+                                    courseId={courseId} 
+                                    role={role} 
+                                    onDeleteModule={deleteModule}
+                                    // onEditModule={handleEditModule}
+                                />
                             ))
                         ))}
                 </div>
