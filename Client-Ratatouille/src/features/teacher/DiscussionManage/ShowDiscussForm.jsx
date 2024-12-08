@@ -42,7 +42,7 @@ export default function CourseDiscussMain(){
         return color;
     };
     return (
-        <div className="h-full border p-2 rounded-xl">
+        <div className="h-full">
             {/* chứa all posted/ your posted  New posted */}
             <div className="flex flex-col sm:flex-row justify-around mb-2 pt-2 pb-2 sticky top-0 z-50 bg-white"> 
             {

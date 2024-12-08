@@ -171,7 +171,7 @@ export default function DetailDiscussForm(){
             </div>
 
             {/* Khối chứa các comment và ô input gửi comment */}
-            <div className="bg-white flex flex-col rounded-xl mt-2 p-2 h-[55vh]">
+            <div className="bg-white flex flex-col rounded-xl mt-2 p-2 h-[52.5vh]">
                 <div ref={commentsRef} className="flex-1 overflow-y-auto mb-3 p-2">
                     {allComments.length > 0 ? 
                         allComments.map(comment => (
