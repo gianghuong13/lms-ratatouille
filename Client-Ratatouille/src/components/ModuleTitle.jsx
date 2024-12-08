@@ -3,12 +3,21 @@ import ModuleItem from "./ModuleItem";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import triangleicon from "../assets/User_Screen/dropdown.svg";
-import pluscircle from "../assets/User_Screen/PlusCircle.svg";
 import ModuleEditOptions from "./ModuleEditOptions";
 import AddItemOptions from "./AddItemOptions";
 import EditModuleForm from "../features/teacher/ModuleManage/EditModuleForm";
 
-const ModuleTitle = ({ moduleId, moduleName, moduleDescription, materials, courseId, role, onDeleteModule }) => {
+const ModuleTitle = ({ 
+  moduleId,
+  moduleName, 
+  moduleDescription, 
+  materials = [], 
+  courseId, 
+  role, 
+  onDeleteModule,
+  onModuleUpdate,
+  onFetchMaterials
+}) => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -21,6 +30,9 @@ const ModuleTitle = ({ moduleId, moduleName, moduleDescription, materials, cours
  
   const toggleDropdown = () => {
       setIsOpen((prevState) => !prevState);
+      if (!isOpen) {
+        onFetchMaterials();
+      }
   };
 
   const handleEditModule = async () => {
@@ -31,7 +43,7 @@ const ModuleTitle = ({ moduleId, moduleName, moduleDescription, materials, cours
             description: updatedData.description,
         });
         if (response.status === 200) {
-            console.log('Module edited successfully');
+            onModuleUpdate(moduleId, updatedData);
             setShowForm(false);
         } else {
             setError('Failed to edit module');
@@ -80,7 +92,7 @@ const ModuleTitle = ({ moduleId, moduleName, moduleDescription, materials, cours
       
       {isOpen && (
         <div className="module-items p-2 bg-gray-100 rounded-lg">
-          {materials.length === 0 ? (
+          {!materials || materials.length === 0 ? (
             <p>No materials available</p>
           ) : (
             materials.map((material) => (
