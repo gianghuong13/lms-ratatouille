@@ -142,12 +142,12 @@ CREATE TABLE comments (
     post_id INT NOT NULL,
     creator_id VARCHAR(8),
     content TEXT NOT NULL,
-    root_of_cmt INT DEFAULT NULL,
+    reply_to_comment INT DEFAULT NULL,
     created_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     last_modified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE,
     FOREIGN KEY (creator_id) REFERENCES users(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (root_of_cmt) REFERENCES comments(comment_id) ON DELETE SET NULL
+    FOREIGN KEY (reply_to_comment) REFERENCES comments(comment_id) ON DELETE SET NULL
 );
 
 -- Bảng submissions
