@@ -7,43 +7,72 @@ import AddModuleForm from '../../../features/teacher/ModuleManage/AddModuleForm'
 import AddButton from '../../../components/AddButton';
 import WelcomCard from '../../../components/WelcomCard';
 import PageTitle from '../../../components/PageTitle';
+
 const CourseHome = () => {
     const courseId = useParams().courseId;
     const role = localStorage.getItem('role');  // role có thể là teacher hoạc student, mục tiêu tiếp theo là chỉ có teacher mới có thể thêm module
     const navigate = useNavigate();
     const [modules, setModules] = useState([]);
+    const [materials, setMaterials] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showForm, setShowForm] = useState(false);
 
     useEffect(() => {
-        const fetchModulesWithGroupedMaterials = async () => {
-            try {
-                setIsLoading(true);
-                const response = await axios.get(`/api/materials/${courseId}`);
-                if (response.status === 200 && response.data.length === 0) {
-                    setModules([]);
-                } else if (response.status === 200 && response.data.length > 0) {
-                    setModules(response.data);  // Set modules that contain materials
-                } else {
-                    setError("Unexpected response from the server");
-                }
-            } catch (error) {
-                setError("Error fetching materials. Please try again.");
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchModulesWithGroupedMaterials();
+        fetchModules();
     }, [courseId]);
 
-    if (isLoading) {
-        return <div className="text-center mt-10 text-lg font-medium">Loading modules...</div>;
-    }
-    if (error) {
-        return <div className="text-center mt-10 text-red-500">{error}</div>;
-    }
+    // const fetchModulesWithGroupedMaterials = async () => {
+    //     try {
+    //         setIsLoading(true);
+    //         const response = await axios.get(`/api/materials/${courseId}`);
+    //         if (response.status === 200 && response.data.length === 0) {
+    //             setModules([]);
+    //         } else if (response.status === 200 && response.data.length > 0) {
+    //             setModules(response.data);  // Set modules that contain materials
+    //         } else {
+    //             setError("Unexpected response from the server");
+    //         }
+    //     } catch (error) {
+    //         setError("Error fetching materials. Please try again.");
+    //     } finally {
+    //         setIsLoading(false);
+    //     }
+    // };
+
+    const fetchModules = async () => {
+        try {
+            setIsLoading(true);
+            const response = await axios.get(`/api/modules/${courseId}`);
+            if (response.status === 200 && response.data.length === 0) {
+                setModules([]);
+            } else if (response.status === 200 && response.data.length > 0) {
+                setModules(response.data);
+            } else {
+                setError("Unexpected response from the server");
+            }
+        } catch (error) {
+            setError("Error fetching modules. Please try again.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const fetchMaterialsForModule = async (moduleId) => {
+        try {
+            const response = await axios.get(`/api/materials/module/${moduleId}`);
+            if (response.status === 200) {
+                setMaterials((prevState) => ({
+                    ...prevState,
+                    [moduleId]: response.data, // Lưu materials theo module_id
+                }));
+            } else {
+                setError('Failed to fetch materials');
+            }
+        } catch (error) {
+            setError('Error fetching materials:', error);
+        }
+    };
 
     const handleAddModuleButtonClick = () => {
         setShowForm(true);
@@ -61,8 +90,6 @@ const CourseHome = () => {
                 description: moduleDescription
             });
             setModules(prevModules => [...prevModules, response.data.newModule]);
-            navigate(`/teacher/courses/${courseId}`);
-
             setShowForm(false);
 
         } catch (error) {
@@ -84,6 +111,14 @@ const CourseHome = () => {
         }
     };
 
+    const updateModule = (moduleId, updatedData) => {
+        setModules((prevModules) => 
+            prevModules.map((module) => 
+                module.module_id === moduleId ? { ...module, ...updatedData } : module
+            )
+        );
+    };
+
     // const handleEditModule = async (moduleId, moduleName, moduleDescription) => {
     //     try {
     //         const response = await axios.put(`/api/modules/edit/${moduleId}`, {
@@ -98,6 +133,13 @@ const CourseHome = () => {
     //         setError('Failed to edit module');
     //     }
     // };
+
+    if (isLoading) {
+        return <div className="text-center mt-10 text-lg font-medium">Loading modules...</div>;
+    }
+    if (error) {
+        return <div className="text-center mt-10 text-red-500">{error}</div>;
+    }
 
     return (
         <Layout>
@@ -123,11 +165,12 @@ const CourseHome = () => {
                                     moduleId={module.module_id} 
                                     moduleName={module.module_name} 
                                     moduleDescription={module.description}
-                                    materials={module.materials} 
+                                    materials={materials[module.module_id]} 
                                     courseId={courseId} 
                                     role={role} 
                                     onDeleteModule={deleteModule}
-                                    // onEditModule={handleEditModule}
+                                    onModuleUpdate={updateModule} //callback
+                                    onFetchMaterials={() => fetchMaterialsForModule(module.module_id)}
                                 />
                             ))
                         ))}

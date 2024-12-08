@@ -44,7 +44,7 @@ const ModuleForm = ({
                         value={moduleName}
                         onChange={(e) => {
                             setModuleName(e.target.value);
-                            onFormChange(e);
+                            if (onFormChange) onFormChange(e);
                         }}
                         className="mt-1 p-2 border border-gray-300 rounded-md w-full"
                         required
@@ -61,7 +61,7 @@ const ModuleForm = ({
                         value={moduleDescription}
                         onChange={(e) => {
                             setModuleDescription(e.target.value);
-                            onFormChange(e);
+                            if (onFormChange) onFormChange(e);
                         }}
                         className="mt-1 p-2 border border-gray-300 rounded-md w-full"
                         rows="4"

@@ -6,15 +6,26 @@ const AddMaterialForm = ({ courseId, moduleId, uploaderId }) => {
   const navigate = useNavigate();
   
   const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [materialType, setMaterialType] = useState("document");
   const [files, setFiles] = useState([]);
+  const [visibility, setVisibility] = useState("public");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   
   // Handle file selection
   const handleFileChange = (event) => {
+    const selectedFiles = event.target.files;
     setFiles(event.target.files);
+
+    if (selectedFiles.length > 0) {
+      setTitle(selectedFiles[0].name);
+    }
   };
+
+  
+
+
 
   // Submit form data to the server
   const handleSubmit = async (event) => {
