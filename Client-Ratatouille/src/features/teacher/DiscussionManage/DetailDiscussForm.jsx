@@ -40,7 +40,7 @@ export default function DetailDiscussForm(){
         content: "",
         post_id: postId,
         creator_id: myId,
-        reply_to_comment: null
+        root_of_cmt: null
     });
     const [filesList, setFilesList] = useState([]); // posted file list
     
@@ -232,7 +232,7 @@ export default function DetailDiscussForm(){
                                 setMyComment((prev) => ({
                                     ...prev,
                                     content: newContent,
-                                    reply_to_comment: replyTo === 0 ? null : replyTo,
+                                    root_of_cmt: replyTo === 0 ? null : replyTo,
                                 }));
                                 setMyMessage(newContent);
                             }}
