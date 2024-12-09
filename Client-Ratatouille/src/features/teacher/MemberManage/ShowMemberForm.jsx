@@ -90,18 +90,19 @@ export default function ShowPeopleForm() {
     return (
         <>
             <div className="ml-5">
-                <h5
-                    class="block font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
+                <h5 className="block font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
                     Members list of {courseId}
                 </h5>
-                <p class="block mt-1 font-sans text-base antialiased font-normal leading-relaxed text-gray-700">
+                <p className="block mt-1 font-sans text-base antialiased font-normal leading-relaxed text-gray-700">
                     See information about all members
                 </p>
             </div>
-            <div className="flex items-center">
-                <div className="my-5 ml-5 w-full max-w-xs min-w-[50px]">
+            <div className="flex flex-wrap items-center gap-4">
+                <div className="my-5 ml-5 w-full sm:w-1/3">
                     <div className="relative">
-                        <input type="text" class="peer w-full pl-3 pr-10 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-500 rounded-md transition duration-300 ease focus:outline-none focus:border-gray-900 hover:border-slate-600 shadow-sm focus:shadow"
+                        <input
+                            type="text"
+                            className="peer w-full pl-3 pr-10 py-2 bg-transparent placeholder:text-slate-400 text-slate-600 text-sm border border-slate-500 rounded-md transition duration-300 ease focus:outline-none focus:border-gray-900 hover:border-slate-600 shadow-sm focus:shadow"
                             value={searchTerm}
                             onChange={handleSearchChange}
                         />
@@ -113,10 +114,10 @@ export default function ShowPeopleForm() {
                         </svg>
                     </div>
                 </div>
-
-
-                <form className="max-w-sm mx-5">
-                    <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 white:bg-gray-500 dark:border-gray-500 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+    
+                <form className="w-full sm:w-1/3">
+                    <select
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                         value={selectedRole}
                         onChange={handleRoleChange}
                     >
@@ -125,11 +126,11 @@ export default function ShowPeopleForm() {
                         <option value="Student">Student ({totalStudents})</option>
                     </select>
                 </form>
-
-                {role === 'teacher' && (
-                    <div>
+    
+                {role === "teacher" && (
+                    <div className="w-full sm:w-auto">
                         <button
-                            className="flex max-w-[150px] min-w-[130px] select-none items-center gap-3 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:outline-none  py-2 px-4 text-center align-middle font-sans text-sm font-bold  text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg  focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                            className="flex max-w-[150px] items-center gap-3 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl py-2 px-4 text-center font-sans text-sm font-bold text-white shadow-md transition-all"
                             type="button"
                             onClick={() => setShowAddMemberForm(true)}
                         >
@@ -141,11 +142,11 @@ export default function ShowPeopleForm() {
                             </svg>
                             Add Member
                         </button>
+                        
                     </div>
                 )}
-
             </div>
-
+    
             {showAddMemberForm && (
                 <AddMemberForm
                     courseId={courseId}
@@ -153,33 +154,24 @@ export default function ShowPeopleForm() {
                     onMemberAdded={handleMemberAdded}
                 />
             )}
-            <div className="relative flex flex-col text-gray-700 bg-white shadow-md rounded-lg bg-clip-border mx-5 mb-5">
-                <table className=" text-left table-auto min-w-max items-center">
+    
+            <div className="relative flex flex-col text-gray-700 bg-white shadow-md rounded-lg bg-clip-border mx-5 mb-5 overflow-x-auto">
+                <table className="table-auto w-full text-left">
                     <thead>
                         <tr>
                             <th className="px-4 pt-5 min-w-[95px] border-b border-slate-300 bg-slate-200">
-                                <p className="block text-sm font-bold leading-none text-slate-500">
-                                    User ID
-                                </p>
+                                <p className="text-sm font-bold text-slate-500">User ID</p>
                             </th>
-                            <th className="px-4 pt-5 min-w-[170px] max-w-[350px] border-b border-slate-300 bg-slate-200">
-                                <p className="block text-sm font-bold leading-none text-slate-500">
-                                    Full Name
-                                </p>
+                            <th className="px-4 pt-5 min-w-[170px] border-b border-slate-300 bg-slate-200">
+                                <p className="text-sm font-bold text-slate-500">Full Name</p>
                             </th>
-                            <th className="px-4 pt-5 w-[350px] border-b border-slate-300 bg-slate-200">
-                                <p className="block text-sm font-bold leading-none text-slate-500">
-                                    Section
-                                </p>
+                            <th className="px-4 pt-5 border-b border-slate-300 bg-slate-200 hidden sm:table-cell">
+                                <p className="text-sm font-bold text-slate-500">Section</p>
                             </th>
-                            <th className="px-4 pt-5 w-[150px] border-b border-slate-300 bg-slate-200">
-                                <p className="block text-sm font-bold leading-none text-slate-500">
-                                    Role
-                                </p>
+                            <th className="px-4 pt-5 border-b border-slate-300 bg-slate-200">
+                                <p className="text-sm font-bold text-slate-500">Role</p>
                             </th>
-
-                            <th className="px-4 pt-5 w-[100px] border-b border-slate-300 bg-slate-200">
-                            </th>
+                            <th className="px-4 pt-5 border-b border-slate-300 bg-slate-200"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -192,45 +184,45 @@ export default function ShowPeopleForm() {
                         ) : (
                             filteredMembers.map((member, index) => (
                                 <tr key={index} className="hover:bg-slate-50 border-b border-slate-200">
-                                    <td className="px-4 pt-6">
-                                        <p className="block font-semibold text-sm text-slate-800">{member.id}</p>
+                                    <td className="px-4 py-2">
+                                        <p className="font-semibold text-sm text-slate-800">{member.id}</p>
                                     </td>
-                                    <td className="px-4 pt-6">
-                                        <p className="block text-sm text-slate-800">{member.full_name}</p>
+                                    <td className="px-4 py-2">
+                                        <p className="text-sm text-slate-800">{member.full_name}</p>
                                     </td>
-                                    <td className="px-4 pt-6">
-                                        <p className="block text-sm text-slate-800">{member.course_name}</p>
+                                    <td className="px-4 py-2 hidden sm:table-cell">
+                                        <p className="text-sm text-slate-800">{member.course_name}</p>
                                     </td>
-                                    <td className="px-4 pt-6">
-                                        <p className="block text-sm text-slate-800">{member.role}</p>
+                                    <td className="px-4 py-2">
+                                        <p className="text-sm text-slate-800">{member.role}</p>
                                     </td>
-
-
-
-                                    {
-                                        role === 'teacher' && (
-                                            <td className="px-4 pt-6">
-                                                <div className="block text-center">
-                                                    {member.id !== userId ? (<button className="mb-5 px-2 p-1 rounded bg-red-500 text-white hover:bg-red-700"
-                                                        onClick={() => confirmDelete(member)}>Delete</button>) : null}
-                                                </div>
-                                            </td>
-                                        )
-                                    }
+                                    {role === "teacher" && (
+                                        <td className="px-4 py-2 text-center">
+                                            {member.id !== userId && (
+                                                <button
+                                                    className="px-2 py-1 rounded bg-red-500 text-white hover:bg-red-700"
+                                                    onClick={() => confirmDelete(member)}
+                                                >
+                                                    Delete
+                                                </button>
+                                            )}
+                                        </td>
+                                    )}
                                 </tr>
                             ))
                         )}
                     </tbody>
                 </table>
             </div>
-
+    
             {showConfirm && (
                 <ConfirmCard
-                    message={`Are you sure you want to remove member "${memberToDelete?.full_name}" from "${courseId}" ?`}
+                    message={`Are you sure you want to remove member "${memberToDelete?.full_name}" from "${courseId}"?`}
                     onConfirm={deleteMember}
                     onCancel={() => setShowConfirm(false)}
                 />
             )}
         </>
     );
+    
 }

@@ -33,7 +33,6 @@ const CourseFiles = () => {
     fetchData();
   }, [courseId]);
 
-
   // Handle file row click
   const handleRowClick = (fileKey) => {
     const encodedKey = btoa(fileKey); // Encode fileKey using Base64
@@ -41,8 +40,8 @@ const CourseFiles = () => {
   };
 
   return (
-      <Layout>
-      <div className="p-6">
+    <Layout>
+      <div className="p-4 sm:p-6">
         <h1 className="text-lg font-bold text-gray-700 mb-4">Files for Course {courseId}</h1>
         {/* Searchbar Component */}
         <Searchbar
@@ -62,15 +61,15 @@ const CourseFiles = () => {
         ) : (
           <div className="mt-6 overflow-x-auto">
             <table className="w-full text-left">
-              <thead className="text-gray-500 uppercase text-sm">
+              <thead className="text-gray-500 uppercase text-xs sm:text-sm">
                 <tr>
-                  <th className="py-2 px-4">Name</th>
-                  <th className="py-2 px-4">Type</th>
-                  <th className="py-2 px-4">Size</th>
-                  <th className="py-2 px-4">Last Modified</th>
+                  <th className="py-2 px-2 sm:px-4">Name</th>
+                  <th className="py-2 px-2 sm:px-4">Type</th>
+                  <th className="py-2 px-2 sm:px-4">Size</th>
+                  <th className="py-2 px-2 sm:px-4">Last Modified</th>
                 </tr>
               </thead>
-              <tbody className="text-gray-700 text-sm">
+              <tbody className="text-gray-700 text-xs sm:text-sm">
                 {filteredFiles.length > 0 ? (
                   filteredFiles.map((file, index) => (
                     <tr
@@ -78,10 +77,10 @@ const CourseFiles = () => {
                       className="hover:bg-gray-50 cursor-pointer"
                       onClick={() => handleRowClick(file.key)}
                     >
-                      <td className="py-2 px-4">{file.name}</td>
-                      <td className="py-2 px-4">{file.type.toUpperCase()}</td>
-                      <td className="py-2 px-4">{(file.size / (1024 * 1024)).toFixed(2)} MB</td>
-                      <td className="py-2 px-4">
+                      <td className="py-2 px-2 sm:px-4">{file.name}</td>
+                      <td className="py-2 px-2 sm:px-4">{file.type.toUpperCase()}</td>
+                      <td className="py-2 px-2 sm:px-4">{(file.size / (1024 * 1024)).toFixed(2)} MB</td>
+                      <td className="py-2 px-2 sm:px-4">
                         {new Date(file.lastModified).toLocaleString()}
                       </td>
                     </tr>
