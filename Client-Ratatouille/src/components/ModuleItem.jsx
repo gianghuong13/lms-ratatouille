@@ -20,7 +20,7 @@ const ModuleItem = ({ material }) => {
         </div>
       ));
     } else {
-      return <div>No files available</div>;
+      return <div>No items available</div>;
     }
   };
 

@@ -115,6 +115,63 @@ const materialManageController = {
     });
   },
 
+  getMaterialsByModule: async (req, res) => {
+    const { module_id } = req.params;
+    if (!module_id) {
+      return res.status(400).send('Missing module_id fields');
+    }
+    const query = `
+        SELECT
+            mat.module_id,
+            mat.material_id,
+            mat.title,
+            mat.material_type,
+            mf.file_id,
+            mf.file_name,
+            mf.file_path
+        FROM materials mat
+        LEFT JOIN materials_files mf ON mat.material_id = mf.material_id
+        WHERE mat.module_id = ?;
+    `;
+
+    connection.query(query, [module_id], (err, results) => {
+        if (err) {
+            return res.status(500).json({ error: `Database query error: ${err.message} ` });
+        }
+
+        if (results.length === 0) {
+            return res.status(200).json([]);
+        }
+
+        const groupedMaterials = results.reduce((acc, row) => {
+            const { module_id, material_id, title, material_type, file_id, file_name, file_path } = row;
+
+            let material = acc.find(m => m.material_id === material_id);
+
+            if (!material) {
+                material = {
+                    module_id,
+                    material_id,
+                    title,
+                    material_type,
+                    files: [],
+                };
+                acc.push(material);
+            }
+
+            if (file_name && file_path) {
+                material.files.push({ file_id, file_name, file_path });
+            }
+
+            return acc;
+        }, []);
+
+        const response = Object.values(groupedMaterials);
+
+        return res.status(200).json(response);
+    });
+  },
+
 };
 
 export default materialManageController;
