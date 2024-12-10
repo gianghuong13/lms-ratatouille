@@ -24,7 +24,7 @@ export default function OtherComment(props){
                 props.replied_creator_full_name ? (
                     <>
                         <p className="ml-[50px] text-gray-400 text-xs block m-0">{getLastWord(props.creator_full_name)} reply to {getLastWord(props.replied_creator_full_name)}</p>
-                        <p className="m-0 ml-[42px] bg-[#F7F7F7] text-[#747579] p-0.5 px-2 rounded-full text-sm max-w-[66%] inline-block">{props.replied_content}</p>
+                        <p className="m-0 ml-[42px] bg-[#F7F7F7] text-[#747579] p-0.5 px-2 rounded-2xl text-sm max-w-[66%] inline-block">{props.replied_content}</p>
                     </>
                 ) : (
                     <p className="ml-[50px] text-gray-400 text-xs block m-0">{getLastWord(props.creator_full_name)}</p>
@@ -49,7 +49,7 @@ export default function OtherComment(props){
                             .toUpperCase()
                         : ""}
                 </Avatar>
-                <span className="ml-2 p-2 px-3 rounded-full bg-[#F0F0F0] max-w-[66%]" title={props.created_date}>{props.content}</span>
+                <span className="ml-2 p-2 px-3 rounded-3xl bg-[#F0F0F0] max-w-[66%]" title={props.created_date}>{props.content}</span>
                 <button className="ml-1" onClick={() => props.handleReply(props.comment_id)}>
                     <FontAwesomeIcon
                         icon={faReply}

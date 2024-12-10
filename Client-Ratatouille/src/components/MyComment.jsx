@@ -18,6 +18,7 @@ export default function MyComment(props){
         // Trả về từ cuối cùng trong mảng
         return words.length > 0 ? words[words.length - 1] : ''; 
     }
+
     return (
         <>
         <div className="text-right">
@@ -25,20 +26,21 @@ export default function MyComment(props){
                 props.replied_creator_full_name ? (
                     <>
                         <p className="mr-[50px] text-gray-400 text-xs block m-2">You reply to {getLastWord(props.replied_creator_full_name)}</p>
-                        <span className="m-0 mr-[42px] bg-[#F7F7F7] text-[#747579] px-2 p-0.5 rounded-full  text-sm max-w-[66%] inline-block text-left">{props.replied_content}</span>
+                        <span className="m-0 mr-[42px] bg-[#F7F7F7] text-[#747579] px-2 p-0.5 rounded-2xl text-sm max-w-[66%] inline-block text-left">{props.replied_content}</span>
                     </>
                 ) : (
-                    <p className="mr-[50px] text-gray-400 text-xs block m-0">{getLastWord(props.creator_full_name)}</p>
+                    <></>
+                    // <p className="mr-[50px] text-gray-400 text-xs block m-0">{getLastWord(props.creator_full_name)}</p>
                 )
             }
-            <div className="flex items-center justify-end">
+            <div className="flex items-center justify-end mb-1">
                 <button className="mr-1" onClick={() => props.handleReply(props.comment_id)}>
                     <FontAwesomeIcon
                         icon={faReply}
                         className=" text-gray-400 hover:text-blue-300 w-3 h-3 p-2 hover:bg-[#F3F3F4] hover:rounded-full"
                     />
                 </button>
-                <span className="px-3 p-2 mr-2 rounded-full bg-[#8FC8FB] block max-w-[66%] text-white text-left"  title={props.created_date}>{props.content}</span>
+                <span className="px-3 p-2 mr-2 rounded-3xl bg-[#8FC8FB] block max-w-[66%] text-white text-left"  title={props.created_date}>{props.content}</span>
                 <Avatar
                     style={{
                         backgroundColor: getColorFromName(props.creator_full_name || ""), // Màu từ tên

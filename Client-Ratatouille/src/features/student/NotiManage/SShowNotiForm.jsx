@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRef } from "react";
 import Avatar from '@mui/joy/Avatar';
+import { format, formatDistanceToNow, differenceInDays, isValid, parse } from 'date-fns';
 
 export default function SShowNotiForm(){
     const accessToken = localStorage.getItem('accessToken');
@@ -54,6 +55,32 @@ export default function SShowNotiForm(){
             color += letters[(hash >> (i * 4)) & 0xF];
         }
         return color;
+    };
+
+    const formatDate = (dateString) => {
+        if (!dateString || dateString.trim() === "") {
+            console.error("Invalid date string: empty or undefined");
+            return "Invalid date";
+        }
+    
+        // Parse the date string into a Date object
+        const parsedDate = parse(dateString, "yyyy-MM-dd HH:mm:ss", new Date());
+    
+        // Check if the parsed date is valid
+        if (!isValid(parsedDate)) {
+            console.error("Invalid date:", dateString);
+            return "Invalid date";
+        }
+    
+        const daysDifference = differenceInDays(new Date(), parsedDate);
+    
+        if (daysDifference <= 3) {
+            return formatDistanceToNow(parsedDate, { addSuffix: true });
+        } else if (daysDifference < 7 && daysDifference > 3){
+            return format(parsedDate, "eee, MMM d, h:mm a") + " (" + formatDistanceToNow(parsedDate, { addSuffix: true }) + ")";
+        }{
+            return format(parsedDate, "eee, MMM d, h:mm a");
+        }
     };
 
     return (
@@ -127,7 +154,12 @@ export default function SShowNotiForm(){
                                                 {noti.title}
                                             </h6>
                                             <p className="m-0">{(convert(noti.content, {wordwrap: 130})).length > 130 ? (convert(noti.content, {wordwrap: 130})).slice(0, 130) + " ..." : (convert(noti.content, {wordwrap: 130}))}</p>
-                                            <p className="text-sm italic m-0">{noti.created_date}</p>
+                                            <p className="text-sm italic m-0">{
+                                                noti?.created_date && noti.created_date.trim() !== ""
+                                                ? formatDate(noti.created_date)
+                                                : "Loading..."   
+                                            }
+                                            </p>
                                         </div>
                                         </Link>
                                     </li>
@@ -171,8 +203,12 @@ export default function SShowNotiForm(){
                                                 {noti.title}
                                             </h6>
                                             <p className="m-0">{(convert(noti.content, {wordwrap: 130})).length > 130 ? (convert(noti.content, {wordwrap: 130})).slice(0, 130) + " ..." : (convert(noti.content, {wordwrap: 130}))}</p>
-                                            <p className="text-sm italic m-0">{noti.created_date}</p>
-                                        </div>
+                                            <p className="text-sm italic m-0">{
+                                                noti?.created_date && noti.created_date.trim() !== ""
+                                                ? formatDate(noti.created_date)
+                                                : "Loading..."   
+                                            }
+                                            </p>                                        </div>
                                         </Link>
                                     </li>
                                 )
