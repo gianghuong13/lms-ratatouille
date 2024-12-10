@@ -8,15 +8,16 @@ import MyComment from "../../../components/MyComment";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faX} from "@fortawesome/free-solid-svg-icons"
 import {faPaperPlane} from "@fortawesome/free-solid-svg-icons"
-
+import createWebSocket from "../../../services/createWebSocket";
+import { format, formatDistanceToNow, differenceInDays, isValid, parse } from 'date-fns';
 export default function DetailDiscussForm(){
     // lay cac post ve voi id, lay cac file da post ve
     const myId = localStorage.getItem('userId');
 
     const commentsRef = useRef(null); // để thanh cuộn của khối các comments luôn nằm ở dưới
-
+    const socketRef = useRef(null);
+    
     const {postId} = useParams();
-
     const [allComments, setAllComments] = useState([]); // tất cả các comment trong 1 post, có cách nào mà ko phải lấy hết các comment (khi lướt đến mới tải xuống)
     const [replyTo, setReplyTo] = useState(0); // chứa id của comment mà mình đang reply lại (để check xem có cần hiện phần reply lại comment khác ko)
     const [replyToComment, setReplyToComment] = useState({ // thông tin về comment mà mình đang reply để hiện trên phần nhập comment
@@ -33,9 +34,7 @@ export default function DetailDiscussForm(){
         last_modified: "",
         full_name: ""
     });
-
     const [myMessage, setMyMessage] = useState(""); // nội dung mình nhập vào để set khi gửi xong thì ô input là trống
-
     const [myComment, setMyComment] = useState({ // thông tin về comment của mình để đẩy lên cơ sở dữ liệu
         content: "",
         post_id: postId,
@@ -44,13 +43,15 @@ export default function DetailDiscussForm(){
     });
     const [filesList, setFilesList] = useState([]); // posted file list
     
-    useEffect(() => {
+    useEffect(() => { // thao tác để thanh cuộn luôn nằm ở dưới
         if (commentsRef.current) {
             commentsRef.current.scrollTop = commentsRef.current.scrollHeight;
         }
     }, [allComments]);
 
     useEffect(() => {
+        // console.log('useEffect running for postId:', postId); // kiểm tra useEffect có được gọi 2 lần ko 
+
         const fetchData = async () => {
             try {
                 const postRes = await axios.get('/api/posts/' + postId);
@@ -62,34 +63,37 @@ export default function DetailDiscussForm(){
                     const filesListRes = await axios.post('/api/object-urls', fileInfos); // lấy các urls ứng với các file trên S3 về 
                     setFilesList(filesListRes.data.results);
                 }
+
+                const allCommentsRes = await axios.get(`/api/get-all-comments-in-post/${postId}`);
+                setAllComments(allCommentsRes.data);
+
+                // Kiểm tra xem socket đã tồn tại hay chưa
+                if (!socketRef.current) { // nếu ko kiểm tra dòng này sẽ gây ra tình trạng useEffect thực thi 2 lần, 
+                    const socket = createWebSocket(postId); // dẫn đến sự kiện đc đẩy vào allComments 2 lần 
+                    socketRef.current = socket;             //và kết quả hiện lên màn hình là 2 đoạn tin nhắn giống hệt nhau 
+
+                    // Lắng nghe tin nhắn từ server
+                    socket.onmessage = (event) => {
+                        const newMessage = JSON.parse(event.data);
+                        console.log("New message received: ", newMessage);
+                        setAllComments((prevMessages) => [...prevMessages, newMessage]);
+                    };
+
+                    // Đóng WebSocket khi component unmount
+                    return () => {
+                        socket.close();
+                        socketRef.current = null; // Xóa socket khi unmount
+                    };
+                }
             } catch (err) {
                 console.error("Error fetching data:", err);
             }
         };
-    
-        const fetchComments = async () => {
-            try {
-                const allCommentsRes = await axios.get(`/api/get-all-comments-in-post/${postId}`);
-                setAllComments(allCommentsRes.data);
-            } catch (err) {
-                console.error("Error fetching comments:", err);
-            }
-        };
-    
-        // Gọi API lần đầu khi component render
+
         fetchData();
-        fetchComments();
-    
-        // Thiết lập interval để gọi API sau mỗi 10 giây
-        const intervalId = setInterval(() => {
-            fetchComments();
-        }, 5000);
-    
-        // Dọn dẹp interval khi component unmount
-        return () => clearInterval(intervalId);
     }, [postId]); // postId là phụ thuộc, nếu thay đổi thì sẽ gọi lại useEffect
     
-
+    
     const getColorFromName = (name) => {
         const hash = name.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
         const letters = '0123456789ABCDEF';
@@ -106,12 +110,14 @@ export default function DetailDiscussForm(){
         setReplyToComment(replyToCommentRes.data[0]);
     }
 
-    const handleSend = async (e) => { // khi gửi đẩy thông tin lên cơ sở dữ liệu
-        // e.preventDefault();
-        await axios.post('/api/create-comment', myComment);
+    const handleSend = async (e) => {
+        e.preventDefault();
+        // console.log("Sending message:", myComment);  // Kiểm tra xem message có bị gọi 2 lần không
+        socketRef.current.send(JSON.stringify(myComment));
         setMyMessage("");
         setReplyTo(0);
-    }
+    };
+    
     const handleDiscardReply = () => { // khi người dùng ko còn muốn reply lại 1 comment khác nữa
         setReplyTo(0);
     }
@@ -121,6 +127,35 @@ export default function DetailDiscussForm(){
         // Trả về từ cuối cùng trong mảng
         return words.length > 0 ? words[words.length - 1] : ''; 
     }
+
+
+    const formatDate = (dateString) => {
+        if (!dateString || dateString.trim() === "") {
+            console.error("Invalid date string: empty or undefined");
+            return "Invalid date";
+        }
+    
+        // Parse the date string into a Date object
+        const parsedDate = parse(dateString, "yyyy-MM-dd HH:mm:ss", new Date());
+    
+        // Check if the parsed date is valid
+        if (!isValid(parsedDate)) {
+            console.error("Invalid date:", dateString);
+            return "Invalid date";
+        }
+    
+        const daysDifference = differenceInDays(new Date(), parsedDate);
+    
+        if (daysDifference <= 3) {
+            return formatDistanceToNow(parsedDate, { addSuffix: true });
+        } else if (daysDifference < 7 && daysDifference > 3){
+            return format(parsedDate, "eee, MMM d, h:mm a") + " (" + formatDistanceToNow(parsedDate, { addSuffix: true }) + ")";
+        }{
+            return format(parsedDate, "eee, MMM d, h:mm a");
+        }
+    };
+    
+    
     return (
         <div className="flex flex-col max-h-dvh bg-[#F5F8FB] p-2 rounded-xl">
             {/* Khối chứa thông tin bài post */}
@@ -146,7 +181,9 @@ export default function DetailDiscussForm(){
                         </Avatar>
                         <span className="font-semibold pl-2">{post.full_name}</span>
                     </div>
-                    <span className="text-sm italic m-0 text-right flex-1">{post.created_date}</span>
+                    <span className="text-sm italic m-0 text-right flex-1">
+                        {post?.created_date ? formatDate(post.created_date) : "Loading..."}
+                    </span>
                 </div>
                 <h6 className="font-bold font-sans m-0 text-center">{post.title}</h6>
                 <div className="prose max-w-none break-words whitespace-normal" dangerouslySetInnerHTML={{ __html: post.content }} />
@@ -177,7 +214,7 @@ export default function DetailDiscussForm(){
                         allComments.map(comment => (
                             comment.creator_id === myId ? (
                                 <MyComment 
-                                    key={comment.comment_id}
+                                    key={`${comment.comment_id}-${comment.created_date}`}
                                     replied_creator_full_name={comment.replied_creator_full_name}
                                     creator_full_name={comment.creator_full_name}
                                     replied_content={comment.replied_content}
@@ -189,8 +226,7 @@ export default function DetailDiscussForm(){
                                 />
                             ) : (
                                 <OtherComment 
-                                    key={comment.comment_id}
-                                    replied_creator_full_name={comment.replied_creator_full_name}
+                                    key={`${comment.comment_id}-${comment.created_date}`}                                    replied_creator_full_name={comment.replied_creator_full_name}
                                     creator_full_name={comment.creator_full_name}
                                     replied_content={comment.replied_content}
                                     comment_id={comment.comment_id}

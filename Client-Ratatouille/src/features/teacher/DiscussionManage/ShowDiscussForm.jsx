@@ -4,6 +4,7 @@ import {Link, useParams} from "react-router-dom"
 import axios from "axios";
 import Avatar from "@mui/joy/Avatar";
 import { convert } from 'html-to-text';
+import { format, formatDistanceToNow, differenceInDays, isValid, parse } from 'date-fns';
 
 export default function CourseDiscussMain(){
     const [isAll, setIsAll] = useState(1);
@@ -41,6 +42,31 @@ export default function CourseDiscussMain(){
         }
         return color;
     };
+
+    const formatDate = (dateString) => {
+        if (!dateString || dateString.trim() === "") {
+            console.error("Invalid date string: empty or undefined");
+            return "Invalid date";
+        }
+    
+        // Parse the date string into a Date object
+        const parsedDate = parse(dateString, "yyyy-MM-dd HH:mm:ss", new Date());
+    
+        // Check if the parsed date is valid
+        if (!isValid(parsedDate)) {
+            console.error("Invalid date:", dateString);
+            return "Invalid date";
+        }
+    
+        const daysDifference = differenceInDays(new Date(), parsedDate);
+    
+        if (daysDifference < 7) {
+            return format(parsedDate, "eee, MMM d, h:mm a") + " (" + formatDistanceToNow(parsedDate, { addSuffix: true }) + ")";
+        } else {
+            return format(parsedDate, "eee, MMM d, h:mm a");
+        }
+    };
+
     return (
         <div className="h-full">
             {/* chứa all posted/ your posted  New posted */}
@@ -129,7 +155,9 @@ export default function CourseDiscussMain(){
                                                 {post.title}
                                             </h6>
                                             <p className="m-0">{(convert(post.content, {wordwrap: 130})).length > 130 ? (convert(post.content, {wordwrap: 130})).slice(0, 130) + " ..." : (convert(post.content, {wordwrap: 130}))}</p>
-                                            <p className="text-sm italic m-0">{post.created_date}</p>
+                                            <p className="text-sm italic m-0">
+                                                {post?.created_date ? formatDate(post.created_date) : "Loading..."}
+                                            </p>
                                         </div>
                                         </Link>
                                     </li>

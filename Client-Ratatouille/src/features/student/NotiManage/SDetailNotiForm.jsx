@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from 'axios';
 import { Link } from "react-router-dom";
 import Avatar from '@mui/joy/Avatar';
+import { format, formatDistanceToNow, differenceInDays, isValid, parse } from 'date-fns';
 
 export default function SDetailNotiForm() {
     const { id } = useParams();
@@ -54,6 +55,33 @@ export default function SDetailNotiForm() {
         }
         return color;
     };
+
+    const formatDate = (dateString) => {
+        if (!dateString || dateString.trim() === "") {
+            console.error("Invalid date string: empty or undefined");
+            return "Invalid date";
+        }
+    
+        // Parse the date string into a Date object
+        const parsedDate = parse(dateString, "yyyy-MM-dd HH:mm:ss", new Date());
+    
+        // Check if the parsed date is valid
+        if (!isValid(parsedDate)) {
+            console.error("Invalid date:", dateString);
+            return "Invalid date";
+        }
+    
+        const daysDifference = differenceInDays(new Date(), parsedDate);
+    
+        if (daysDifference <= 3) {
+            return formatDistanceToNow(parsedDate, { addSuffix: true });
+        } else if (daysDifference < 7 && daysDifference > 3){
+            return format(parsedDate, "eee, MMM d, h:mm a") + " (" + formatDistanceToNow(parsedDate, { addSuffix: true }) + ")";
+        }{
+            return format(parsedDate, "eee, MMM d, h:mm a");
+        }
+    };
+
     return (
         <div className="m-0 p-3 sm:mx-2 rounded-2xl shadow-lg h-[89vh] md:mx-3 xl:ml-5 xl:mr-10 bg-white overflow-y-auto">
             <h2 className="text-xl font-semibold ml-12">{noti.title}</h2>
@@ -85,11 +113,19 @@ export default function SDetailNotiForm() {
                     </p>
                 </div>
                 <div className="flex-1 text-right mr-4 hidden md:block italic">
-                    <p className="text-sm text-gray-500 m-0">{"Last modified: " + noti.last_modified}</p>
+                    <p className="text-sm text-gray-500 m-0">{"Last modified: " + 
+                        noti?.last_modified && noti.last_modified.trim() !== ""
+                            ? formatDate(noti.last_modified)
+                            : "Loading..."                   }
+                    </p>
                 </div>
             </div>
             <div className="ml-14 block md:hidden italic">
-                    <p className="text-sm text-gray-500 m-0">{"Last modified: " + noti.last_modified}</p>
+                    <p className="text-sm text-gray-500 m-0">{"Last modified: " + 
+                        noti?.last_modified && noti.last_modified.trim() !== ""
+                            ? formatDate(noti.last_modified)
+                            : "Loading..."                  }
+                    </p>
             </div>
             <div className="prose max-w-none break-words whitespace-normal ml-12 mt-3" dangerouslySetInnerHTML={{ __html: noti.content }} />
             <div>
