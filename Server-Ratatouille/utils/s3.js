@@ -111,8 +111,8 @@ async function listObjects(folder) {
     // Trả về danh sách file
     return files;
   } catch (error) {
-    console.error("Error listing objects:", error);
-    throw new Error("Unable to list objects from S3");
+    
+    throw error;
   }
 }
 
