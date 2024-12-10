@@ -106,24 +106,25 @@ const MaterialForm = ({
 
   return (
     <div className="material-form px-10">
-      <form onSubmit={handleSubmit}>
-        <div className="flex">
-          <label className="font-semibold text-lg p-1">Title:</label>
+      <form onSubmit={handleSubmit} className="flex flex-col space-y-5 w-2/3">
+        <div className="flex justify-between">
+          <label className="font-semibold text-lg p-1 mr-20">Title:</label>
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Enter title or leave blank to use file name.."
-            className="w-full p-2"
+            className="bg-blue-200 border border-gray-300 rounded-md flex-1 ml-2 focus:outline focus:outline-2 focus:outline-[#D2DEF0] focus:border-[#015DAF] p-2 hover:border-[#015DAF]"
           />
         </div>
 
         <div>
-          <label className="font-semibold text-lg p-1">Material Type:</label>
+          <label className="font-semibold text-lg p-1 mr-3">Material Type:</label>
           <select
             value={materialType}
             onChange={(e) => setMaterialType(e.target.value)}
             required
+            className="bg-blue-200 w-32 border border-gray-300 rounded-md focus:outline focus:outline-2 focus:outline-[#D2DEF0] focus:border-[#015DAF] p-1 hover:border-[#015DAF]"
           >
             <option value="document">Document</option>
             <option value="video">Video</option>
@@ -133,8 +134,8 @@ const MaterialForm = ({
         </div>
 
         <div className="flex">
-          <label className=" text-lg p-1">Status:</label>
-          <div className="flex">
+          <label className="font-semibold text-lg p-1 mr-16">Status:</label>
+          <div className="flex space-x-3">
             <div className="flex items-center me-4">
               <input 
                 id="public" 
@@ -163,7 +164,7 @@ const MaterialForm = ({
 
         {isEdit && (
           <div className="flex items-center">
-            <label className="font-semibold text-lg p-1">Current File:</label>
+            <label className="font-semibold text-lg p-1 mr-8">Current File:</label>
             <div className="flex items-center">
               <a href={material.file.file_path} target="_blank" rel="noreferrer" className="text-blue-500 underline">{material.file.file_name}</a>
             </div>
@@ -171,7 +172,7 @@ const MaterialForm = ({
         )}
 
         <div className="flex items-center">
-          <label className="font-semibold text-lg p-1">
+          <label className="font-semibold text-lg p-1 mr-12">
             {isEdit ? "New File:" : "File Attachement:"}
           </label>
           <input
@@ -183,12 +184,21 @@ const MaterialForm = ({
         </div>
 
         {error && <p className="error">{error}</p>}
-
-        <div className="mt-10 justify-items-end">
+        <div className="flex items-center space-x-5">
+        <div className="mt-14 justify-items-end">
           <button type="submit" disabled={loading} 
             className="text-white bg-blue-700 rounded-2xl p-2">
-            {loading ? (isEdit ? "Updating..." : "Uploading...") : (isEdit ? "Update Material" : "+ Material")}
+            {loading ? (isEdit ? "Updating..." : "Uploading...") : (isEdit ? "Save Edit" : "+ Material")}
           </button>
+        </div>
+        <div className="mt-14 justify-items-end">
+          <button
+            onClick={() => navigate(`/teacher/courses/${courseId}`)}
+            className="text-gray-700 bg-gray-400 rounded-2xl p-2"
+          >
+            Cancel
+          </button>
+        </div>
         </div>
       </form>
     </div>

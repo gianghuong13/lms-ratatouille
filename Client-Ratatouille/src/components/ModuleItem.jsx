@@ -10,7 +10,7 @@ const ModuleItem = ({ courseId, role, moduleId, material, onDeleteMaterial }) =>
 
   const navigate = useNavigate();
 
-  const { title, material_type, files } = material;
+  const { title, material_type, files, status } = material;
 
   // const renderFiles = () => {
   //   // Check if files is an array and has elements
@@ -34,7 +34,9 @@ const ModuleItem = ({ courseId, role, moduleId, material, onDeleteMaterial }) =>
 
   const getFileUrl = () => {
     if (files && files.length > 0) {
-      return files[0].file_path; // file_path là URL của file trong danh sách files
+      let url = btoa(files[0].file_path); // Encode file path using Base64
+      url = `/${role}/courses/${courseId}/files/${url}`;
+      return url;
     }
     return null;
   };
@@ -44,6 +46,10 @@ const ModuleItem = ({ courseId, role, moduleId, material, onDeleteMaterial }) =>
   const onEditMaterial = (materialId) => {
     navigate(`/teacher/courses/${courseId}/modules/${moduleId}/material-items/${materialId}/edit`);
   };
+
+  if (role === 'student' && status === 'private') {
+    return null;
+  }
 
   return (
     <div className="flex justify-between module-item p-4 bg-white rounded-lg shadow mb-2">
