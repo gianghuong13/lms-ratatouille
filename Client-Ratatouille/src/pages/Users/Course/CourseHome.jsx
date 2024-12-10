@@ -103,10 +103,9 @@ const CourseHome = () => {
             try {
                 await axios.delete(`/api/modules/delete/${moduleId}`);
                 setModules(prevModules => prevModules.filter(module => module.module_id !== moduleId));
-                alert('Module deleted successfully');
             } catch (error) {
                 console.error('Error deleting module:', error);
-                alert('Failed to delete module. Please try again later.');
+                setError('Failed to delete module. Please try again later.');
             }
         }
     };
@@ -145,7 +144,7 @@ const CourseHome = () => {
         <Layout>
             <div className='container mx-auto pr-20 p-4'>
                 {role === 'teacher' && (
-                    <div className='float-right mb-5'>
+                    <div className='justify-items-end'>
                         <AddButton onClick={handleAddModuleButtonClick} label="Module" />
                     </div>
                 )}
@@ -156,12 +155,12 @@ const CourseHome = () => {
                 )}
 
                 {/* Modules List */}
-                <div className="module-materials mt-4 w-full px-10 pt-5 pb-10">
-                    {isLoading ? (<p>Loading materials...</p>) : error ? (<p>{error}</p>) : (
-                        modules.length === 0 ? (<p>No materials available for this course</p>) : (
+                <div className="module-materials w-full px-10 pb-5">
+                    {isLoading ? (<p>Loading modules...</p>) : error ? (<p>{error}</p>) : (
+                        modules.length === 0 ? (<p>No modules available for this course</p>) : (
                             modules.map((module) => (
                                 <ModuleTitle 
-                                    key={module.module_id} 
+                                    key={module.module_id}
                                     moduleId={module.module_id} 
                                     moduleName={module.module_name} 
                                     moduleDescription={module.description}

@@ -34,6 +34,7 @@ import CourseGrades from './pages/Users/Course/CourseGrades.jsx';
 import CoursePeople from './pages/Users/Course/CoursePeople.jsx';
 import CourseFiles from './pages/Users/Course/CourseFiles.jsx';
 import AddMaterial from './pages/Users/Module/AddMaterial.jsx';
+import EditMaterial from './pages/Users/Module/EditMaterial.jsx';
 import TCreateNotification from './pages/Users/NotiManage/TCreateNotification.jsx';
 import TNotifications from './pages/Users/NotiManage/TNotifications.jsx';
 import TUpdateNotification from './pages/Users/NotiManage/TUpdateNotification.jsx';
@@ -88,6 +89,7 @@ const App = () => {
 
             <Route path="courses/:courseId" element={<CourseHome />} />
             <Route path='courses/:courseId/modules/:moduleId/add-material' element={<AddMaterial />} />
+            <Route path='courses/:courseId/modules/:moduleId/material-items/:materialId/edit' element={<EditMaterial />} />
             
             <Route path='courses/:courseId/assignments' element={<CourseAssignments />} />
             <Route path='courses/:courseId/grades' element={<CourseGrades />} />

@@ -83,10 +83,15 @@ CREATE TABLE materials (
     module_id INT DEFAULT NULL,
     material_type ENUM('document', 'video', 'link', 'zip') NOT NULL,
     title NVARCHAR(255) NOT NULL,
+    status ENUM('public', 'private') DEFAULT 'public',
     -- FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE,
     FOREIGN KEY (uploader_id) REFERENCES users(user_id) ON DELETE SET NULL,
     FOREIGN KEY (module_id) REFERENCES modules(module_id) ON DELETE SET NULL
 );
+-- query to add column status to materials table
+-- ALTER TABLE materials
+-- ADD status ENUM('public', 'private') DEFAULT 'public';
+
 
 CREATE TABLE materials_files (
 	file_id INT PRIMARY KEY auto_increment,

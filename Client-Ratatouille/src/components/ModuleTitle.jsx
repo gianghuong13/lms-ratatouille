@@ -18,6 +18,7 @@ const ModuleTitle = ({
   onModuleUpdate,
   onFetchMaterials
 }) => {
+
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -62,6 +63,20 @@ const ModuleTitle = ({
     }));
   };
 
+  const handleDeleteMaterial = async (materialId) => {
+    try {
+      console.log(materialId);
+      const response = await axios.delete(`/api/materials/delete/${materialId}`);
+      if (response.status === 200) {
+        onFetchMaterials();
+      } else {
+        setError('Failed to delete material');
+      }
+    } catch (error) {
+      setError('Failed to delete material');
+    }
+  };
+
 
   return (
     <>
@@ -73,12 +88,11 @@ const ModuleTitle = ({
             <h3 className="text-xl font-semibold">{moduleName}</h3>
           </div>
 
-          <div className="flex items-baseline space-x-2">
+          <div className="flex items-center space-x-2">
             
             {role === 'teacher' && (
                     <>
                       <ModuleEditOptions onEdit={() => setShowForm(true)} onDelete={() => onDeleteModule(moduleId)} />
-                      {/* <img src={pluscircle} alt="addplus" onClick={() => navigate(`/teacher/courses/${courseId}/modules/${moduleId}/add-material`)} className="cursor-pointer"/> */}
                       <AddItemOptions 
                         onAddMaterial={() => navigate(`/teacher/courses/${courseId}/modules/${moduleId}/add-material`)} 
                         onAddAssignment={() => navigate(`/teacher/courses/${courseId}/modules/${moduleId}/add-assignment`)} 
@@ -96,7 +110,14 @@ const ModuleTitle = ({
             <p>No materials available</p>
           ) : (
             materials.map((material) => (
-              <ModuleItem key={material.material_id} material={material} />
+              <ModuleItem 
+                key={material.material_id} 
+                material={material}
+                role={role}
+                courseId={courseId}
+                moduleId={moduleId}
+                onDeleteMaterial={() => handleDeleteMaterial(material.material_id)}
+              />
             ))
           )}
         </div>
