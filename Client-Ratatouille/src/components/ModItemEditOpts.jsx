@@ -3,7 +3,7 @@ import dots from "../assets/User_Screen/EditDots.svg";
 import editIcon from "../assets/User_Screen/Edit.svg";
 import trashbinIcon from "../assets/User_Screen/Trashbin.svg";
 
-const ModuleEditOptions = ({ onEdit, onDelete }) => {
+const ModItemEditOpts = ({ onEdit, onDelete }) => {
     const [isVisible, setIsVisible] = useState(false);
     const menuRef = useRef();
 
@@ -55,4 +55,4 @@ const ModuleEditOptions = ({ onEdit, onDelete }) => {
     );
 };
 
-export default ModuleEditOptions;
+export default ModItemEditOpts;
