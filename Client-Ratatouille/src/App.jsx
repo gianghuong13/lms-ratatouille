@@ -41,6 +41,9 @@ import TUpdateNotification from './pages/Users/NotiManage/TUpdateNotification.js
 import TDetailNotification from './pages/Users/NotiManage/TDetailNotification.jsx';
 import FileDetail from './pages/Users/Course/FileDetail.jsx';
 import Calendar from './pages/Users/Calendar.jsx';
+import AddAssignment from './pages/Users/AssignmentManage/AddAssignment.jsx';
+import DetailAssignment from './pages/Users/AssignmentManage/DetailAssignment.jsx';
+import EditAssignment from './pages/Users/AssignmentManage/EditAssignment.jsx';
 
 import CourseDiscussions from './pages/Users/Discussion/CourseDiscussions.jsx'
 import NewDiscussion from './pages/Users/Discussion/NewDiscussion.jsx'
@@ -92,6 +95,12 @@ const App = () => {
             <Route path='courses/:courseId/modules/:moduleId/material-items/:materialId/edit' element={<EditMaterial />} />
             
             <Route path='courses/:courseId/assignments' element={<CourseAssignments />} />
+            <Route path='courses/:courseId/assignments/add' element={<AddAssignment />} />
+            <Route path='courses/:courseId/assignments/:assignmentId' element={<DetailAssignment />} />
+            <Route path='courses/:courseId/assignments/:assignmentId/edit' element={<EditAssignment />} />
+
+
+
             <Route path='courses/:courseId/grades' element={<CourseGrades />} />
             <Route path='courses/:courseId/people' element={<CoursePeople />} />
             <Route path='courses/:courseId/files' element={<CourseFiles />} />
@@ -117,6 +126,8 @@ const App = () => {
             <Route path='courses/:courseId/people' element={<CoursePeople />} />
             <Route path='courses/:courseId/files' element={<CourseFiles />} />
             <Route path='courses/:courseId/files/:encodedKey' element={<FileDetail />} />
+            <Route path='courses/:courseId/assignments/:assignmentId' element={<DetailAssignment />} />
+
 
             <Route path='courses/:courseId/discussions' element={<CourseDiscussions />} />
             <Route path='courses/:courseId/discussions/create-discussion' element={<NewDiscussion />} />
