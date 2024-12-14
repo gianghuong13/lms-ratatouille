@@ -236,3 +236,9 @@ INSERT INTO users (user_id, password, full_name, role, email) VALUES
 INSERT INTO `fall2024c8g10_educationsystem`.`terms` (`term_id`, `term_name`) VALUES ('2425H', 'SummerTerm 2024-2025');
 INSERT INTO `fall2024c8g10_educationsystem`.`terms` (`term_id`, `term_name`) VALUES ('2425I', 'FallTerm 2024-2025');
 INSERT INTO `fall2024c8g10_educationsystem`.`terms` (`term_id`, `term_name`) VALUES ('2425II', 'SpringTerm 2024-2025');
+
+ALTER TABLE assignments
+ADD COLUMN start_date DATETIME DEFAULT CURRENT_TIMESTAMP;;
+
+
+drop table assignment_allowed_formats;
