@@ -99,6 +99,7 @@ const App = () => {
             <Route path='courses/:courseId/assignments/:assignmentId' element={<DetailAssignment />} />
             <Route path='courses/:courseId/assignments/:assignmentId/edit' element={<EditAssignment />} />
 
+            <Route path='courses/:courseId/modules/:moduleId/add-assignment' element={<AddAssignment />} />
 
 
             <Route path='courses/:courseId/grades' element={<CourseGrades />} />
@@ -133,6 +134,7 @@ const App = () => {
             <Route path='courses/:courseId/discussions/create-discussion' element={<NewDiscussion />} />
             <Route path='courses/:courseId/discussions/update-post/:postId' element={<UpdateDiscussion />} />
             <Route path='courses/:courseId/discussions/detail-post/:postId' element={<DetailDiscussion />} />
+            <Route path='calendar' element={<Calendar />} />
           </Route>
         </Route>
         <Route element={<UnauthorizedRoutes />}>

@@ -5,19 +5,20 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
 export default function AddAssignmentForm() {
+    const { courseId, moduleId } = useParams();
     const [moduleList, setModuleList] = useState([]);
+    const [selectedModuleId, setSelectedModuleId] = useState(moduleId || null);
     const [loading, setLoading] = useState(true);
     const [selectedFiles, setSelectedFiles] = useState(null); 
     const [selectedFileNames, setSelectedFileNames] = useState([]);
     const [errors, setErrors] = useState({});
-    const { courseId } = useParams();
     const userId = localStorage.getItem("userId");
     const fileInputRef = useRef(null); 
     const [assignment, setAssignment] = useState({
         course_id: courseId,
         creator_id: userId,
         title: "",
-        module_id: "",
+        module_id: selectedModuleId || "",
         start_date: "",
         due_date: "",
         description: ""
