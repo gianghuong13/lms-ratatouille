@@ -238,7 +238,7 @@ INSERT INTO `fall2024c8g10_educationsystem`.`terms` (`term_id`, `term_name`) VAL
 INSERT INTO `fall2024c8g10_educationsystem`.`terms` (`term_id`, `term_name`) VALUES ('2425II', 'SpringTerm 2024-2025');
 
 ALTER TABLE assignments
-ADD COLUMN start_date DATETIME DEFAULT CURRENT_TIMESTAMP;;
+ADD COLUMN start_date DATETIME DEFAULT CURRENT_TIMESTAMP;
 
 
 drop table assignment_allowed_formats;

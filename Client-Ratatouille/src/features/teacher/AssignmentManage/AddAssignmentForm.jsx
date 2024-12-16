@@ -5,23 +5,25 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
 export default function AddAssignmentForm() {
+    const { courseId, moduleId } = useParams();
     const [moduleList, setModuleList] = useState([]);
+    const [selectedModuleId, setSelectedModuleId] = useState(moduleId || "");
     const [loading, setLoading] = useState(true);
     const [selectedFiles, setSelectedFiles] = useState(null); 
     const [selectedFileNames, setSelectedFileNames] = useState([]);
     const [errors, setErrors] = useState({});
-    const { courseId } = useParams();
     const userId = localStorage.getItem("userId");
     const fileInputRef = useRef(null); 
     const [assignment, setAssignment] = useState({
         course_id: courseId,
         creator_id: userId,
         title: "",
-        module_id: "",
+        module_id: selectedModuleId,
         start_date: "",
         due_date: "",
         description: ""
     });
+    const [selectedModuleName, setSelectedModuleName] = useState("");
 
     const toolbarOptions = [
         ['bold', 'italic', 'underline', 'strike'],
@@ -47,6 +49,10 @@ export default function AddAssignmentForm() {
                 setModuleList([]);
             } else {
                 setModuleList(responseModule.data);
+                if (moduleId) {
+                    const selectedModule = responseModule.data.find(module => module.module_id === moduleId);
+                    setSelectedModuleName(selectedModule ? selectedModule.module_name : "");
+                }
             }
             setLoading(false);
         } catch (error) {
@@ -57,7 +63,7 @@ export default function AddAssignmentForm() {
 
     useEffect(() => {
         getModuleList();
-    }, [courseId]);
+    }, [courseId, moduleId]);
 
     const validateForm = () => {
         const newErrors = {};
@@ -80,13 +86,11 @@ export default function AddAssignmentForm() {
 
     const handleChange = async (e, fieldName) => {
         if (fieldName) {
-            // Trường hợp nhận giá trị trực tiếp từ ReactQuill
             setAssignment((prevData) => ({
                 ...prevData,
-                [fieldName]: e, // e là giá trị từ ReactQuill
+                [fieldName]: e,
             }));
         } else {
-            // Trường hợp sự kiện DOM thông thường 
             const { name, value } = e.target;
             setAssignment((prevData) => ({
                 ...prevData,
@@ -94,7 +98,6 @@ export default function AddAssignmentForm() {
             }));
         }
     };
-    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -103,6 +106,7 @@ export default function AddAssignmentForm() {
             setErrors(validationErrors);
             return;
         }
+
         try {
             const response = await axios.post("/api/assignment/create", assignment);
             const assignment_id = response.data.assignment_id;
@@ -121,14 +125,13 @@ export default function AddAssignmentForm() {
                             "Content-Type": "multipart/form-data",
                         }
                     })
-                    const assignmentFile = response.data.uploadedFiles;// kết quả trả về từ việc đẩy file lên S3 là thông tin về file lưu trên S3 (gồm fileName và key), để chuản bị chèn thông tin vào bảng notification_files của DB
+                    const assignmentFile = response.data.uploadedFiles;
     
                     try {
                         const response = await axios.post(`/api/assignment/create-file/${assignment_id}`, assignmentFile);
                     
                         console.log("File uploaded successfully:");
                     } catch (error) {
-                        // Xử lý lỗi
                         console.error("Error uploading file:", error);
                     }
                     
@@ -144,12 +147,12 @@ export default function AddAssignmentForm() {
                 module_id: '',
                 start_date: '',
                 due_date: '',
-                description: '' // Reset description
+                description: ''
             });
             setSelectedFiles([]);
             setSelectedFileNames([]);
             if (fileInputRef.current) {
-                fileInputRef.current.value = ""; // Reset giá trị của input file
+                fileInputRef.current.value = "";
             }
             setErrors({});
             alert("Assignment created successfully!");
@@ -187,6 +190,7 @@ export default function AddAssignmentForm() {
                                 name='module_id'
                                 onChange={handleChange}
                                 className="bg-white border border-gray-400 text-gray-800 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-[80%] p-2.5"
+                                disabled={!!moduleId}
                             >
                                 <option value="" disabled>Select a module</option>
                                 {moduleList.map((module) => (
@@ -196,33 +200,34 @@ export default function AddAssignmentForm() {
                                 ))}
                             </select>
                         )}
+                        {moduleId && selectedModuleName && (
+                            <p className="text-sm text-gray-600 italic mt-2">Selected Module: {selectedModuleName}</p>
+                        )}
                         {errors.module_id && <p className="text-sm text-red-600">{errors.module_id}</p>}
                     </div>
 
-                    <div className="flex gap-4">
-                        <div className="w-1/2">
-                            <label className="block mb-2 text-sm font-medium text-gray-700">Start Date</label>
-                            <input 
-                                type="datetime-local" 
-                                className="bg-white border border-gray-400 text-gray-800 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5" 
-                                name='start_date'
-                                value={assignment.start_date}
-                                onChange={handleChange}
-                            />
-                            {errors.start_date && <p className="text-sm text-red-600">{errors.start_date}</p>}
-                        </div>
+                    <div className="w-1/2">
+                        <label className="block mb-2 text-sm font-medium text-gray-700">Start Date</label>
+                        <input 
+                            type="datetime-local" 
+                            className="bg-white border border-gray-400 text-gray-800 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5" 
+                            name='start_date'
+                            value={assignment.start_date}
+                            onChange={handleChange}
+                        />
+                        {errors.start_date && <p className="text-sm text-red-600">{errors.start_date}</p>}
+                    </div>
 
-                        <div className="w-1/2">
-                            <label className="block mb-2 text-sm font-medium text-gray-700">Due Date</label>
-                            <input 
-                                type="datetime-local" 
-                                className="bg-white border border-gray-400 text-gray-800 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5" 
-                                name='due_date'
-                                value={assignment.due_date}
-                                onChange={handleChange}
-                            />
-                            {errors.due_date && <p className="text-sm text-red-600">{errors.due_date}</p>}
-                        </div>
+                    <div className="w-1/2">
+                        <label className="block mb-2 text-sm font-medium text-gray-700">Due Date</label>
+                        <input 
+                            type="datetime-local" 
+                            className="bg-white border border-gray-400 text-gray-800 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5" 
+                            name='due_date'
+                            value={assignment.due_date}
+                            onChange={handleChange}
+                        />
+                        {errors.due_date && <p className="text-sm text-red-600">{errors.due_date}</p>}
                     </div>
                 </div>
 
@@ -233,7 +238,6 @@ export default function AddAssignmentForm() {
                         theme="snow" 
                         value={assignment.description} 
                         onChange={(value) => handleChange(value, "description")} 
-                        
                         className="ql-editor break-words w-full"
                     />
                     {errors.description && <p className="text-sm text-red-600">{errors.description}</p>}
@@ -249,7 +253,7 @@ export default function AddAssignmentForm() {
                         onChange={(e) => {
                             const files = Array.from(e.target.files);
                             setSelectedFiles(files); 
-                            setSelectedFileNames(files.map((file) => file.name)); // Lưu tên file vào state
+                            setSelectedFileNames(files.map((file) => file.name));
                         }}
                     />
                     {selectedFileNames.length > 0 && (
