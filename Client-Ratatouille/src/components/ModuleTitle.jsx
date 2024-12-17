@@ -134,7 +134,7 @@ const ModuleTitle = ({
                       <ModuleEditOptions onEdit={() => setShowForm(true)} onDelete={() => onDeleteModule(moduleId)} />
                       <AddItemOptions 
                         onAddMaterial={() => navigate(`/teacher/courses/${courseId}/modules/${moduleId}/add-material`)} 
-                        onAddAssignment={() => navigate(`/teacher/courses/${courseId}/assignments/add`)} 
+                        onAddAssignment={() => navigate(`/teacher/courses/${courseId}/modules/${moduleId}/add-assignment`)} 
                       />
                     </>
             )}

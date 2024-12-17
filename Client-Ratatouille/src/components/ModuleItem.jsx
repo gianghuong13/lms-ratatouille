@@ -120,9 +120,21 @@ const ModuleItem = ({ courseId, role, moduleId, item, itemType, onDelete }) => {
               className="text-gray-700 hover:underline font-semibold text-lg"
             >
               {title}
-            </Link>
-            <div className="text-gray-500 text-xs">
-              Due: {new Date(due_date).toLocaleDateString()}
+            </a>
+          )}
+          
+          {itemType === 'assignment' && (
+            <div>
+              <Link 
+                to={`/${role}/courses/${courseId}/modules/${moduleId}/assignments/${item.assignment_id}`} 
+                target="_blank"
+                className="text-gray-700 hover:underline font-semibold text-lg"
+              >
+                {title}
+              </Link>
+              <div className="text-gray-500 text-xs">
+                Due: {new Date(due_date).toLocaleDateString()}
+              </div>
             </div>
           </div>
         )}

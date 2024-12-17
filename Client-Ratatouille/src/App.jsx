@@ -49,6 +49,7 @@ import CourseDiscussions from './pages/Users/Discussion/CourseDiscussions.jsx'
 import NewDiscussion from './pages/Users/Discussion/NewDiscussion.jsx'
 import DetailDiscussion from './pages/Users/Discussion/DetailDiscussion.jsx'
 import UpdateDiscussion from './pages/Users/Discussion/UpdateDiscussion.jsx'
+import AddSubmissionPage from './pages/Users/SubmissionManage/AddSubmissionPage.jsx'
 const App = () => {
   const role = useSelector((state) => state.auth.role);
   const location = useLocation(); // Hook để lấy đường dẫn hiện tại
@@ -96,7 +97,7 @@ const App = () => {
             
             <Route path='courses/:courseId/assignments' element={<CourseAssignments />} />
             <Route path='courses/:courseId/assignments/add' element={<AddAssignment />} />
-            <Route path='courses/:courseId/assignments/:assignmentId' element={<DetailAssignment />} />
+            <Route path='courses/:courseId/modules/:moduleId/assignments/:assignmentId' element={<DetailAssignment />} />
             <Route path='courses/:courseId/assignments/:assignmentId/edit' element={<EditAssignment />} />
 
 
@@ -104,6 +105,7 @@ const App = () => {
             <Route path='courses/:courseId/people' element={<CoursePeople />} />
             <Route path='courses/:courseId/files' element={<CourseFiles />} />
             <Route path='courses/:courseId/files/:encodedKey' element={<FileDetail />} />
+            <Route path='courses/:courseId/modules/:moduleId/add-assignment' element={<AddAssignment />} />
             <Route path='calendar' element={<Calendar />} />
 
             <Route path='courses/:courseId/discussions' element={<CourseDiscussions />} />
@@ -125,7 +127,8 @@ const App = () => {
             <Route path='courses/:courseId/people' element={<CoursePeople />} />
             <Route path='courses/:courseId/files' element={<CourseFiles />} />
             <Route path='courses/:courseId/files/:encodedKey' element={<FileDetail />} />
-            <Route path='courses/:courseId/assignments/:assignmentId' element={<DetailAssignment />} />
+            <Route path='courses/:courseId/modules/:moduleId/assignments/:assignmentId' element={<DetailAssignment />} />
+            <Route path='courses/:courseId/modules/:moduleId/assignments/:assignmentId/add-submission' element={<AddSubmissionPage />} />
 
 
             <Route path='courses/:courseId/discussions' element={<CourseDiscussions />} />
