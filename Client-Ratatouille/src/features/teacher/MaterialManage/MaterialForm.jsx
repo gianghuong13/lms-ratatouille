@@ -14,10 +14,12 @@ const MaterialForm = ({
   
   const [title, setTitle] = useState("");
   const [materialType, setMaterialType] = useState("document");
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState(null); // current file
+  const [selectedFile, setSelectedFile] = useState(null); // new file
   const [status, setStatus] = useState("public");
 
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [linkUrl, setLinkUrl] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -27,6 +29,9 @@ const MaterialForm = ({
       setMaterialType(material.material_type);
       setFile(material.file);
       setStatus(material.status);
+      if (material.material_type === "link" && material.file) {
+        setLinkUrl(material.file.file_path);
+      }
     }
   }, [isEdit, material]);
 
@@ -39,6 +44,17 @@ const MaterialForm = ({
     }
   };
 
+  const handleMaterialTypeChange = (event) => {
+    const selectedType = event.target.value;
+    setMaterialType(selectedType);
+
+    if (selectedType === "link") {
+      setFile(null);
+      setSelectedFile(null);
+      setLinkUrl("");
+    }
+
+  }
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
@@ -46,8 +62,11 @@ const MaterialForm = ({
 
     try {
       let uploadedFile = null;
-      //nếu có file được chọn
-      if (selectedFile) {
+      
+      if (materialType === "link") {
+        uploadedFile = {fileName: title, key: linkUrl}
+      }
+      else if (selectedFile) {
         // xóa file cũ trên s3 nếu ở mode edit và có file mới được chọn
         if (isEdit && selectedFile.name !== material.file.file_name) {
           console.log("deleting file", material.file.file_path);
@@ -82,7 +101,7 @@ const MaterialForm = ({
         title,
         materialType,
         status,
-        file: uploadedFile // Dùng file mới hoặc giữ file cũ
+        file: uploadedFile 
       }
 
       if (isEdit) {
@@ -115,6 +134,7 @@ const MaterialForm = ({
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Enter title or leave blank to use file name.."
             className="bg-blue-200 border border-gray-300 rounded-md flex-1 ml-2 focus:outline focus:outline-2 focus:outline-[#D2DEF0] focus:border-[#015DAF] p-2 hover:border-[#015DAF]"
+            required
           />
         </div>
 
@@ -122,7 +142,7 @@ const MaterialForm = ({
           <label className="font-semibold text-lg p-1 mr-3">Material Type:</label>
           <select
             value={materialType}
-            onChange={(e) => setMaterialType(e.target.value)}
+            onChange={handleMaterialTypeChange}
             required
             className="bg-blue-200 w-32 border border-gray-300 rounded-md focus:outline focus:outline-2 focus:outline-[#D2DEF0] focus:border-[#015DAF] p-1 hover:border-[#015DAF]"
           >
@@ -132,6 +152,47 @@ const MaterialForm = ({
             <option value="zip">ZIP</option>
           </select>
         </div>
+
+        {materialType === "link" ? (
+          <div className="flex items-center">
+            <label className="font-semibold text-lg p-1 mr-20">URL:</label>
+            <input
+              type="text"
+              value={linkUrl}
+              onChange={(e) => setLinkUrl(e.target.value)}
+              placeholder="Enter link URL"
+              required
+              className="bg-blue-200 border border-gray-300 rounded-md flex-1 ml-2 focus:outline focus:outline-2 focus:outline-[#D2DEF0] focus:border-[#015DAF] p-2 hover:border-[#015DAF]"
+            />
+          </div>
+        ) : (
+          <>
+            {isEdit && file && (
+              <div className="flex items-center">
+                <label className="font-semibold text-lg p-1 mr-8">Current File:</label>
+                <div className="flex items-center">
+                  <a href={material.file.file_path} target="_blank" rel="noreferrer" className="text-blue-500 underline">
+                    {material.file.file_name}
+                  </a>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+
+        {materialType !== "link" && (
+          <div className="flex items-center">
+            <label className="font-semibold text-lg p-1 mr-12">
+              {isEdit ? "New File:" : "File Attachement:"}
+            </label>
+            <input
+              type="file"
+              onChange={handleFileChange}
+              required={!isEdit} // Chỉ bắt buộc nếu thêm mới
+              className="text-blue-500 underline"
+            />
+          </div>
+        )}
 
         <div className="flex">
           <label className="font-semibold text-lg p-1 mr-16">Status:</label>
@@ -162,27 +223,6 @@ const MaterialForm = ({
           </div>
         </div>
 
-        {isEdit && (
-          <div className="flex items-center">
-            <label className="font-semibold text-lg p-1 mr-8">Current File:</label>
-            <div className="flex items-center">
-              <a href={material.file.file_path} target="_blank" rel="noreferrer" className="text-blue-500 underline">{material.file.file_name}</a>
-            </div>
-          </div>
-        )}
-
-        <div className="flex items-center">
-          <label className="font-semibold text-lg p-1 mr-12">
-            {isEdit ? "New File:" : "File Attachement:"}
-          </label>
-          <input
-            type="file"
-            onChange={handleFileChange}
-            required={!isEdit} // Chỉ bắt buộc nếu thêm mới
-            className="text-blue-500 underline"
-          />
-        </div>
-
         {error && <p className="error">{error}</p>}
         <div className="flex items-center space-x-5">
         <div className="mt-14 justify-items-end">
@@ -191,9 +231,13 @@ const MaterialForm = ({
             {loading ? (isEdit ? "Updating..." : "Uploading...") : (isEdit ? "Save Edit" : "+ Material")}
           </button>
         </div>
+
         <div className="mt-14 justify-items-end">
           <button
-            onClick={() => navigate(`/teacher/courses/${courseId}`)}
+            onClick={(e) => {
+              e.preventDefault();
+              navigate(`/teacher/courses/${courseId}`)
+            }}
             className="text-gray-700 bg-gray-400 rounded-2xl p-2"
           >
             Cancel
