@@ -41,6 +41,9 @@ const ModuleItem = ({ courseId, role, moduleId, item, itemType, onDelete }) => {
 
   const getFileUrl = () => {
     if (files && files.length > 0) {
+      if (material_type === 'link') {
+        return files[0].file_path;
+      }
       let url = btoa(files[0].file_path); // Encode file path using Base64
       url = `/${role}/courses/${courseId}/files/${url}`;
       return url;
@@ -65,6 +68,7 @@ const ModuleItem = ({ courseId, role, moduleId, item, itemType, onDelete }) => {
   return (
     <div className="flex justify-between module-item p-4 bg-white rounded-lg shadow mb-2">
       <div className="flex items-center">
+        {/* icon */}
         {itemType === 'material' && (
           <>
             {material_type === 'document' && (
@@ -96,35 +100,32 @@ const ModuleItem = ({ courseId, role, moduleId, item, itemType, onDelete }) => {
           </div>
         )}
 
+        {/* title */}
+        {itemType === 'material' && (
+          <a 
+            href={fileUrl} 
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-700 hover:underline font-semibold text-lg"
+          >
+            {title}
+          </a>
+        )}
         
-
-        
-
-          {itemType === 'material' && (
-            <a 
-              href={fileUrl} 
+        {itemType === 'assignment' && (
+          <div>
+            <Link 
+              to={`/${role}/courses/${courseId}/assignments/${item.assignment_id}`} 
               target="_blank"
-              rel="noopener noreferrer"
               className="text-gray-700 hover:underline font-semibold text-lg"
             >
               {title}
-            </a>
-          )}
-          
-          {itemType === 'assignment' && (
-            <div>
-              <Link 
-                to={`/${role}/courses/${courseId}/assignments/${item.assignment_id}`} 
-                target="_blank"
-                className="text-gray-700 hover:underline font-semibold text-lg"
-              >
-                {title}
-              </Link>
-              <div className="text-gray-500 text-xs">
-                Due: {new Date(due_date).toLocaleDateString()}
-              </div>
+            </Link>
+            <div className="text-gray-500 text-xs">
+              Due: {new Date(due_date).toLocaleDateString()}
             </div>
-          )}
+          </div>
+        )}
 
         
       </div>
