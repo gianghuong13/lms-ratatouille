@@ -198,6 +198,18 @@ const assignmentManageController = {
         });
     },
 
+    getAssignmentByModule: (req, res) => {
+        const {module_id} = req.params;
+        const sql = `SELECT assignment_id, title, due_date, start_date, module_id FROM assignments WHERE module_id = ?`;
+        connection.query(sql, [module_id], (err, data) => {
+            if (err) {
+                console.error("Error query at getAssignmentByModule:", err);
+                return res.status(500).send("Error executing query get assignment by module");
+            }
+            return res.status(200).json(data);
+        }
+        );
+    },
     
 };
 

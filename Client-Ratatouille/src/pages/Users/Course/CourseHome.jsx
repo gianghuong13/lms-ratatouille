@@ -10,10 +10,11 @@ import PageTitle from '../../../components/PageTitle';
 
 const CourseHome = () => {
     const courseId = useParams().courseId;
-    const role = localStorage.getItem('role');  // role có thể là teacher hoạc student, mục tiêu tiếp theo là chỉ có teacher mới có thể thêm module
+    const role = localStorage.getItem('role');
     const navigate = useNavigate();
     const [modules, setModules] = useState([]);
     const [materials, setMaterials] = useState([]);
+    const [assignments, setAssignments] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showForm, setShowForm] = useState(false);
@@ -74,6 +75,22 @@ const CourseHome = () => {
         }
     };
 
+    const fetchAssignmentsForModule = async (moduleId) => {
+        try {
+            const response = await axios.get(`/api/assignment/get-assignments/module/${moduleId}`);
+            if (response.status === 200) {
+                setAssignments((prevState) => ({
+                    ...prevState,
+                    [moduleId]: response.data,
+                }));
+            } else {
+                setError('Failed to fetch assignments');
+            }
+        } catch (error) {
+            setError('Error fetching assignments:', error);
+        }
+    };
+
     const handleAddModuleButtonClick = () => {
         setShowForm(true);
     };
@@ -118,20 +135,6 @@ const CourseHome = () => {
         );
     };
 
-    // const handleEditModule = async (moduleId, moduleName, moduleDescription) => {
-    //     try {
-    //         const response = await axios.put(`/api/modules/edit/${moduleId}`, {
-    //             module_name: moduleName,
-    //             description: moduleDescription,
-    //         });
-    //         if (response.status === 200) {
-    //             setShowForm(false);
-    //         }
-    //     } catch (error) {
-    //         console.error('Error editing module:', error);
-    //         setError('Failed to edit module');
-    //     }
-    // };
 
     if (isLoading) {
         return <div className="text-center mt-10 text-lg font-medium">Loading modules...</div>;
@@ -164,12 +167,14 @@ const CourseHome = () => {
                                     moduleId={module.module_id} 
                                     moduleName={module.module_name} 
                                     moduleDescription={module.description}
-                                    materials={materials[module.module_id]} 
+                                    materials={materials[module.module_id]}
+                                    assignments={assignments[module.module_id]}
                                     courseId={courseId} 
                                     role={role} 
                                     onDeleteModule={deleteModule}
                                     onModuleUpdate={updateModule} //callback
                                     onFetchMaterials={() => fetchMaterialsForModule(module.module_id)}
+                                    onFetchAssignments={() => fetchAssignmentsForModule(module.module_id)}
                                 />
                             ))
                         ))}

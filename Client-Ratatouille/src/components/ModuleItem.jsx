@@ -5,12 +5,19 @@ import clip from "../assets/User_Screen/Clip.svg";
 import linkIcon from "../assets/User_Screen/linkIcon.svg";
 import videoIcon from "../assets/User_Screen/videoIcon.svg";
 import zipIcon from "../assets/User_Screen/zipIcon.svg";
+import assignmentIcon from "../assets/User_Screen/Assignment.svg";
 
-const ModuleItem = ({ courseId, role, moduleId, material, onDeleteMaterial }) => {
+const ModuleItem = ({ courseId, role, moduleId, item, itemType, onDelete }) => {
 
   const navigate = useNavigate();
 
-  const { title, material_type, files, status } = material;
+  let title, material_type, files, status, due_date;
+
+  if (itemType === 'material') {
+    ({ title, material_type, files, status } = item);
+  } else if (itemType === 'assignment') {
+    ({ title, due_date } = item);
+  }
 
   // const renderFiles = () => {
   //   // Check if files is an array and has elements
@@ -43,8 +50,12 @@ const ModuleItem = ({ courseId, role, moduleId, material, onDeleteMaterial }) =>
 
   const fileUrl = getFileUrl();
 
-  const onEditMaterial = (materialId) => {
-    navigate(`/teacher/courses/${courseId}/modules/${moduleId}/material-items/${materialId}/edit`);
+  const onEditItem = () => {
+    const route = 
+      itemType === 'material'
+        ? `/teacher/courses/${courseId}/modules/${moduleId}/material-items/${item.material_id}/edit`
+        : `/teacher/courses/${courseId}/assignments/${item.assignment_id}/edit`;
+    navigate(route);
   };
 
   if (role === 'student' && status === 'private') {
@@ -54,50 +65,76 @@ const ModuleItem = ({ courseId, role, moduleId, material, onDeleteMaterial }) =>
   return (
     <div className="flex justify-between module-item p-4 bg-white rounded-lg shadow mb-2">
       <div className="flex items-center">
+        {itemType === 'material' && (
+          <>
+            {material_type === 'document' && (
+              <div className="mr-1">
+                <img src={clip} alt="clip" className="h-4 w-4 inline-block mr-1" />
+              </div>
+            )}
+            {material_type === 'video' && (
+              <div className="mr-1">
+                <img src={videoIcon} alt="clip" className="h-4 w-4 inline-block mr-1" />
+              </div>
+            )}
+            {material_type === 'link' && (
+              <div className="mr-1">
+                <img src={linkIcon} alt="link" className="h-6 w-6 inline-block" />
+              </div>
+            )}
+            {material_type === 'zip' && (
+              <div className="mr-1">
+                <img src={zipIcon} alt="zip" className="h-4 w-4 inline-block mr-1" />
+              </div>
+            )}
+          </>
+        )}
 
-        {material_type === 'document' && (
+        {itemType === 'assignment' && (
           <div className="mr-1">
-            <img src={clip} alt="clip" className="h-4 w-4 inline-block mr-1" />
-          </div>
-        )}
-        {material_type === 'video' && (
-          <div className="mr-1">
-          <img src={videoIcon} alt="clip" className="h-4 w-4 inline-block mr-1" />
-        </div>
-        )}
-        {material_type === 'link' && (
-          <div className="mr-1">
-            <img src={linkIcon} alt="link" className="h-4 w-4 inline-block mr-1" />
-          </div>
-        )}
-        {material_type === 'zip' && (
-          <div className="mr-1">
-            <img src={zipIcon} alt="zip" className="h-4 w-4 inline-block mr-1" />
+            <img src={assignmentIcon} alt="assignment" className="h-6 w-6 inline-block mr-1" />
           </div>
         )}
 
         
 
-        <div className="flex justify-between items-center">
-          {/* <div className="font-semibold" href="">{title}</div> */}
-          {/* <div className="material-files mt-2">
-            {renderFiles()}
-          </div> */}
-          <a 
-            href={fileUrl}  // Assuming the file_path is relative to the server root
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gray-700 hover:underline font-semibold text-lg"
-          >
-            {title}
-          </a>
-        </div>
+        
+
+          {itemType === 'material' && (
+            <a 
+              href={fileUrl} 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-700 hover:underline font-semibold text-lg"
+            >
+              {title}
+            </a>
+          )}
+          
+          {itemType === 'assignment' && (
+            <div>
+              <Link 
+                to={`/${role}/courses/${courseId}/assignments/${item.assignment_id}`} 
+                target="_blank"
+                className="text-gray-700 hover:underline font-semibold text-lg"
+              >
+                {title}
+              </Link>
+              <div className="text-gray-500 text-xs">
+                Due: {new Date(due_date).toLocaleDateString()}
+              </div>
+            </div>
+          )}
+
+        
       </div>
+
       {role === 'teacher' && (
         <div>
           <ModuleEditOptions 
-            onEdit={() => onEditMaterial(material.material_id)} 
-            onDelete={onDeleteMaterial}/>
+            onEdit={onEditItem} 
+            onDelete={() => onDelete(itemType === 'material' ? item.material_id : item.assignment_id)}
+          />
         </div>
       )}
     </div>
