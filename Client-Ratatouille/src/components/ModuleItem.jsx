@@ -114,7 +114,7 @@ const ModuleItem = ({ courseId, role, moduleId, item, itemType, onDelete }) => {
           {itemType === 'assignment' && (
             <div>
               <Link 
-                to={`/${role}/courses/${courseId}/assignments/${item.assignment_id}`} 
+                to={`/${role}/courses/${courseId}/modules/${moduleId}/assignments/${item.assignment_id}`} 
                 target="_blank"
                 className="text-gray-700 hover:underline font-semibold text-lg"
               >
