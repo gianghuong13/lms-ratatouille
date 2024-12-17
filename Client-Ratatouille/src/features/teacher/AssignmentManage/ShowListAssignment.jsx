@@ -69,7 +69,6 @@ export default function ShowListAssignment() {
 
         if (response.data && Array.isArray(response.data.filePaths) && response.data.filePaths.length > 0) {
           const filePaths = response.data.filePaths;
-          console.log("File paths:", filePaths);
     
           // Bước 2: Xóa các file trên S3
           try {
