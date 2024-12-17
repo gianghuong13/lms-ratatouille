@@ -66,9 +66,19 @@ const ModuleTitle = ({
     }));
   };
 
-  const handleDeleteMaterial = async (materialId) => {
+  const handleDeleteMaterial = async (materialId, materialFilePath) => {
     try {
       console.log(materialId);
+      if (materialFilePath) {
+        const deleteResponse = await axios.post('/api/delete-files', { keys: [materialFilePath] });
+        if (deleteResponse.status !== 200) {
+          setError('Failed to delete file from s3');
+          console.error('Failed to delete file from s3', deleteResponse.data);
+          return;
+        }
+        console.log('File deleted from s3 successfully');
+      }
+
       const response = await axios.delete(`/api/materials/delete/${materialId}`);
       if (response.status === 200) {
         onFetchMaterials();
@@ -76,7 +86,7 @@ const ModuleTitle = ({
         setError('Failed to delete material');
       }
     } catch (error) {
-      setError('Failed to delete material');
+      setError('Error deleting material');
     }
   };
 
@@ -86,6 +96,7 @@ const ModuleTitle = ({
 
       if (response.data && Array.isArray(response.data.filePaths) && response.data.filePaths.length > 0) {
         const filePaths = response.data.filePaths;
+        console.log("Files to delete:", filePaths);
         
         try {
           await axios.post('/api/delete-files', { filePaths });
@@ -159,7 +170,7 @@ const ModuleTitle = ({
                       role={role}
                       courseId={courseId}
                       moduleId={moduleId}
-                      onDelete={() => handleDeleteMaterial(material.material_id)}
+                      onDelete={() => handleDeleteMaterial(material.material_id, material.files[0]?.file_path)}
                     />
                   ))}
                 </div>
@@ -182,40 +193,6 @@ const ModuleTitle = ({
               )}
             </>
           )}
-          {/* <div className="materials">
-            {!materials || materials.length === 0 ? (
-              <p>No materials available</p>
-            ) : (
-              materials.map((material) => (
-                <ModuleItem 
-                  key={material.material_id} 
-                  item={material}
-                  itemType="material"
-                  role={role}
-                  courseId={courseId}
-                  moduleId={moduleId}
-                  onDelete={() => handleDeleteMaterial(material.material_id)}
-                />
-              ))
-            )}
-          </div>
-          <div className="assigments">
-            {!assignments || assignments.length === 0 ? (
-              <p>No assignments available</p>
-            ) : (
-              assignments.map((assignment) => (
-                <ModuleItem
-                  key={assignment.assignment_id}
-                  item={assignment}
-                  itemType="assignment"
-                  role={role}
-                  courseId={courseId}
-                  moduleId={moduleId}
-                  onDelete={() => handleDeleteAssignment(assignment.assignment_id)}
-                />
-              ))
-            )}
-          </div> */}
         </div>
 
         
