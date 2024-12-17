@@ -92,7 +92,7 @@ export default function DetailAssignmentForm() {
     }
 
     const handleCancel = () => {
-        setShowConfirm(false); // Đóng ConfirmCard
+        setShowConfirm(false);
     };
 
 
