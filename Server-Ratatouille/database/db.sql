@@ -194,7 +194,7 @@ CREATE TABLE assignment_files (
     file_id INT PRIMARY KEY AUTO_INCREMENT,
     assignment_id INT NOT NULL,
     file_name NVARCHAR(255) NOT NULL,
-    file_path VARCHAR(255) NOT NULL,
+    file_path NVARCHAR(255) NOT NULL,
     upload_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (assignment_id) REFERENCES assignments(assignment_id) ON DELETE CASCADE
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -204,7 +204,7 @@ CREATE TABLE post_files (
     file_id INT PRIMARY KEY AUTO_INCREMENT,
     post_id INT NOT NULL,
     file_name NVARCHAR(255) NOT NULL,
-    file_path VARCHAR(255) NOT NULL,
+    file_path NVARCHAR(255) NOT NULL,
     upload_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -214,7 +214,7 @@ CREATE TABLE submission_files (
     file_id INT PRIMARY KEY AUTO_INCREMENT,
     submission_id INT NOT NULL,
     file_name NVARCHAR(255) NOT NULL,
-    file_path VARCHAR(255) NOT NULL,
+    file_path NVARCHAR(255) NOT NULL,
     upload_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (submission_id) REFERENCES submissions(submission_id) ON DELETE CASCADE
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -224,7 +224,7 @@ CREATE TABLE notification_files (
     file_id INT PRIMARY KEY AUTO_INCREMENT,
     notification_id INT NOT NULL,
     file_name NVARCHAR(255) NOT NULL,
-    file_path VARCHAR(255) NOT NULL,
+    file_path NVARCHAR(255) NOT NULL,
     upload_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (notification_id) REFERENCES notifications(notification_id) ON DELETE CASCADE
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -238,7 +238,7 @@ INSERT INTO `fall2024c8g10_educationsystem`.`terms` (`term_id`, `term_name`) VAL
 INSERT INTO `fall2024c8g10_educationsystem`.`terms` (`term_id`, `term_name`) VALUES ('2425II', 'SpringTerm 2024-2025');
 
 ALTER TABLE assignments
-ADD COLUMN start_date DATETIME DEFAULT CURRENT_TIMESTAMP;;
+ADD COLUMN start_date DATETIME DEFAULT CURRENT_TIMESTAMP;
 
 
 drop table assignment_allowed_formats;
