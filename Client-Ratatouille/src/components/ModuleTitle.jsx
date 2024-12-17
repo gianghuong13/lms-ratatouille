@@ -12,11 +12,13 @@ const ModuleTitle = ({
   moduleName, 
   moduleDescription, 
   materials = [], 
+  assignments = [],
   courseId, 
   role, 
   onDeleteModule,
   onModuleUpdate,
-  onFetchMaterials
+  onFetchMaterials,
+  onFetchAssignments,
 }) => {
 
   const navigate = useNavigate();
@@ -33,6 +35,7 @@ const ModuleTitle = ({
       setIsOpen((prevState) => !prevState);
       if (!isOpen) {
         onFetchMaterials();
+        onFetchAssignments();
       }
   };
 
@@ -77,6 +80,42 @@ const ModuleTitle = ({
     }
   };
 
+  const handleDeleteAssignment = async (assignmentId) => {
+    try {
+      const response = await axios.get(`/api/assignment/get-assignment-filepath/${assignmentId}`);
+
+      if (response.data && Array.isArray(response.data.filePaths) && response.data.filePaths.length > 0) {
+        const filePaths = response.data.filePaths;
+        
+        try {
+          await axios.post('/api/delete-files', { filePaths });
+          console.log('Files deleted from S3 successfully');
+        } catch (error) {
+          console.error("Error deleting files from S3:", error);
+        }
+  
+        try {
+          await axios.delete(`/api/assignment/delete-assignment-file/${assignmentId}`);
+          console.log('Files deleted from assignment_files table');
+        } catch (error) {
+          console.error("Error deleting assignment files from DB:", error);
+        }
+
+      } else {
+        console.log("No files to delete or invalid data format.");
+      }
+      
+      try {
+        await axios.delete(`/api/assignment/delete-assignment/${assignmentId}`);
+        onFetchAssignments();
+        
+      } catch (error) {
+        console.error("Error deleting assignment:", error); 
+      }
+    } catch (error) {
+      console.error("Error fetching assignment files:", error);
+    }
+  };
 
   return (
     <>
@@ -95,7 +134,7 @@ const ModuleTitle = ({
                       <ModuleEditOptions onEdit={() => setShowForm(true)} onDelete={() => onDeleteModule(moduleId)} />
                       <AddItemOptions 
                         onAddMaterial={() => navigate(`/teacher/courses/${courseId}/modules/${moduleId}/add-material`)} 
-                        onAddAssignment={() => navigate(`/teacher/courses/${courseId}/modules/${moduleId}/add-assignment`)} 
+                        onAddAssignment={() => navigate(`/teacher/courses/${courseId}/assignments/add`)} 
                       />
                     </>
             )}
@@ -106,21 +145,80 @@ const ModuleTitle = ({
       
       {isOpen && (
         <div className="module-items p-2 bg-gray-100 rounded-lg">
-          {!materials || materials.length === 0 ? (
-            <p>No materials available</p>
+          {!materials.length && !assignments.length ? (
+            <p>No materials or assignments available</p>
           ) : (
-            materials.map((material) => (
-              <ModuleItem 
-                key={material.material_id} 
-                material={material}
-                role={role}
-                courseId={courseId}
-                moduleId={moduleId}
-                onDeleteMaterial={() => handleDeleteMaterial(material.material_id)}
-              />
-            ))
+            <>
+              {materials.length > 0 && (
+                <div className="materials">
+                  {materials.map((material) => (
+                    <ModuleItem 
+                      key={material.material_id} 
+                      item={material}
+                      itemType="material"
+                      role={role}
+                      courseId={courseId}
+                      moduleId={moduleId}
+                      onDelete={() => handleDeleteMaterial(material.material_id)}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {assignments.length > 0 && (
+                <div className="assignments">
+                  {assignments.map((assignment) => (
+                    <ModuleItem 
+                      key={assignment.assignment_id} 
+                      item={assignment}
+                      itemType="assignment"
+                      role={role}
+                      courseId={courseId}
+                      moduleId={moduleId}
+                      onDelete={() => handleDeleteAssignment(assignment.assignment_id)}
+                    />
+                  ))}
+                </div>
+              )}
+            </>
           )}
+          {/* <div className="materials">
+            {!materials || materials.length === 0 ? (
+              <p>No materials available</p>
+            ) : (
+              materials.map((material) => (
+                <ModuleItem 
+                  key={material.material_id} 
+                  item={material}
+                  itemType="material"
+                  role={role}
+                  courseId={courseId}
+                  moduleId={moduleId}
+                  onDelete={() => handleDeleteMaterial(material.material_id)}
+                />
+              ))
+            )}
+          </div>
+          <div className="assigments">
+            {!assignments || assignments.length === 0 ? (
+              <p>No assignments available</p>
+            ) : (
+              assignments.map((assignment) => (
+                <ModuleItem
+                  key={assignment.assignment_id}
+                  item={assignment}
+                  itemType="assignment"
+                  role={role}
+                  courseId={courseId}
+                  moduleId={moduleId}
+                  onDelete={() => handleDeleteAssignment(assignment.assignment_id)}
+                />
+              ))
+            )}
+          </div> */}
         </div>
+
+        
       )}
 
       {showForm && (

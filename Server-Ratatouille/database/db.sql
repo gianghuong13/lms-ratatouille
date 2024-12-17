@@ -60,38 +60,16 @@ CREATE TABLE modules (
     FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- -- Bảng materials
--- CREATE TABLE materials (
---     material_id INT PRIMARY KEY AUTO_INCREMENT,
---     course_id VARCHAR(50) NOT NULL,
---     uploader_id VARCHAR(8),
---     module_id INT DEFAULT NULL,
---     material_type ENUM('document', 'video', 'link', 'zip') NOT NULL,
---     title NVARCHAR(255) NOT NULL,
---     file_url VARCHAR(255), 
---     description TEXT,
---     upload_date DATETIME DEFAULT CURRENT_TIMESTAMP,
---     FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE,
---     FOREIGN KEY (uploader_id) REFERENCES users(user_id) ON DELETE SET NULL,
---     FOREIGN KEY (module_id) REFERENCES modules(module_id) ON DELETE SET NULL
--- );
-
 CREATE TABLE materials (
     material_id INT PRIMARY KEY AUTO_INCREMENT,
-    -- course_id VARCHAR(50) NOT NULL,
     uploader_id VARCHAR(8),
     module_id INT DEFAULT NULL,
     material_type ENUM('document', 'video', 'link', 'zip') NOT NULL,
     title NVARCHAR(255) NOT NULL,
     status ENUM('public', 'private') DEFAULT 'public',
-    -- FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE,
     FOREIGN KEY (uploader_id) REFERENCES users(user_id) ON DELETE SET NULL,
     FOREIGN KEY (module_id) REFERENCES modules(module_id) ON DELETE SET NULL
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
--- query to add column status to materials table
--- ALTER TABLE materials
--- ADD status ENUM('public', 'private') DEFAULT 'public';
-
 
 CREATE TABLE materials_files (
 	file_id INT PRIMARY KEY auto_increment,
