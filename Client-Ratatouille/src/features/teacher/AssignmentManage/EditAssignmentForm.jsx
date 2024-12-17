@@ -13,7 +13,6 @@ export default function EditAssignmentForm() {
     const { courseId } = useParams();
     const { assignmentId } = useParams();
     const navigate = useNavigate();
-    const userId = localStorage.getItem("userId");
     const [assignment, setAssignment] = useState({
         title: "",
         start_date: "",

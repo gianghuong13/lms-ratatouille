@@ -217,8 +217,8 @@ export default function ShowListAssignment() {
                         <Link 
                           to={
                             role === "teacher"
-                            ? `/teacher/courses/${courseId}/assignments/${assignment.assignment_id}`
-                            : `/student/courses/${courseId}/assignments/${assignment.assignment_id}`
+                            ? `/teacher/courses/${courseId}/modules/${assignment.module_id}/assignments/${assignment.assignment_id}`
+                            : `/student/courses/${courseId}/modules/${assignment.module_id}/assignments/${assignment.assignment_id}`
                           } 
                           className=" hover:underline"
                         >{assignment.title}</Link>
