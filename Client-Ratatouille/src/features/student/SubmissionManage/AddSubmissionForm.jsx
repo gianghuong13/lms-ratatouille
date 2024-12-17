@@ -84,7 +84,7 @@ export default function DetailAssignmentForm() {
             }
 
             
-                navigate(`/student/courses/${courseId}/module/${moduleId}/assignments/${assignmentId}`);
+                navigate(`/student/courses/${courseId}/modules/${moduleId}/assignments/${assignmentId}`);
             
         } catch (error) {
             console.error("Error submitting assignment:", error);

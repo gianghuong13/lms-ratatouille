@@ -61,7 +61,7 @@ export default function DetailAssignmentForm() {
 
     const isClosed = new Date(assignment.due_date) < new Date();
 
-    const handleClickAttemp = () => {
+    const handleClickAttempt = () => {
         navigate(`/student/courses/${courseId}/modules/${moduleId}/assignments/${assignmentId}/add-submission`);
       };
 
@@ -75,9 +75,9 @@ export default function DetailAssignmentForm() {
                     <button
                     className="flex max-w-[80px] min-w-[80px] select-none items-center gap-3 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:outline-none py-2 px-4 text-center align-middle font-sans text-sm font-bold text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                     type="button"
-                    onClick={handleClickAttemp}
+                    onClick={handleClickAttempt}
                     >
-                    Attemp
+                        Attempt
                     </button>
             )}
                
