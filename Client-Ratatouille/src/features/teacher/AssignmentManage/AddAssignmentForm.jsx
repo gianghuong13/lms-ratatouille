@@ -163,7 +163,7 @@ export default function AddAssignmentForm() {
 
     return (
         <>
-            <form className="mt-5" onSubmit={handleSubmit}>
+            <form className="mt-5 ml-5" onSubmit={handleSubmit}>
                 <div className="grid gap-6 mb-6 md:grid-cols-2">
                     <div>
                         <label className="block mb-2 text-sm font-medium text-gray-700">Assignment Name</label>
