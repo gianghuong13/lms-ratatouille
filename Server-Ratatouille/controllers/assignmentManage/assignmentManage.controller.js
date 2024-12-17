@@ -1,5 +1,4 @@
 import connection from "../../database/dbConnect.js";
-import bcrypt from 'bcrypt';
 
 const assignmentManageController = {
     getAllModuleName: (req, res) => {
@@ -43,7 +42,6 @@ const assignmentManageController = {
 
                 const assignmentValues = assignmentFile.map(file => [assignment_id, file.fileName, file.key])
     
-                // Insert into notification_courses
                 await connection.promise().query(sql, [assignmentValues]);
             }
             return res.status(200).send("Create notiFile successfully");

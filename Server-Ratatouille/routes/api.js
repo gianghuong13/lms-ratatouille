@@ -9,6 +9,7 @@ import moduleManageRouter from "./module-manage/module-manage.js";
 import materialManageRouter from "./material-manage/material-manage.js";
 import forumanageRouter from "./forum-manage/forum-manage.js";
 import assignmentManageRouter from "./assignment-manage/assignment-manage.js";
+import submissionManageRouter from "./submission-manage/submission-manage.js";
 
 
 router.use(accountManageRouter);
@@ -20,5 +21,6 @@ router.use(moduleManageRouter);
 router.use(materialManageRouter);
 router.use(forumanageRouter);
 router.use(assignmentManageRouter);
+router.use(submissionManageRouter);
 
 export default router;
