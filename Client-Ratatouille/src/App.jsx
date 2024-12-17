@@ -104,6 +104,7 @@ const App = () => {
             <Route path='courses/:courseId/people' element={<CoursePeople />} />
             <Route path='courses/:courseId/files' element={<CourseFiles />} />
             <Route path='courses/:courseId/files/:encodedKey' element={<FileDetail />} />
+            <Route path='courses/:courseId/modules/:moduleId/add-assignment' element={<AddAssignment />} />
             <Route path='calendar' element={<Calendar />} />
 
             <Route path='courses/:courseId/discussions' element={<CourseDiscussions />} />
