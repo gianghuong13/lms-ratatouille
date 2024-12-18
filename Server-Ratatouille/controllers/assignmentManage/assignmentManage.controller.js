@@ -208,6 +208,30 @@ const assignmentManageController = {
         }
         );
     },
+
+    getAssignmentAndGradeByCourseAndStudentId: (req, res) => {
+        const { courseId, studentId } = req.params;
+        const sql = `
+            SELECT 
+                a.assignment_id, 
+                a.title, 
+                a.due_date, 
+                a.start_date, 
+                a.module_id, 
+                s.submission_id,
+                COALESCE(s.grade, 0) AS grade
+            FROM assignments a
+            LEFT JOIN submissions s ON a.assignment_id = s.assignment_id AND s.student_id = ?
+            WHERE a.course_id = ?
+        `;
+        connection.query(sql, [studentId, courseId], (err, data) => {
+            if (err) {
+                console.error("Error query at getAssignmentAndGradeByCourseAndStudentId:", err);
+                return res.status(500).send("Error executing query get assignment and grade by course and student id");
+            }
+            return res.status(200).json(data);
+        });
+    },
     
 };
 
