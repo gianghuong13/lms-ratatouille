@@ -164,7 +164,7 @@ export default function DetailAssignmentForm() {
             </form>
             {showConfirm && (
                 <ConfirmCard
-                    message="Are you sure you want to create this account?"
+                    message="Are you sure you want to submit?"
                     onConfirm={handleConfirm}
                     onCancel={handleCancel}
                 />
