@@ -111,7 +111,6 @@ export default function DetailAssignmentForm() {
         
     }
 
-
      useEffect(() => {
         const loadData = async () => {
             await Promise.all([fetchAssignments(), fetchFileNamesAndPaths()]);
@@ -133,8 +132,6 @@ export default function DetailAssignmentForm() {
 
     const handleClickNewAttempt = async () => {
         try {
-
-
             const filePaths = { keys: fileSubmission.map((file) => file.file_path) };
             console.log("File paths:", filePaths);
 
@@ -153,25 +150,17 @@ export default function DetailAssignmentForm() {
                 console.error("Error deleting assignment files from DB:", error);
             }
 
-
-
-
             try {
                 await axios.delete(`/api/submission/delete/${submission_id}`);
                 fetchAssignments();
-
-
             } catch (error) {
                 console.error("Error deleting submission:", error);
             }
 
             navigate(`/student/courses/${courseId}/modules/${moduleId}/assignments/${assignmentId}/add-submission`);
-
-
         } catch (error) {
             console.error("Error fetching assignment files:", error);
         }
-
     }
 
     if (loading) {
@@ -209,29 +198,24 @@ export default function DetailAssignmentForm() {
                 )
                 }
 
-                {
-                    role === 'teacher' && (
-                        <div className="flex justify-end space-x-2">
-                            <button
-                                className="flex justify-center items-center max-w-[80px] min-w-[80px] select-none gap-3 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:outline-none py-1.5 px-3 text-center align-middle font-sans text-sm font-bold text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                                type="button"
-                                onClick={() => navigate(`/teacher/courses/${courseId}/assignments/${assignmentId}/edit`)}
-                            >
-                                Edit
-                            </button>
-                            <button
-                                className="flex max-w-[100px] min-w-[100px] select-none items-center gap-3 rounded-lg bg-gradient-to-br from-green-600 to-blue-500 hover:bg-gradient-to-bl focus:outline-none py-2 px-4 text-center align-middle font-sans text-base font-bold text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                                type="button"
-                                onClick={() => navigate(`/teacher/courses/${courseId}/assignments/${assignmentId}/grading`)}
-                            >
-                                Grading
-                            </button>
-                        </div>
-                    )
-                }
-
-
-
+                {role === 'teacher' && (
+                    <div className="flex justify-end space-x-2">
+                        <button
+                            className="flex justify-center items-center max-w-[80px] min-w-[80px] select-none gap-3 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:outline-none py-1.5 px-3 text-center align-middle font-sans text-sm font-bold text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                            type="button"
+                            onClick={() => navigate(`/teacher/courses/${courseId}/assignments/${assignmentId}/edit`)}
+                        >
+                            Edit
+                        </button>
+                        <button
+                            className="flex max-w-[100px] min-w-[100px] select-none items-center gap-3 rounded-lg bg-gradient-to-br from-green-600 to-blue-500 hover:bg-gradient-to-bl focus:outline-none py-2 px-4 text-center align-middle font-sans text-base font-bold text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                            type="button"
+                            onClick={() => navigate(`/teacher/courses/${courseId}/assignments/${assignmentId}/grading`)}
+                        >
+                            Grading
+                        </button>
+                    </div>
+                )}
             </div>
             <hr className="my-4 border-t-1 border-gray-300" />
             <div className="flex col-span-2 space-x-8">
@@ -241,14 +225,12 @@ export default function DetailAssignmentForm() {
                 <p className="text-sm font-bold mb-0">Due date:
                     <span className="text-sm font-normal"> {assignment.due_date}</span>
                     {isClosed && <span className="text-red-600"> - (Closed)</span>}
-
                 </p>
                 <p className="text-sm font-bold mb-0">Last modified:
                     <span className="text-sm font-normal">
                         {assignment.last_modified}
                     </span>
                 </p>
-
             </div>
             <hr className="my-4 border-t-1 border-gray-300" />
             {assignment.description ? (
@@ -259,7 +241,6 @@ export default function DetailAssignmentForm() {
             ) : (
                 <p className="text-sm font-normal">No description were added for this assignment</p>
             )}
-
             <hr className="my-4 border-t-1 border-gray-300" />
             <div className="flex flex-col col-span-2 md:flex-row md:space-x-[300px]">
                 <div className="mt-4">
@@ -281,7 +262,6 @@ export default function DetailAssignmentForm() {
                         )}
                     </ul>
                 </div>
-
                 <div className="mt-4">
                     {role === "student" && (
                         submission.submission_id ? (
@@ -319,7 +299,6 @@ export default function DetailAssignmentForm() {
                         )
                     )}
                 </div>
-
             </div>
         </div>
     );

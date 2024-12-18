@@ -117,7 +117,7 @@ export default function ViewStudentSubmissionForm() {
                 </p>
             </div>
             ) : (
-            <p className="block mt-3 font-sans text-lg antialiased font-medium leading-snug text-gray-800 text-red-500">
+            <p className="block mt-3 font-sans text-lg antialiased font-medium leading-snug text-gray-800">
                 Student information not available
             </p>
         )}
