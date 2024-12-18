@@ -17,8 +17,6 @@ export default function DetailAssignmentForm() {
     const { moduleId } = useParams();
     const userId = localStorage.getItem("userId");
 
-
-
     const fetchAssignments = async () => {
         try {
             const response = await axios.get(`/api/assignment/get-assignment-detail/${assignmentId}`);
@@ -110,7 +108,6 @@ export default function DetailAssignmentForm() {
 
     }
 
-
     useEffect(() => {
         fetchAssignments();
         fetchFileNamesAndPaths();
@@ -123,6 +120,7 @@ export default function DetailAssignmentForm() {
     }, [fileNames]);
 
     const isClosed = new Date(assignment.due_date) < new Date();
+    const isNotStarted = new Date(assignment.start_date) > new Date();
 
     const handleClickAttempt = () => {
         navigate(`/student/courses/${courseId}/modules/${moduleId}/assignments/${assignmentId}/add-submission`);
@@ -130,8 +128,6 @@ export default function DetailAssignmentForm() {
 
     const handleClickNewAttempt = async () => {
         try {
-
-
             const filePaths = { keys: fileSubmission.map((file) => file.file_path) };
             console.log("File paths:", filePaths);
 
@@ -150,78 +146,63 @@ export default function DetailAssignmentForm() {
                 console.error("Error deleting assignment files from DB:", error);
             }
 
-
-
-
             try {
                 await axios.delete(`/api/submission/delete/${submission_id}`);
                 fetchAssignments();
-
-
             } catch (error) {
                 console.error("Error deleting submission:", error);
             }
 
             navigate(`/student/courses/${courseId}/modules/${moduleId}/assignments/${assignmentId}/add-submission`);
-
-
         } catch (error) {
             console.error("Error fetching assignment files:", error);
         }
-
     }
-
 
     return (
         <div className="container mx-auto px-4 py-6 flex-1">
             <div className="flex justify-between items-center mb-4">
-                <h1 className="text-3xl text-black">{assignment.title}
-                </h1>
+                <h1 className="text-3xl text-black">{assignment.title}</h1>
                 {role === "student" && (
-                    submission_id ? (
-                        <button
-                            className="flex max-w-[125px] min-w-[125px] select-none items-center gap-3 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:outline-none py-2 px-4 text-center align-middle font-sans text-sm font-bold text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                            type="button"
-                            onClick={handleClickNewAttempt}
-                        >
-                            New Attempt
-                        </button>
-                    ) : (
-
-                        <button
-                            className="flex max-w-[80px] min-w-[80px] select-none items-center gap-3 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:outline-none py-2 px-4 text-center align-middle font-sans text-sm font-bold text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                            type="button"
-                            onClick={handleClickAttempt}
-                        >
-                            Attempt
-                        </button>
-                    )
-                )
-                }
-
-                {
-                    role === 'teacher' && (
-                        <div className="flex justify-end space-x-2">
+                    !isNotStarted && (
+                        submission_id ? (
                             <button
-                                className="flex justify-center items-center max-w-[80px] min-w-[80px] select-none gap-3 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:outline-none py-1.5 px-3 text-center align-middle font-sans text-sm font-bold text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                                className="flex max-w-[125px] min-w-[125px] select-none items-center gap-3 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:outline-none py-2 px-4 text-center align-middle font-sans text-sm font-bold text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                                 type="button"
-                                onClick={() => navigate(`/teacher/courses/${courseId}/assignments/${assignmentId}/edit`)}
+                                onClick={handleClickNewAttempt}
                             >
-                                Edit
+                                New Attempt
                             </button>
+                        ) : (
                             <button
-                                className="flex max-w-[100px] min-w-[100px] select-none items-center gap-3 rounded-lg bg-gradient-to-br from-green-600 to-blue-500 hover:bg-gradient-to-bl focus:outline-none py-2 px-4 text-center align-middle font-sans text-base font-bold text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                                className="flex max-w-[80px] min-w-[80px] select-none items-center gap-3 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:outline-none py-2 px-4 text-center align-middle font-sans text-sm font-bold text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                                 type="button"
-                                onClick={() => navigate(`/teacher/courses/${courseId}/assignments/${assignmentId}/grading`)}
+                                onClick={handleClickAttempt}
                             >
-                                Grading
+                                Attempt
                             </button>
-                        </div>
+                        )
                     )
-                }
+                )}
 
-
-
+                {role === 'teacher' && (
+                    <div className="flex justify-end space-x-2">
+                        <button
+                            className="flex justify-center items-center max-w-[80px] min-w-[80px] select-none gap-3 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:outline-none py-1.5 px-3 text-center align-middle font-sans text-sm font-bold text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                            type="button"
+                            onClick={() => navigate(`/teacher/courses/${courseId}/assignments/${assignmentId}/edit`)}
+                        >
+                            Edit
+                        </button>
+                        <button
+                            className="flex max-w-[100px] min-w-[100px] select-none items-center gap-3 rounded-lg bg-gradient-to-br from-green-600 to-blue-500 hover:bg-gradient-to-bl focus:outline-none py-2 px-4 text-center align-middle font-sans text-base font-bold text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                            type="button"
+                            onClick={() => navigate(`/teacher/courses/${courseId}/assignments/${assignmentId}/grading`)}
+                        >
+                            Grading
+                        </button>
+                    </div>
+                )}
             </div>
             <hr className="my-4 border-t-1 border-gray-300" />
             <div className="flex col-span-2 space-x-8">
@@ -231,14 +212,12 @@ export default function DetailAssignmentForm() {
                 <p className="text-sm font-bold mb-0">Due date:
                     <span className="text-sm font-normal"> {assignment.due_date}</span>
                     {isClosed && <span className="text-red-600"> - (Closed)</span>}
-
                 </p>
                 <p className="text-sm font-bold mb-0">Last modified:
                     <span className="text-sm font-normal">
                         {assignment.last_modified}
                     </span>
                 </p>
-
             </div>
             <hr className="my-4 border-t-1 border-gray-300" />
             {assignment.description ? (
@@ -249,7 +228,6 @@ export default function DetailAssignmentForm() {
             ) : (
                 <p className="text-sm font-normal">No description were added for this assignment</p>
             )}
-
             <hr className="my-4 border-t-1 border-gray-300" />
             <div className="flex flex-col col-span-2 md:flex-row md:space-x-[300px]">
                 <div className="mt-4">
@@ -271,7 +249,6 @@ export default function DetailAssignmentForm() {
                         )}
                     </ul>
                 </div>
-
                 <div className="mt-4">
                     {role === "student" && (
                         submission.submission_id ? (
@@ -299,12 +276,10 @@ export default function DetailAssignmentForm() {
                         ) : (
                             <div>
                                 <h2 className="text-xl text-red-600 font-semibold">You haven't submitted yet!!</h2>
-
                             </div>
                         )
                     )}
                 </div>
-
             </div>
         </div>
     );
