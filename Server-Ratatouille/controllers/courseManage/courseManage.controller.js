@@ -602,6 +602,7 @@ const courseManageController = {
   countCoursesByTerm: (req, res) => {
     const query = `
       SELECT 
+        t.term_id,
         t.term_name, 
         COUNT(c.course_id) AS total_courses
       FROM terms t
@@ -629,6 +630,29 @@ const courseManageController = {
       res.status(201).send("Term added successfully");
     });
   },
+
+  deleteTerm: async (req, res) => {
+    const { term_id } = req.params;
+  
+    try {
+      await connection.promise().query("START TRANSACTION");
+  
+      // Delete courses associated with the term
+      const deleteCoursesQuery = `DELETE FROM courses WHERE term_id = ?`;
+      await connection.promise().query(deleteCoursesQuery, [term_id]);
+  
+      // Delete the term
+      const deleteTermQuery = `DELETE FROM terms WHERE term_id = ?`;
+      await connection.promise().query(deleteTermQuery, [term_id]);
+  
+      await connection.promise().query("COMMIT");
+      res.status(200).send("Term and associated courses deleted successfully");
+    } catch (err) {
+      console.log("Error executing query:", err);
+      await connection.promise().query("ROLLBACK");
+      res.status(500).send("Error executing query delete term and associated courses");
+    }
+  }
 };
 
 export default courseManageController;

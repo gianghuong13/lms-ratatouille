@@ -25,5 +25,6 @@ router.post('/courses/add-member/:course_id', courseManageController.addMemberTo
 router.post('/courses/count-course-by-term', courseManageController.countCoursesByTerm);
 
 router.post('/courses/add-terms', courseManageController.addTerm);
+router.delete('/courses/delete-term/:term_id', courseManageController.deleteTerm);
 
 export default router;
