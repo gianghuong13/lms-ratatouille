@@ -22,5 +22,8 @@ router.get('/courses/get-teacher-by-id-course/:course_id', courseManageControlle
 router.get('/courses/get-student-by-id-course/:course_id', courseManageController.getStudentsOfCourseById);
 router.delete('/courses/delete-member/:course_id/:user_id', courseManageController.deleteMemberFromCourse);
 router.post('/courses/add-member/:course_id', courseManageController.addMemberToCourse);
+router.post('/courses/count-course-by-term', courseManageController.countCoursesByTerm);
+
+router.post('/courses/add-terms', courseManageController.addTerm);
 
 export default router;
