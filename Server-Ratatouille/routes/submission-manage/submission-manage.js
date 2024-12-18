@@ -8,4 +8,6 @@ router.get('/submission/get/:assignment_id/:student_id', submissionManageControl
 router.get('/submission/get-filename-path/:submission_id', submissionManageController.getSubmissionFileNameAndPath);
 router.delete('/submission/delete/:submission_id', submissionManageController.deleteSubmission);
 router.delete('/submission/delete-files/:submission_id', submissionManageController.deleteSubmissionFile);
+router.get('/submission/get-all/:assignment_id', submissionManageController.getSubmissionInAnAssignment);
+router.post('/submission/grading/:submission_id', submissionManageController.gradingSubmission);
 export default router;
