@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import ConfirmCard from "../../../components/ConfirmCard";
 import AddMemberForm from "./AddMemberForm";
 

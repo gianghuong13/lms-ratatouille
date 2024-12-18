@@ -51,6 +51,7 @@ import DetailDiscussion from './pages/Users/Discussion/DetailDiscussion.jsx'
 import UpdateDiscussion from './pages/Users/Discussion/UpdateDiscussion.jsx'
 import AddSubmissionPage from './pages/Users/SubmissionManage/AddSubmissionPage.jsx'
 import GradingPage from './pages/Users/SubmissionManage/GradingPage.jsx';
+import ViewStudentSubmissionPage from './pages/Users/SubmissionManage/ViewStudentSubmissionPage.jsx';
 const App = () => {
   const role = useSelector((state) => state.auth.role);
   const location = useLocation(); // Hook để lấy đường dẫn hiện tại
@@ -114,6 +115,7 @@ const App = () => {
             <Route path='courses/:courseId/discussions/update-post/:postId' element={<UpdateDiscussion />} />
             <Route path='courses/:courseId/discussions/detail-post/:postId' element={<DetailDiscussion />} />
             <Route path='courses/:courseId/assignments/:assignmentId/grading' element={<GradingPage />} />
+            <Route path='courses/:courseId/assignment/:assignmentId/submissions/:submissionId' element={<ViewStudentSubmissionPage />} />
           </Route>
           <Route path="/student">
             <Route index element={<Dashboard />} />
