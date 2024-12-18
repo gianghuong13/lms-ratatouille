@@ -16,6 +16,9 @@ export default function DetailAssignmentForm() {
     const { courseId } = useParams();
     const { moduleId } = useParams();
     const userId = localStorage.getItem("userId");
+    const [loading, setLoading] = useState(true);
+
+
 
     const fetchAssignments = async () => {
         try {
@@ -105,12 +108,15 @@ export default function DetailAssignmentForm() {
                 fetchSubmissionFileUrls();
             }
         }, [fileSubmission]);
-
+        
     }
 
-    useEffect(() => {
-        fetchAssignments();
-        fetchFileNamesAndPaths();
+     useEffect(() => {
+        const loadData = async () => {
+            await Promise.all([fetchAssignments(), fetchFileNamesAndPaths()]);
+            setLoading(false); // Đặt loading về false sau khi tải xong
+        };
+        loadData();
     }, [assignmentId]);
 
     useEffect(() => {
@@ -119,8 +125,6 @@ export default function DetailAssignmentForm() {
         }
     }, [fileNames]);
 
-    const isClosed = new Date(assignment.due_date) < new Date();
-    const isNotStarted = new Date(assignment.start_date) > new Date();
 
     const handleClickAttempt = () => {
         navigate(`/student/courses/${courseId}/modules/${moduleId}/assignments/${assignmentId}/add-submission`);
@@ -159,31 +163,40 @@ export default function DetailAssignmentForm() {
         }
     }
 
+    if (loading) {
+        return <p>Loading assignment details...</p>;
+    }
+
+    const isClosed = new Date(assignment.due_date) < new Date();
+    const isOpen = new Date(assignment.start_date) < new Date();
+
+
     return (
         <div className="container mx-auto px-4 py-6 flex-1">
             <div className="flex justify-between items-center mb-4">
-                <h1 className="text-3xl text-black">{assignment.title}</h1>
-                {role === "student" && (
-                    !isNotStarted && (
-                        submission_id ? (
-                            <button
-                                className="flex max-w-[125px] min-w-[125px] select-none items-center gap-3 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:outline-none py-2 px-4 text-center align-middle font-sans text-sm font-bold text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                                type="button"
-                                onClick={handleClickNewAttempt}
-                            >
-                                New Attempt
-                            </button>
-                        ) : (
-                            <button
-                                className="flex max-w-[80px] min-w-[80px] select-none items-center gap-3 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:outline-none py-2 px-4 text-center align-middle font-sans text-sm font-bold text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                                type="button"
-                                onClick={handleClickAttempt}
-                            >
-                                Attempt
-                            </button>
-                        )
+                <h1 className="text-3xl text-black">{assignment.title}
+                </h1>
+                {role === "student" && !isClosed && isOpen && (
+                    submission_id ? (
+                        <button
+                            className="flex max-w-[125px] min-w-[125px] select-none items-center gap-3 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:outline-none py-2 px-4 text-center align-middle font-sans text-sm font-bold text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                            type="button"
+                            onClick={handleClickNewAttempt}
+                        >
+                            New Attempt
+                        </button>
+                    ) : (
+
+                        <button
+                            className="flex max-w-[80px] min-w-[80px] select-none items-center gap-3 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:outline-none py-2 px-4 text-center align-middle font-sans text-sm font-bold text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                            type="button"
+                            onClick={handleClickAttempt}
+                        >
+                            Attempt
+                        </button>
                     )
-                )}
+                )
+                }
 
                 {role === 'teacher' && (
                     <div className="flex justify-end space-x-2">
@@ -274,9 +287,15 @@ export default function DetailAssignmentForm() {
                                 </ul>
                             </div>
                         ) : (
-                            <div>
-                                <h2 className="text-xl text-red-600 font-semibold">You haven't submitted yet!!</h2>
-                            </div>
+                            isOpen ? (
+                                <div>
+                                    <h2 className="text-xl text-red-600 font-semibold">You haven't submitted yet!!</h2>
+                                </div>
+                            ) : (
+                                <div>
+                                    <h2 className="text-xl text-red-600 font-semibold">The assignment is not open yet!</h2>
+                                </div>
+                            )
                         )
                     )}
                 </div>
