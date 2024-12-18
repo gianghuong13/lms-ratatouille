@@ -181,7 +181,7 @@ export default function EditAssignmentForm() {
             }
 
             alert("Assignment created successfully!");
-            navigate(`/teacher/courses/${courseId}/assignments/${assignmentId}`);
+            navigate(`/teacher/courses/${courseId}/modules/${module_id}/assignments/${assignmentId}`);
         } catch (error) {
             console.error("Error creating assignment: ", error);
         }

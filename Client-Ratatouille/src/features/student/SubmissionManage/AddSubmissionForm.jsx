@@ -79,7 +79,7 @@ export default function DetailAssignmentForm() {
                     }
 
                 } catch (err) {
-                    console.error("Error at upload or insert noti", err)
+                    console.error("Error at upload or insert files", err)
                 }
             }
 
