@@ -177,28 +177,34 @@ export default function DetailAssignmentForm() {
             <div className="flex justify-between items-center mb-4">
                 <h1 className="text-3xl text-black">{assignment.title}
                 </h1>
-                {role === "student" && ( 
-                    submission_id ? (
-                    <button
-                    className="flex max-w-[125px] min-w-[125px] select-none items-center gap-3 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:outline-none py-2 px-4 text-center align-middle font-sans text-sm font-bold text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                    type="button"
-                    onClick={handleClickNewAttempt}
-                    >
-                        New Attempt
-                    </button>
-                    ) : (
-                        
+                {isClosed ? (
+                    <div></div>
+                ) : (
+                    role === "student" && ( 
+                        submission_id ? (
                         <button
-                        className="flex max-w-[80px] min-w-[80px] select-none items-center gap-3 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:outline-none py-2 px-4 text-center align-middle font-sans text-sm font-bold text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                        className="flex max-w-[125px] min-w-[125px] select-none items-center gap-3 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:outline-none py-2 px-4 text-center align-middle font-sans text-sm font-bold text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                         type="button"
-                        onClick={handleClickAttempt}
+                        onClick={handleClickNewAttempt}
                         >
-                            Attempt
+                            New Attempt
                         </button>
+                        ) : (
+                            
+                            <button
+                            className="flex max-w-[80px] min-w-[80px] select-none items-center gap-3 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:outline-none py-2 px-4 text-center align-middle font-sans text-sm font-bold text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                            type="button"
+                            onClick={handleClickAttempt}
+                            >
+                                Attempt
+                            </button>
+                            )
                         )
-                    )
+                    
+                   )   
+            
                 }
-               
+                
             </div>
             <hr className="my-4 border-t-1 border-gray-300" />
             <div className="flex col-span-2 space-x-8">
