@@ -139,6 +139,7 @@ const App = () => {
             <Route path='courses/:courseId/discussions/update-post/:postId' element={<UpdateDiscussion />} />
             <Route path='courses/:courseId/discussions/detail-post/:postId' element={<DetailDiscussion />} />
             <Route path='calendar' element={<Calendar />} />
+            <Route path='courses/:courseId/assignments/:assignmentId/submissions/:submissionId' element={<ViewStudentSubmissionPage />} />
           </Route>
         </Route>
         <Route element={<UnauthorizedRoutes />}>

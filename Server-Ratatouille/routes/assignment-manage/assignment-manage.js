@@ -16,5 +16,6 @@ router.get("/assignment/get-assignment-detail-1/:assignment_id", assignmentManag
 router.post("/assignment/update-assignment/:assignment_id", assignmentManageController.updateAssignment);
 router.put("/assignment/update-assignment-file/:assignment_id", assignmentManageController.updateAssignmentFile);
 router.get("/assignment/get-assignments/module/:module_id", assignmentManageController.getAssignmentByModule);
+router.get('/assignment/get-assignments-and-grades/:courseId/:studentId',assignmentManageController.getAssignmentAndGradeByCourseAndStudentId);
 
 export default router;
