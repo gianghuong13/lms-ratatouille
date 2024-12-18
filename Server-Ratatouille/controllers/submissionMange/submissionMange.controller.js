@@ -1,4 +1,5 @@
 import connection from "../../database/dbConnect.js";
+
 const submissionManageController = {
   createSubmission: async (req, res) => {
     const { assignment_id, student_id } = req.params;
@@ -141,6 +142,7 @@ const submissionManageController = {
       res.status(500).json({ error: "Internal server error" });
     }
   },
+
   gradingSubmission: async (req, res) => {
     const { submission_id } = req.params;
     const { grade } = req.body;
@@ -153,7 +155,21 @@ const submissionManageController = {
         return res.status(200).send("Grading submission successfully");
         } 
     })
+  },
+
+  getSubmissionBySubmissionId: async (req, res) => {
+    const { submission_id } = req.params;
+    const sql = `SELECT * FROM submissions WHERE submission_id = ?`;
+    connection.query(sql, [submission_id], (err, data) => {
+      if (err) {
+        console.error("Error query at getSubmissionBySubmissionId:", err);
+        return res.status(500).send("Error getting submission by submission id");
+      } else {
+        return res.status(200).json(data[0]);
+      }
+    })
   }
-};
+}
+
 
 export default submissionManageController;
