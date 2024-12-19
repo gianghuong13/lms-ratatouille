@@ -1,9 +1,17 @@
+/* PrimeReact Theme (Chọn theme phù hợp, ví dụ lara-light-indigo) */
+@import 'primereact/resources/themes/lara-light-indigo/theme.css';
+
+/* PrimeReact Core CSS */
+@import 'primereact/resources/primereact.min.css';
+
+/* PrimeIcons CSS */
+@import 'primeicons/primeicons.css';
 @import './styles/tailwind.css';
 
 #root{
     display: flex;
     flex-direction: row;
-    overflow-x: hidden;
+    /* overflow-x: hidden; */
 }
 html{
     font-size: 16px;
@@ -13,6 +21,35 @@ html{
 @tailwind utilities; 
 @layer components { 
   .all-\[unset\] { all: unset; } 
+}
+
+.custom-confirm-dialog .p-dialog-header {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.custom-confirm-dialog .p-dialog-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
+.custom-confirm-dialog .p-button {
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.custom-confirm-dialog .p-button.p-confirm-dialog-reject {
+  background-color: #f44336;
+  border: none;
+  color: white;
+}
+
+.custom-confirm-dialog .p-button.p-confirm-dialog-accept {
+  background-color: #2196f3;
+  border: none;
+  color: white;
 }
 
 /* :root { 

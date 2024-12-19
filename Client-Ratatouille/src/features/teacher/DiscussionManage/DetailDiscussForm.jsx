@@ -10,6 +10,8 @@ import {faX} from "@fortawesome/free-solid-svg-icons"
 import {faPaperPlane} from "@fortawesome/free-solid-svg-icons"
 import createWebSocket from "../../../services/createWebSocket";
 import { format, formatDistanceToNow, differenceInDays, isValid, parse } from 'date-fns';
+import ConfirmCard from "../../../components/ConfirmCard";
+
 export default function DetailDiscussForm(){
     // lay cac post ve voi id, lay cac file da post ve
     const myId = localStorage.getItem('userId');
@@ -17,6 +19,8 @@ export default function DetailDiscussForm(){
     const commentsRef = useRef(null); // để thanh cuộn của khối các comments luôn nằm ở dưới
     const socketRef = useRef(null);
     
+    const [isOnDeleteClick, setIsOnDeleteClick] = useState(0); // khi click vào thùng rác xóa tin nhắnnhắn
+
     const {postId} = useParams();
     const [allComments, setAllComments] = useState([]); // tất cả các comment trong 1 post, có cách nào mà ko phải lấy hết các comment (khi lướt đến mới tải xuống)
     const [replyTo, setReplyTo] = useState(0); // chứa id của comment mà mình đang reply lại (để check xem có cần hiện phần reply lại comment khác ko)
@@ -74,9 +78,20 @@ export default function DetailDiscussForm(){
 
                     // Lắng nghe tin nhắn từ server
                     socket.onmessage = (event) => {
-                        const newMessage = JSON.parse(event.data);
-                        console.log("New message received: ", newMessage);
-                        setAllComments((prevMessages) => [...prevMessages, newMessage]);
+                        const data = JSON.parse(event.data);
+
+                        if(data.type === "new_comment"){
+                            setAllComments((prevMessages) => [...prevMessages, data.comment]);
+                        } else if(data.type === "delete_comment"){
+                            setAllComments((prevMessages) =>
+                                prevMessages.map((comment) =>
+                                  comment.comment_id === data.commentId
+                                    ? { ...comment, content: "Message is unsent" }
+                                    : comment
+                                )
+                            );
+                        }
+                       
                     };
 
                     // Đóng WebSocket khi component unmount
@@ -113,7 +128,11 @@ export default function DetailDiscussForm(){
     const handleSend = async (e) => {
         e.preventDefault();
         // console.log("Sending message:", myComment);  // Kiểm tra xem message có bị gọi 2 lần không
-        socketRef.current.send(JSON.stringify(myComment));
+        const messageData = {
+            action: "create_comment", // Đặt action tương ứng
+            ...myComment, // Bao gồm thông tin comment từ state
+          };
+        socketRef.current.send(JSON.stringify(messageData));
         setMyMessage("");
         setReplyTo(0);
     };
@@ -128,6 +147,24 @@ export default function DetailDiscussForm(){
         return words.length > 0 ? words[words.length - 1] : ''; 
     }
 
+    const acceptDeleteComment = (comment_id) => {
+        if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+            const deleteMessage = {
+              action: "delete_comment", // Hành động xóa
+              commentId: comment_id,   // ID comment cần xóa
+            };
+            socketRef.current.send(JSON.stringify(deleteMessage));
+        }
+        setIsOnDeleteClick(0);
+    }
+
+    const rejectDeleteComment = () => {
+        setIsOnDeleteClick(0);
+    }
+    const handleOnDeleteClick = (comment_id) => {
+        setIsOnDeleteClick(comment_id);
+        // console.log("delete click handle", isOnDeleteClick);
+    }
 
     const formatDate = (dateString) => {
         if (!dateString || dateString.trim() === "") {
@@ -223,6 +260,7 @@ export default function DetailDiscussForm(){
                                     created_date={comment.created_date}
                                     creator_id={comment.creator_id}
                                     handleReply={handleReply}
+                                    handleDelete={handleOnDeleteClick}
                                 />
                             ) : (
                                 <OtherComment 
@@ -234,6 +272,7 @@ export default function DetailDiscussForm(){
                                     created_date={comment.created_date}
                                     creator_id={comment.creator_id}
                                     handleReply={handleReply}
+                                    handleDelete={handleOnDeleteClick}
                                 />
                             )
                         )) : (<p>No comments</p>)
@@ -257,6 +296,17 @@ export default function DetailDiscussForm(){
                     ) : (
                         <></>
                     )}
+                    {
+                        isOnDeleteClick ? (
+                            <ConfirmCard 
+                                message="Are you sure you want to delete this comment?"
+                                onConfirm={() => acceptDeleteComment(isOnDeleteClick)}
+                                onCancel={() => rejectDeleteComment()}
+                            />
+                        ) : (
+                            <></>
+                        )
+                    }
                     <form className="flex" onSubmit={handleSend}>
                         <input 
                             className="border px-4 py-2 bg-[#F3F3F4] rounded-full outline-[#015DAF] w-full focus:outline focus:outline-2 focus:outline-[#D2DEF0] focus:border-[#015DAF] hover:border-[#015DAF] mx-3 md:mx-5"

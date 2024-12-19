@@ -160,7 +160,7 @@ export default function TShowNotiForm(){
                                         <div className="mr-2 my-1">
                                         <Avatar 
                                             style={{
-                                                backgroundColor: getColorFromName(noti.full_name || ""), // Màu từ tên
+                                                backgroundColor: getColorFromName(teacherName || ""), // Màu từ tên
                                                 color: '#ffffff'
                                             }}
                                         >
