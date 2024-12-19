@@ -7,6 +7,7 @@ import 'react-quill/dist/quill.snow.css';
 export default function EditAssignmentForm() {
     const [moduleList, setModuleList] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [selectedFiles, setSelectedFiles] = useState(null); 
     const [selectedFileNames, setSelectedFileNames] = useState([]);
     const [errors, setErrors] = useState({});
@@ -85,12 +86,11 @@ export default function EditAssignmentForm() {
             setAssignment(response.data);
 
             const filesDB = await axios.get(`/api/assignment/get-assignment-filename-path/${assignmentId}`);
-            if(filesDB.data.length > 0){ // nếu có dữ liệu trả về từ notification_files, chứng tỏ thông báo đó đính kèm file 
+            if(filesDB.data.length > 0){  
                 const fileInfos = {files: filesDB.data}
-                const filesListRes = await axios.post('/api/object-urls', fileInfos); // lấy các urls ứng với các file trên S3 về 
+                const filesListRes = await axios.post('/api/object-urls', fileInfos); 
                 setFilesList(filesListRes.data.results);
             }
-            console.log("file khi get duoc",filesDB.data);
         }
         catch (error) {
             console.error("Error getting assignment detail: ", error);
@@ -134,7 +134,7 @@ export default function EditAssignmentForm() {
 
 
         try {
-            console.log("Assignment: ", assignment);
+            setIsLoading(true);
 
             await axios.post(`/api/assignment/update-assignment/${assignmentId}`, assignment);
 
@@ -184,6 +184,8 @@ export default function EditAssignmentForm() {
             navigate(`/teacher/courses/${courseId}/modules/${module_id}/assignments/${assignmentId}`);
         } catch (error) {
             console.error("Error creating assignment: ", error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -322,9 +324,36 @@ export default function EditAssignmentForm() {
 
                 <button 
                     type="submit" 
-                    className="my-5 text-white bg-gray-700 hover:bg-gray-800 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+                    className="my-5 text-white bg-gray-700 hover:bg-gray-800 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center flex items-center justify-center"
+                    disabled={isLoading}
                 >
-                    Save Changes
+                    {isLoading ? (
+                        <>
+                            <svg 
+                                className="animate-spin h-5 w-5 mr-2 text-white" 
+                                xmlns="http://www.w3.org/2000/svg" 
+                                fill="none" 
+                                viewBox="0 0 24 24"
+                            >
+                                <circle 
+                                    className="opacity-25" 
+                                    cx="12" 
+                                    cy="12" 
+                                    r="10" 
+                                    stroke="currentColor" 
+                                    strokeWidth="4"
+                                />
+                                <path 
+                                    className="opacity-75" 
+                                    fill="currentColor" 
+                                    d="M4 12a8 8 0 018-8v8H4z"
+                                />
+                            </svg>
+                            Saving...
+                        </>
+                    ) : (
+                        "Save changes"
+                    )}
                 </button>
             </form>
 

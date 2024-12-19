@@ -9,6 +9,7 @@ export default function AddAssignmentForm() {
     const [moduleList, setModuleList] = useState([]);
     const [selectedModuleId, setSelectedModuleId] = useState(moduleId || "");
     const [loading, setLoading] = useState(true);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [selectedFiles, setSelectedFiles] = useState(null); 
     const [selectedFileNames, setSelectedFileNames] = useState([]);
     const [errors, setErrors] = useState({});
@@ -106,6 +107,7 @@ export default function AddAssignmentForm() {
             setErrors(validationErrors);
             return;
         }
+        setIsSubmitting(true);
 
         try {
             const response = await axios.post("/api/assignment/create", assignment);
@@ -133,11 +135,11 @@ export default function AddAssignmentForm() {
                         console.log("File uploaded successfully:");
                     } catch (error) {
                         console.error("Error uploading file:", error);
-                    }
+                    } 
                     
                 }catch (err){
                     console.error("Error at upload or insert noti", err)
-                }
+                } 
             }
 
             setAssignment({
@@ -158,6 +160,8 @@ export default function AddAssignmentForm() {
             alert("Assignment created successfully!");
         } catch (error) {
             console.error("Error creating assignment: ", error);
+        } finally {
+            setIsSubmitting(false); 
         }
     };
 
@@ -269,10 +273,38 @@ export default function AddAssignmentForm() {
 
                 <button 
                     type="submit" 
-                    className="my-5 text-white bg-gray-700 hover:bg-gray-800 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+                    className="my-5 text-white bg-gray-700 hover:bg-gray-800 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center flex items-center justify-center"
+                    disabled={isSubmitting}
                 >
-                    Submit
+                    {isSubmitting ? (
+                        <>
+                            <svg 
+                                className="animate-spin h-5 w-5 mr-2 text-white" 
+                                xmlns="http://www.w3.org/2000/svg" 
+                                fill="none" 
+                                viewBox="0 0 24 24"
+                            >
+                                <circle 
+                                    className="opacity-25" 
+                                    cx="12" 
+                                    cy="12" 
+                                    r="10" 
+                                    stroke="currentColor" 
+                                    strokeWidth="4"
+                                />
+                                <path 
+                                    className="opacity-75" 
+                                    fill="currentColor" 
+                                    d="M4 12a8 8 0 018-8v8H4z"
+                                />
+                            </svg>
+                            Submitting...
+                        </>
+                    ) : (
+                        "Submit"
+                    )}
                 </button>
+
             </form>
         </>
     );

@@ -10,6 +10,7 @@ export default function DetailAssignmentForm() {
     const [selectedFileNames, setSelectedFileNames] = useState([]);
     const [submission, setSubmission] = useState({});
     const [fileSubmission, setFileSubmission] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
     const [submissionId, setSubmissionId] = useState("");
     const role = localStorage.getItem("role");
     const [showConfirm, setShowConfirm] = useState(false); 
@@ -84,6 +85,7 @@ export default function DetailAssignmentForm() {
 
     const handleConfirm = async () => {
         setShowConfirm(false);
+        setIsLoading(true);
         if (fileSubmission && Array.isArray(fileSubmission)) {
             try {
                 await Promise.all([
@@ -137,6 +139,8 @@ export default function DetailAssignmentForm() {
             
         } catch (error) {
             console.error("Error submitting assignment:", error);
+        } finally{
+            setIsLoading(false);
         }
     }
 
@@ -199,17 +203,39 @@ export default function DetailAssignmentForm() {
                 {error && <p className="text-red-500">{error}</p>}
 
 
-                {/* <button 
-                    type="button" 
-                    className="my-5 text-black bg-white-700 mr-3  border-[1px] border-black font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+                
+                <button 
+                    type="submit" 
+                    className="my-5 text-white bg-gray-700 hover:bg-gray-800 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center flex items-center justify-center"
+                    disabled={isLoading}
                 >
-                    Cancel
-            </button> */}
-                <button
-                    type="submit"
-                    className="my-5 text-white bg-gray-700 hover:bg-gray-800 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
-                >
-                    Submit
+                    {isLoading ? (
+                        <>
+                            <svg 
+                                className="animate-spin h-5 w-5 mr-2 text-white" 
+                                xmlns="http://www.w3.org/2000/svg" 
+                                fill="none" 
+                                viewBox="0 0 24 24"
+                            >
+                                <circle 
+                                    className="opacity-25" 
+                                    cx="12" 
+                                    cy="12" 
+                                    r="10" 
+                                    stroke="currentColor" 
+                                    strokeWidth="4"
+                                />
+                                <path 
+                                    className="opacity-75" 
+                                    fill="currentColor" 
+                                    d="M4 12a8 8 0 018-8v8H4z"
+                                />
+                            </svg>
+                            Submitting...
+                        </>
+                    ) : (
+                        "Submit"
+                    )}
                 </button>
             </form>
             {showConfirm && (

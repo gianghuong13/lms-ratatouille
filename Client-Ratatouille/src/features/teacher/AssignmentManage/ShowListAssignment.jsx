@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react"; 
+import React, { useState, useEffect, useCallback } from "react"; 
 import { useNavigate, useParams, Link } from "react-router-dom";
+import { useMemo } from "react";
 import axios from "axios";
 import ConfirmCard from "../../../components/ConfirmCard";
 import Toast from "../../../components/Toast";
@@ -15,14 +16,14 @@ export default function ShowListAssignment() {
   const role = localStorage.getItem("role");
 
 
-  const fetchAssignments = async () => {
+  const fetchAssignments = useCallback(async () => {
     try {
       const response = await axios.get(`/api/assignment/get-assignment-info/${courseId}`);
       setAssignments(Array.isArray(response.data) ? response.data : []); // Đảm bảo mảng
     } catch (error) {
       console.error("Error fetching assignments:", error);
     }
-  };
+  },[courseId]);
   
   
 
@@ -112,9 +113,9 @@ export default function ShowListAssignment() {
   }
 
   // Filtered items based on search term
-  const filteredItems = assignments.filter((assignment) =>
+  const filteredItems = useMemo (() =>assignments.filter((assignment) =>
     assignment.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  ),[assignments, searchTerm]);
 
   return (
     <>
