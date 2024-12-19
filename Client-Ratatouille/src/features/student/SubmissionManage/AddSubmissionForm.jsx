@@ -6,10 +6,11 @@ import ConfirmCard from "../../../components/ConfirmCard";
 export default function DetailAssignmentForm() {
     const { assignmentId } = useParams();
     const [assignment, setAssignment] = useState({});
-    const [fileNames, setFileNames] = useState([]);
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [selectedFileNames, setSelectedFileNames] = useState([]);
-    const [fileUrls, setFileUrls] = useState({});
+    const [submission, setSubmission] = useState({});
+    const [fileSubmission, setFileSubmission] = useState([]);
+    const [submissionId, setSubmissionId] = useState("");
     const role = localStorage.getItem("role");
     const [showConfirm, setShowConfirm] = useState(false); 
     const navigate = useNavigate();
@@ -32,8 +33,41 @@ export default function DetailAssignmentForm() {
 
 
     useEffect(() => {
+        
         fetchAssignments();
+        fetchSubmission(); 
     }, [assignmentId]);
+
+    useEffect(() => {
+        fetchSubmission(); 
+    }, [assignmentId, userId]);
+
+    useEffect(() => {
+        if (submissionId) {
+            fetchFileNamesAndPathsSubmission();
+        }
+    }, [submissionId]);
+      
+
+    const fetchSubmission = async () => {
+        try { 
+            const response = await axios.get(`/api/submission/get/${assignmentId}/${userId}`);
+            setSubmission(response.data);
+            setSubmissionId(response.data.submission_id);
+            
+        } catch (error) {
+            console.error("Error fetching submission:", error);
+        }
+    }
+
+    const fetchFileNamesAndPathsSubmission = async () => {
+        try {
+            const response = await axios.get(`/api/submission/get-filename-path/${submissionId}`);
+            setFileSubmission(response.data);
+        } catch (error) {
+            console.error("Error fetching file names and paths:", error);
+        }
+    };
 
 
     const isClosed = new Date(assignment.due_date) < new Date();
@@ -50,9 +84,23 @@ export default function DetailAssignmentForm() {
 
     const handleConfirm = async () => {
         setShowConfirm(false);
+        if (fileSubmission && Array.isArray(fileSubmission)) {
+            try {
+                await Promise.all([
+                  axios.post('/api/delete-files', { keys: fileSubmission.map((file) => file.file_path) }),
+                  axios.delete(`/api/submission/delete-files/${submission.submission_id}`),
+                  axios.delete(`/api/submission/delete/${submission.submission_id}`)
+                ]);
+                console.log("Files and submission deleted successfully");
+              } catch (error) {
+                console.error("Error during deletion:", error);
+            }
+        }
+        console.log("handle" + submission);
+
         try {
             const response = await axios.post(`/api/submission/create/${assignmentId}/${userId}`);
-            const submission_id = response.data.submission_id;
+            const newSubmissionId = response.data.submission_id;
 
 
             if (selectedFiles && selectedFiles.length > 0) {
@@ -60,7 +108,7 @@ export default function DetailAssignmentForm() {
                 for (let i = 0; i < selectedFiles.length; i++) {
                     formData.append("files", selectedFiles[i]);
                 }
-                formData.append("folder", "submissions/" + courseId + "/" + moduleId + "/" + assignmentId + "/" + submission_id);
+                formData.append("folder", "submissions/" + courseId + "/" + moduleId + "/" + assignmentId + "/" + newSubmissionId);
 
                 try {
                     const response = await axios.post('/api/upload-files', formData, {
@@ -71,7 +119,7 @@ export default function DetailAssignmentForm() {
                     const submissionFile = response.data.uploadedFiles;
 
                     try {
-                        const response = await axios.post(`/api/submission/create-files/${submission_id}`, submissionFile);
+                        const response = await axios.post(`/api/submission/create-files/${newSubmissionId}`, submissionFile);
 
                         console.log("File uploaded successfully:");
                     } catch (error) {
@@ -85,6 +133,7 @@ export default function DetailAssignmentForm() {
 
             
                 navigate(`/student/courses/${courseId}/modules/${moduleId}/assignments/${assignmentId}`);
+                alert("Submission successful");
             
         } catch (error) {
             console.error("Error submitting assignment:", error);
@@ -94,6 +143,7 @@ export default function DetailAssignmentForm() {
     const handleCancel = () => {
         setShowConfirm(false);
     };
+
 
 
     return (
@@ -139,7 +189,7 @@ export default function DetailAssignmentForm() {
                     {selectedFileNames.length > 0 && (
                         <ul className="mt-2">
                             {selectedFileNames.map((name, index) => (
-                                <li key={index} className="text-sm text-gray-600 italic">
+                                <li key={name} className="text-sm text-gray-600 italic">
                                     {name}
                                 </li>
                             ))}

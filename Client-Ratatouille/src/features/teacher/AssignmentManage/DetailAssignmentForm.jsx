@@ -131,36 +131,9 @@ export default function DetailAssignmentForm() {
     };
 
     const handleClickNewAttempt = async () => {
-        try {
-            const filePaths = { keys: fileSubmission.map((file) => file.file_path) };
-            console.log("File paths:", filePaths);
-
-            // Bước 2: Xóa các file trên S3
-            try {
-                await axios.post('/api/delete-files', filePaths);
-                console.log('Files deleted from S3 successfully');
-            } catch (error) {
-                console.error("Error deleting files from S3:", error);
-            }
-
-            try {
-                await axios.delete(`/api/submission/delete-files/${submission_id}`);
-                console.log('Files deleted from assignment_files table');
-            } catch (error) {
-                console.error("Error deleting assignment files from DB:", error);
-            }
-
-            try {
-                await axios.delete(`/api/submission/delete/${submission_id}`);
-                fetchAssignments();
-            } catch (error) {
-                console.error("Error deleting submission:", error);
-            }
-
+        
             navigate(`/student/courses/${courseId}/modules/${moduleId}/assignments/${assignmentId}/add-submission`);
-        } catch (error) {
-            console.error("Error fetching assignment files:", error);
-        }
+       
     }
 
     if (loading) {

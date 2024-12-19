@@ -11,6 +11,7 @@ router.get("/assignment/get-assignment-filepath/:assignment_id", assignmentManag
 router.delete("/assignment/delete-assignment/:assignment_id", assignmentManageController.deleteAssignment);
 router.delete("/assignment/delete-assignment-file/:assignment_id", assignmentManageController.deleteAssignmentFile);
 router.get("/assignment/get-assignment-detail/:assignment_id", assignmentManageController.getAssignmentDetail);
+router.get("/assignment/get-assignment-submission-filename-path/:assignment_id", assignmentManageController.getAssignmentSubmissionFileNameAndPath);
 router.get("/assignment/get-assignment-filename-path/:assignment_id", assignmentManageController.getAssignmentFileNameAndPath);
 router.get("/assignment/get-assignment-detail-1/:assignment_id", assignmentManageController.getAssignmentDetail1);
 router.post("/assignment/update-assignment/:assignment_id", assignmentManageController.updateAssignment);
