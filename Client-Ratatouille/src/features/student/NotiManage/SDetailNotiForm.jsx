@@ -83,7 +83,7 @@ export default function SDetailNotiForm() {
     };
 
     return (
-        <div className="m-0 p-3 sm:mx-2 rounded-2xl shadow-lg h-[89vh] md:mx-3 xl:ml-5 xl:mr-10 bg-white overflow-y-auto">
+        <div className="m-0 p-3 sm:mx-2 rounded-2xl shadow-lg h-[85vh] md:mx-3 xl:ml-5 xl:mr-10 bg-white overflow-y-auto">
             <h2 className="text-xl font-semibold ml-12">{noti.title}</h2>
             <div className="flex items-center">
                 <Avatar 
