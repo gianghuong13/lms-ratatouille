@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 import { useDispatch } from "react-redux";
 import { setRole } from "../../redux/slices/authSlice";
+import { faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
@@ -133,63 +134,70 @@ const LoginForm = () => {
   
 
   return (
-    <form onSubmit={handleLogin} className="w-full max-w-md p-8 bg-[#fffafa] rounded-2xl border-2 border-solid border-[#015daf] shadow-lg">
-      <h1 className="text-center text-4xl font-medium text-black mb-8">
+    <form onSubmit={handleLogin} className="bg-white w-full max-w-sm p-4 rounded-2xl border-[3px] border-solid border-[#015daf] shadow-lg">
+      <h1 className="text-center text-3xl font-bold text-[#105099] mb-4 mt-2">
         UET-LMS Login
       </h1>
       {message && <p className="text-red-500 mb-4">{message}</p>}
-      <div className="mb-4">
+      
+      <div className="mb-2 flex w-full p-3 border border-[#105099] rounded-full items-center">
+        <FontAwesomeIcon icon={faEnvelope} className="text-[#105099]" />
         <input
           type="email"
           placeholder="Email"
           value={email}
           onChange={handleEmailChange}
-          className="w-full p-2 border border-gray-300 rounded"
+          className="w-full outline-none ml-2"
         />
       </div>
-      <div className="mb-4">
+      <div className="mb-2 flex w-full p-3 border border-[#105099] rounded-full items-center">
+        <FontAwesomeIcon icon={faLock} className="text-[#105099]" />
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={handlePasswordChange}
-          className="w-full p-2 border border-gray-300 rounded"
+          className="w-full outline-none ml-2"
         />
       </div>
-      <div className="flex items-center mb-4">
-        <input
-          type="checkbox"
-          id="remember-password"
-          checked={rememberPassword}
-          onChange={toggleRememberPassword}
-          className="mr-2"
-        />
-        <label htmlFor="remember-password" className="text-black text-[15px]">
-          Remember Password
-        </label>
+
+      <div className="flex justify-between mb-2 ">
+        <div className="flex items-center">
+          <input
+            type="checkbox"
+            id="remember-password"
+            checked={rememberPassword}
+            onChange={toggleRememberPassword}
+            className="mr-2"
+          />
+          <label htmlFor="remember-password" className="text-[#105099] text-sm">
+            Remember Password
+          </label>
+        </div>
+        <div className="">
+          <button type="button"
+            className="text-sm text-[#105099] hover:underline focus:outline-none"
+            onClick={ForgotPassword}
+          >
+            Forgot Password?
+          </button>
+        </div>
       </div>
-      <div className="text-right mb-4">
-        <button type="button"
-          className="text-[15px] text-black hover:underline focus:outline-none"
-          onClick={ForgotPassword}
-        >
-          Forgot Password?
-        </button>
-      </div>
+      
 
       <button
         type="submit"
-        className="w-full h-10 mb-4 bg-[#d9d9d9] rounded text-[15px] text-black flex items-center justify-center"
+        className="w-full p-3 mb-1 bg-[#105099] rounded-full text-white hover:bg-blue-500"
       >
         Login
       </button>
-      <div className="flex items-center justify-center mb-4">
-        <span className="text-[15px] text-black">Or login with</span>
+      <div className="flex items-center justify-center mb-1">
+        <span className="text-sm text-[#105099]">Or login with social platform</span>
       </div>
-      <div className="flex justify-center mb-4">
-        <button className="flex items-center bg-white border border-gray-300 rounded-full px-4 py-2">
-          <FontAwesomeIcon icon={faGoogle} className="text-500 mr-2 rainbow-text" />
-          <span className="text-black">Google</span>
+      <div className="flex justify-center mb-2">
+        <button className="flex items-center bg-white  border border-[#105099] rounded-full px-4 py-2 hover:bg-blue-100">
+          <FontAwesomeIcon icon={faGoogle} className="text-[#105099] mr-2" />
+          <span className="text-[#105099]">Google</span>
         </button>
       </div>
     </form>
