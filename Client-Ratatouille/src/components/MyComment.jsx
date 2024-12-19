@@ -1,8 +1,11 @@
 import Avatar from "@mui/joy/Avatar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faReply} from "@fortawesome/free-solid-svg-icons"
+import {faTrash} from "@fortawesome/free-solid-svg-icons"
+import { useState } from "react";
 
 export default function MyComment(props){
+    const [isHovered, setIsHovered] = useState(false);
     const getColorFromName = (name) => {
         const hash = name.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
         const letters = '0123456789ABCDEF';
@@ -33,13 +36,31 @@ export default function MyComment(props){
                     // <p className="mr-[50px] text-gray-400 text-xs block m-0">{getLastWord(props.creator_full_name)}</p>
                 )
             }
-            <div className="flex items-center justify-end mb-1">
-                <button className="mr-1" onClick={() => props.handleReply(props.comment_id)}>
-                    <FontAwesomeIcon
-                        icon={faReply}
-                        className=" text-gray-400 hover:text-blue-300 w-3 h-3 p-2 hover:bg-[#F3F3F4] hover:rounded-full"
-                    />
-                </button>
+            <div className="flex items-center justify-end mb-1 w-full"
+                onMouseEnter={() =>setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+            >
+                {
+                    isHovered ? (
+                        <>
+                            <button className="mr-1" onClick={() => props.handleDelete(props.comment_id)}>
+                                <FontAwesomeIcon
+                                    icon={faTrash}
+                                    className=" text-gray-400 hover:text-blue-300 w-3 h-3 p-2 hover:bg-[#F3F3F4] hover:rounded-full"
+                                />
+                            </button>
+                            <button className="mr-1" onClick={() => props.handleReply(props.comment_id)}>
+                                <FontAwesomeIcon
+                                    icon={faReply}
+                                    className=" text-gray-400 hover:text-blue-300 w-3 h-3 p-2 hover:bg-[#F3F3F4] hover:rounded-full"
+                                />
+                            </button>
+                            
+                        </>
+                        
+                    ) : (<></>)
+                }
+                
                 <span className="px-3 p-2 mr-2 rounded-3xl bg-[#8FC8FB] block max-w-[66%] text-white text-left"  title={props.created_date}>{props.content}</span>
                 <Avatar
                     style={{

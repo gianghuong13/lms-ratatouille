@@ -1,7 +1,10 @@
 import Avatar from "@mui/joy/Avatar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faReply} from "@fortawesome/free-solid-svg-icons"
+import { useState } from "react";
 export default function OtherComment(props){
+    const [isHovered, setIsHovered] = useState(false);
+    
     const getColorFromName = (name) => {
         const hash = name.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
         const letters = '0123456789ABCDEF';
@@ -30,7 +33,10 @@ export default function OtherComment(props){
                     <p className="ml-[50px] text-gray-400 text-xs block m-0">{getLastWord(props.creator_full_name)}</p>
                 )
             }
-            <div className="flex items-center">
+            <div className="flex items-center"
+                onMouseEnter={() =>setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+            >
                 <Avatar 
                     style={{
                         backgroundColor: getColorFromName(props.creator_full_name || ""), // Màu từ tên
@@ -50,13 +56,20 @@ export default function OtherComment(props){
                         : ""}
                 </Avatar>
                 <span className="ml-2 p-2 px-3 rounded-3xl bg-[#F0F0F0] max-w-[66%]" title={props.created_date}>{props.content}</span>
-                <button className="ml-1" onClick={() => props.handleReply(props.comment_id)}>
-                    <FontAwesomeIcon
-                        icon={faReply}
-                        className=" text-gray-400 hover:text-blue-300 w-3 h-3 p-2 hover:bg-[#F3F3F4] hover:rounded-full"
-                    />
-                </button>
-                </div>
+                {
+                    isHovered ? (
+                        <>
+                            <button className="ml-1" onClick={() => props.handleReply(props.comment_id)}>
+                                <FontAwesomeIcon
+                                    icon={faReply}
+                                    className=" text-gray-400 hover:text-blue-300 w-3 h-3 p-2 hover:bg-[#F3F3F4] hover:rounded-full"
+                                />
+                            </button>
+                        </>
+                    ) : (<></>)
+                }
+                
+            </div>
         </div>
         
     );
