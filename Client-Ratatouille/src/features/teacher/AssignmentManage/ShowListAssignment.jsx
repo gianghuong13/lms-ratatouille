@@ -65,7 +65,7 @@ export default function ShowListAssignment() {
 
   const handleDeleteAssignment = async (assignmentId) => {
       try {
-        const response = await axios.get(`/api/assignment/get-assignment-filepath/${assignmentId}`);
+        const response = await axios.get(`/api/assignment/get-assignment-submission-filename-path/${assignmentId}`);
 
         if (response.data && Array.isArray(response.data.filePaths) && response.data.filePaths.length > 0) {
           const filePaths = response.data.filePaths;
