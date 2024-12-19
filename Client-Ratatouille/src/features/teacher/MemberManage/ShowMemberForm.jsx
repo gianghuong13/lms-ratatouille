@@ -58,12 +58,12 @@ export default function ShowPeopleForm() {
         setSearchTerm(e.target.value);
     }
 
-    const filteredMembers = members.filter((member) => {
+    const filteredMembers = useMemo( () => members.filter((member) => {
         return (
             member.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             member.id.toLowerCase().includes(searchTerm.toLowerCase())
         );
-    });
+    }), [members, searchTerm]);
 
     const confirmDelete = (member) => {
         setShowConfirm(true);
