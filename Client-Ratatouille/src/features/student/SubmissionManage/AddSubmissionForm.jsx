@@ -89,60 +89,55 @@ export default function DetailAssignmentForm() {
         if (fileSubmission && Array.isArray(fileSubmission)) {
             try {
                 await Promise.all([
-                  axios.post('/api/delete-files', { keys: fileSubmission.map((file) => file.file_path) }),
-                  axios.delete(`/api/submission/delete-files/${submission.submission_id}`),
-                  axios.delete(`/api/submission/delete/${submission.submission_id}`)
+                    axios.post('/api/delete-files', { keys: fileSubmission.map((file) => file.file_path) }),
+                    axios.delete(`/api/submission/delete-files/${submission.submission_id}`),
+                    axios.delete(`/api/submission/delete/${submission.submission_id}`)
                 ]);
                 console.log("Files and submission deleted successfully");
-              } catch (error) {
+            } catch (error) {
                 console.error("Error during deletion:", error);
             }
         }
-        console.log("handle" + submission);
-
+    
         try {
             const response = await axios.post(`/api/submission/create/${assignmentId}/${userId}`);
             const newSubmissionId = response.data.submission_id;
-
-
+    
             if (selectedFiles && selectedFiles.length > 0) {
                 const formData = new FormData();
                 for (let i = 0; i < selectedFiles.length; i++) {
                     formData.append("files", selectedFiles[i]);
                 }
                 formData.append("folder", "submissions/" + courseId + "/" + moduleId + "/" + assignmentId + "/" + newSubmissionId);
-
+    
                 try {
                     const response = await axios.post('/api/upload-files', formData, {
                         headers: {
                             "Content-Type": "multipart/form-data",
                         }
-                    })
+                    });
                     const submissionFile = response.data.uploadedFiles;
-
+    
                     try {
-                        const response = await axios.post(`/api/submission/create-files/${newSubmissionId}`, submissionFile);
-
+                        await axios.post(`/api/submission/create-files/${newSubmissionId}`, submissionFile);
                         console.log("File uploaded successfully:");
                     } catch (error) {
                         console.error("Error uploading file:", error);
                     }
-
                 } catch (err) {
-                    console.error("Error at upload or insert files", err)
+                    console.error("Error at upload or insert files", err);
                 }
             }
-
-            
-                navigate(`/student/courses/${courseId}/modules/${moduleId}/assignments/${assignmentId}`);
-                alert("Submission successful");
-            
+    
+            navigate(`/student/courses/${courseId}/modules/${moduleId}/assignments/${assignmentId}`);
+            alert("Submission successful");
+    
         } catch (error) {
             console.error("Error submitting assignment:", error);
-        } finally{
+        } finally {
             setIsLoading(false);
         }
-    }
+    };
 
     const handleCancel = () => {
         setShowConfirm(false);
