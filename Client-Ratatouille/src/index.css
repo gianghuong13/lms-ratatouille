@@ -1,11 +1,3 @@
-/* PrimeReact Theme (Chọn theme phù hợp, ví dụ lara-light-indigo) */
-@import 'primereact/resources/themes/lara-light-indigo/theme.css';
-
-/* PrimeReact Core CSS */
-@import 'primereact/resources/primereact.min.css';
-
-/* PrimeIcons CSS */
-@import 'primeicons/primeicons.css';
 @import './styles/tailwind.css';
 
 #root{
